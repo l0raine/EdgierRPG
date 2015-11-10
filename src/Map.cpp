@@ -64,45 +64,49 @@ bool Map::load(const std::string& filepath)
             file >> spriteOffsetX >> spriteOffsetY;
 
             //Allocate memory for the tile and set it up
-            staticTiles.emplace_back(sf::Sprite());
-            staticTiles.back().setTexture(tileTexture);
+            staticTiles[layerNumber].emplace_back(sf::Sprite());
+            staticTiles[layerNumber].back().setTexture(tileTexture);
 
             //Set the position of the tile
             if(tileNumber == 0) //To avoid division by 0
-                staticTiles.back().setPosition(0,0);
+                staticTiles[layerNumber].back().setPosition(0,0);
             else
-                staticTiles.back().setPosition((tileNumber%mapSizeX)*32, std::floor(tileNumber/mapSizeX)*tileSize);
+                staticTiles[layerNumber].back().setPosition((tileNumber%mapSizeX)*tileSize, std::floor(tileNumber/mapSizeX)*tileSize);
 
             //Set the visible texture
-            staticTiles.back().setTextureRect(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
+            staticTiles[layerNumber].back().setTextureRect(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
         }
         else //Animated tile as more than one frame
         {
             //Allocate memory for the animated tile and set it up
-            animatedTiles.emplace_back(AnimatedTile());
+            animatedTiles[layerNumber].emplace_back(AnimatedTile());
 
             //Set the tile texture
-            animatedTiles.back().setTexture(&tileTexture);
+            animatedTiles[layerNumber].back().setTexture(&tileTexture);
 
             //Set the tile position
             if(tileNumber == 0) //To avoid division by 0
-                staticTiles.back().setPosition(0,0);
+                animatedTiles[layerNumber].back().setPosition(0,0);
             else
-                staticTiles.back().setPosition((tileNumber%mapSizeX)*tileSize, std::floor(tileNumber/mapSizeX)*tileSize);
+                animatedTiles[layerNumber].back().setPosition((tileNumber%mapSizeX)*tileSize, std::floor(tileNumber/mapSizeX)*tileSize);
 
             //Read in each frame and add the frame to the animation
             for(int a = 0; a < frameCount; a++)
             {
                 file >> spriteOffsetX >> spriteOffsetY;
-                animatedTiles.back().addFrame(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
+                animatedTiles[layerNumber].back().addFrame(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
             }
 
             //Read in the frame interval and update the animated tile
             file >> frameInterval;
-            animatedTiles.back().setSwitchInterval(frameInterval);
-            animatedTiles.back().update();
+            animatedTiles[layerNumber].back().setSwitchInterval(frameInterval);
         }
     }
+    //Update static map
+    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+        staticTileMap[cLayer].create(mapSizeX*tileSize, mapSizeY*tileSize);
+    updateStaticMap();
+
     file.close();
     return true;
 }
@@ -114,17 +118,43 @@ bool Map::save(const std::string& filepath)
 
 void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states) const
 {
-    //Draw all animated tiles
-    for(const auto &cTile : animatedTiles)
-        cTile.draw(target, states);
-    //Draw all static tiles
-    for(const auto &cTile : staticTiles)
-        target.draw(cTile, states);
+    //Iterate through each layer of tiles and draw each layer individually
+    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+    {
+        for(const auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
+            cTile.draw(target, states);
+        for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++) //Draw render textures
+            target.draw(sf::Sprite(staticTileMap[cLayer].getTexture()), states);
+    }
 }
 
 void Map::update()
 {
-    //Update all animated tiles
-    for(auto &cTile : animatedTiles)
-        cTile.update();
+    //Update all animated tiles on each layer
+    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+    {
+        for(auto &cTile : animatedTiles[cLayer])
+            cTile.update();
+    }
 }
+
+void Map::updateStaticMap()
+{
+    //Iterate through each static layer
+    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+    {
+        staticTileMap[cLayer].clear(sf::Color::Transparent); //Clear old render
+        for(const auto &cTile : staticTiles[cLayer]) //Draw each tile to the render texture
+            staticTileMap[cLayer].draw(cTile);
+        staticTileMap[cLayer].display(); //Finish the render
+    }
+
+}
+
+
+
+
+
+
+
+

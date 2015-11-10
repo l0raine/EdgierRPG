@@ -11,6 +11,8 @@
 
 #include "AnimatedTile.h"
 
+const unsigned int mapLayerCount = 5;
+
 class Map
 {
     public:
@@ -20,7 +22,8 @@ class Map
         bool load(const std::string &filepath);
         bool save(const std::string &filepath);
         void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
-        void update();
+        void update(); //Updates animated tiles
+        void updateStaticMap(); //Re-renders the static tiles
     protected:
     private:
         //Map data
@@ -30,9 +33,12 @@ class Map
         int mapSizeY;
         std::vector<std::string> ambientMusicList;
         std::vector<std::string> dangerMusicList;
-        std::vector<sf::Sprite> staticTiles;
-        std::vector<AnimatedTile> animatedTiles;
+        std::vector<sf::Sprite> staticTiles[mapLayerCount];
+        std::vector<AnimatedTile> animatedTiles[mapLayerCount];
         unsigned int tileSize;
+
+        //Storage for pre-rendered static tile layers
+        sf::RenderTexture staticTileMap[mapLayerCount];
 
         //Temporary tile texture for everything
         sf::Texture tileTexture;

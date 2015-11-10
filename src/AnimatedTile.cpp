@@ -28,6 +28,8 @@ void AnimatedTile::setTexture(sf::Texture* texture)
 
 void AnimatedTile::update()
 {
+    //Increase current frame if the frame needs moved on
+    //If the currentFrame counter exceeds the number of frames, set it to 0
     if(updateClock.getElapsedTime().asMilliseconds() > switchInterval)
     {
         currentFrame++;
