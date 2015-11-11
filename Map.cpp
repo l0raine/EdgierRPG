@@ -104,7 +104,15 @@ bool Map::load(const std::string& filepath)
     }
     //Update static map
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
-        staticTileMap[cLayer].create(mapSizeX*tileSize, mapSizeY*tileSize);
+    {
+        //staticTileMap[cLayer].create(mapSizeX*tileSize, mapSizeY*tileSize);
+        /*staticTileMap[cLayer][0].position = sf::Vector2f(0,0);
+        staticTileMap[cLayer][1].position = sf::Vector2f(mapSizeX*tileSize,0);
+        staticTileMap[cLayer][2].position = sf::Vector2f(mapSizeX*tileSize, mapSizeY*tileSize);
+        staticTileMap[cLayer][3].position = sf::Vector2f(0, mapSizeY*tileSize);
+        */
+    }
+
     updateStaticMap();
 
     file.close();
@@ -123,8 +131,8 @@ void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states) const
     {
         for(const auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
             cTile.draw(target, states);
-        for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++) //Draw render textures
-            target.draw(sf::Sprite(staticTileMap[cLayer].getTexture()), states);
+
+        target.draw(staticTileMap[cLayer], &tileTexture);
     }
 }
 
@@ -140,21 +148,37 @@ void Map::update()
 
 void Map::updateStaticMap()
 {
+    sf::IntRect tileTex;
+
+    for(unsigned int i=0;i<mapLayerCount;i++)
+    {
+        staticTileMap[i].clear();
+        staticTileMap[i] = sf::VertexArray(sf::Quads);
+        staticTileMap[i].resize(mapSizeX*mapSizeY*4);
+    }
+
     //Iterate through each static layer
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
     {
-        staticTileMap[cLayer].clear(sf::Color::Transparent); //Clear old render
-        for(const auto &cTile : staticTiles[cLayer]) //Draw each tile to the render texture
-            staticTileMap[cLayer].draw(cTile);
-        staticTileMap[cLayer].display(); //Finish the render
+        for(unsigned int tileIndex = 0;tileIndex < staticTiles[cLayer].size();tileIndex++)//Draw each tile to the vertex array
+        {
+            sf::Sprite &cTile = staticTiles[cLayer][tileIndex];
+
+            sf::FloatRect tileBounds = cTile.getGlobalBounds();
+            sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];
+
+            quad[1].position = {tileBounds.left, tileBounds.top};
+            quad[2].position = {tileBounds.left + tileBounds.width , tileBounds.top };
+            quad[3].position = {tileBounds.left + tileBounds.width, tileBounds.top  + tileBounds.height};
+            quad[0].position = {tileBounds.left, tileBounds.top  + tileBounds.height};
+
+            tileTex = cTile.getTextureRect();
+
+            quad[1].texCoords = {tileTex.left, tileTex.top};
+            quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+            quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+            quad[0].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+
+        }
     }
-
 }
-
-
-
-
-
-
-
-

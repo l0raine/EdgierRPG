@@ -38,7 +38,8 @@ class Map
         unsigned int tileSize;
 
         //Storage for pre-rendered static tile layers
-        sf::RenderTexture staticTileMap[mapLayerCount];
+        //sf::RenderTexture staticTileMap[mapLayerCount];
+        sf::VertexArray staticTileMap[mapLayerCount];
 
         //Temporary tile texture for everything
         sf::Texture tileTexture;

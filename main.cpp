@@ -1,6 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Map.h"
+#include<fstream>
 
 using namespace std;
 
