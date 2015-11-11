@@ -165,15 +165,17 @@ void Map::updateStaticMap()
             sf::Sprite &cTile = staticTiles[cLayer][tileIndex];
 
             sf::FloatRect tileBounds = cTile.getGlobalBounds();
-            sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];
+            sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];//Quad is (x + y + tileIndex) * 4
 
-            quad[1].position = {tileBounds.left, tileBounds.top};
+            //Set each tile's position
+            quad[1].position = {tileBounds.left , tileBounds.top};
             quad[2].position = {tileBounds.left + tileBounds.width , tileBounds.top };
             quad[3].position = {tileBounds.left + tileBounds.width, tileBounds.top  + tileBounds.height};
             quad[0].position = {tileBounds.left, tileBounds.top  + tileBounds.height};
 
-            tileTex = cTile.getTextureRect();
+            tileTex = cTile.getTextureRect();//get the texture rect of the tile to draw
 
+            //Project the texture rect onto a quad
             quad[1].texCoords = {tileTex.left, tileTex.top};
             quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
             quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};

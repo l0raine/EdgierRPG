@@ -1,5 +1,5 @@
 Map1
-250 250
+216 216
 2 Forest.wav AmbientForest1.wav
 2 Danger1.wav Danger2.wav
 0 0 0 1 0 0

@@ -12,6 +12,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Test");
     while(window.isOpen())
     {
+        window.setFramerateLimit(60);
+        window.setVerticalSyncEnabled(true);
         sf::Event event;
         while(window.pollEvent(event))
         {
