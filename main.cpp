@@ -7,9 +7,12 @@ using namespace std;
 
 int main()
 {
+    sf::Clock loadTime;
     Map aMap("map.txt");
+    std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms";
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Test");
+    window.setFramerateLimit(60);
     while(window.isOpen())
     {
         sf::Event event;

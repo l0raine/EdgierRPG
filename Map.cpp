@@ -64,8 +64,7 @@ bool Map::load(const std::string& filepath)
             file >> spriteOffsetX >> spriteOffsetY;
 
             //Allocate memory for the tile and set it up
-            staticTiles[layerNumber].emplace_back(sf::Sprite());
-            staticTiles[layerNumber].back().setTexture(tileTexture);
+            staticTiles[layerNumber].emplace_back(StaticTile());
 
             //Set the position of the tile
             if(tileNumber == 0) //To avoid division by 0
@@ -162,7 +161,7 @@ void Map::updateStaticMap()
     {
         for(unsigned int tileIndex = 0;tileIndex < staticTiles[cLayer].size();tileIndex++)//Draw each tile to the vertex array
         {
-            sf::Sprite &cTile = staticTiles[cLayer][tileIndex];
+            StaticTile &cTile = staticTiles[cLayer][tileIndex];
 
             sf::FloatRect tileBounds = cTile.getGlobalBounds();
             sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];
