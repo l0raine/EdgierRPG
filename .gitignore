@@ -31,5 +31,7 @@
 *.txt
 *.png
 *.depend
+*.layout
 bin/
 obj/
+.gitignore
