@@ -31,6 +31,6 @@
 *.txt
 *.png
 *.depend
-.layout
+*.layout
 bin/
 obj/
