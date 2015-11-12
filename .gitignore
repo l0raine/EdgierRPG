@@ -33,4 +33,5 @@
 *.otf
 bin/
 obj/
+Files/
 .gitignore

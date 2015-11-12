@@ -4,6 +4,8 @@
 #include<fstream>
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
+#include "ResourceManager.h"
+#include "Globals.h"
 
 using namespace std;
 
@@ -11,11 +13,12 @@ int main()
 {
     sf::Vector2i windowSize(800,600);
     sf::Clock loadTime;
-    Map aMap("map.txt");
+    Map aMap("./Files/Maps/test_level.txt");
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
 
     //Initialize objects
-    GUIManager guiManager(windowSize, "arial.ttf", sf::Color::Yellow, 15);
+    GUIManager guiManager(windowSize, gl::fontPath + "arial.ttf", sf::Color::Yellow, 15);
+    //ResourceManager ResourceManager(gl::texturePath);
 
     //Get instance of gui
     auto gui = *guiManager.getGUIRef();
@@ -25,7 +28,7 @@ int main()
 
     //Create our first widget
     auto button = frd::Maker::make(frd::Button());
-    button->setWidgetInfo("Hello World!", sf::Vector2f(100, 50), sf::Vector2f(100, 100), sf::Color::Blue); //A blue, 100x50 button positioned at (100, 100) with the label "Hello World!". This function is a shortcut, instead of setting each of these button properties individually
+    button->setWidgetInfo("Don't click me", sf::Vector2f(100, 50), sf::Vector2f(100, 100), sf::Color::Blue); //A blue, 100x50 button positioned at (100, 100) with the label "Hello World!". This function is a shortcut, instead of setting each of these button properties individually
     button->setBezelEnabled(true); //Enable button bezel. Button bezel thickness and colour can be specified with additional function calls.
     button->bindFunction(EventTypes::LeftClick_Up, std::bind([&]()
     {
@@ -47,7 +50,11 @@ int main()
         {
             if(event.type == sf::Event::Closed)
                 window.close();
-
+            else if(event.type == sf::Event::KeyPressed)
+            {
+                if(event.key.code == sf::Keyboard::Escape)
+                    window.close();
+            }
             //Pass the event to FRDGUI to let the GUI respond to it
             gui.handleEvent(event);
         }
