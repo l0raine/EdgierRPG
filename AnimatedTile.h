@@ -8,7 +8,9 @@
 class AnimatedTile
 {
     public:
+        /** Default constructor */
         AnimatedTile();
+        /** Default destructor */
         virtual ~AnimatedTile();
 
         void setSwitchInterval(int switchIntervalNew);
@@ -18,12 +20,16 @@ class AnimatedTile
         void setPosition(const sf::Vector2f newPosition);
         void setPosition(float x, float y);
         void draw(sf::RenderTarget &target, const sf::RenderStates &states) const;
+        void setRotation(int &newRotation);
+        int getRotation();
+        void rotate(int degrees);
     protected:
     private:
         sf::Sprite sprite;
         unsigned int currentFrame;
         int switchInterval;
         std::vector<sf::IntRect> frames;
+        int rotation;
         sf::Clock updateClock;
 };
 

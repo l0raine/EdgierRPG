@@ -55,7 +55,7 @@ bool Map::load(const std::string& filepath)
     }
 
     //Read in tiles
-    int tileNumber, layerNumber, tileSheetNumber, frameCount, spriteOffsetX, spriteOffsetY, frameInterval;
+    int tileNumber, layerNumber, tileSheetNumber, frameCount, spriteOffsetX, spriteOffsetY, frameInterval, rotation;
     while(file >> tileNumber >> layerNumber >> tileSheetNumber >> frameCount)
     {
         if(frameCount == 1) //Normal tile as only one frame
@@ -63,15 +63,20 @@ bool Map::load(const std::string& filepath)
             //Read in sprite offset
             file >> spriteOffsetX >> spriteOffsetY;
 
+            //Read in rotation (0 - up, 1 - right, 2 - down, 3 - left)
+            file >> rotation;
+
             //Allocate memory for the tile and set it up
-            staticTiles[layerNumber].emplace_back(sf::Sprite());
-            staticTiles[layerNumber].back().setTexture(tileTexture);
+            staticTiles[layerNumber].emplace_back(StaticTile());
 
             //Set the position of the tile
             if(tileNumber == 0) //To avoid division by 0
                 staticTiles[layerNumber].back().setPosition(0,0);
             else
                 staticTiles[layerNumber].back().setPosition((tileNumber%mapSizeX)*tileSize, std::floor(tileNumber/mapSizeX)*tileSize);
+
+            //Set the rotation of the tile
+            staticTiles[layerNumber].back().setRotation(rotation);
 
             //Set the visible texture
             staticTiles[layerNumber].back().setTextureRect(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
@@ -100,19 +105,30 @@ bool Map::load(const std::string& filepath)
             //Read in the frame interval and update the animated tile
             file >> frameInterval;
             animatedTiles[layerNumber].back().setSwitchInterval(frameInterval);
+
+            file >> rotation;
+            animatedTiles[layerNumber].back().setRotation(rotation);
+
+            /*switch(rotation)
+            {
+                case 0:
+                    sprite.rotate(0);
+                    break;
+                case 1:
+                    animatedTiles[layerNumber].rotate(90);
+                    break;
+                case 2:
+                    animatedTiles[layerNumber].rotate(180);
+                    break;
+                case 3:
+                    animatedTiles[layerNumber].rotate(270);
+                    break;
+                default:
+                    std::cout<<"Invalid rotation value."<<std::endl;
+            }*/
         }
     }
     //Update static map
-    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
-    {
-        //staticTileMap[cLayer].create(mapSizeX*tileSize, mapSizeY*tileSize);
-        /*staticTileMap[cLayer][0].position = sf::Vector2f(0,0);
-        staticTileMap[cLayer][1].position = sf::Vector2f(mapSizeX*tileSize,0);
-        staticTileMap[cLayer][2].position = sf::Vector2f(mapSizeX*tileSize, mapSizeY*tileSize);
-        staticTileMap[cLayer][3].position = sf::Vector2f(0, mapSizeY*tileSize);
-        */
-    }
-
     updateStaticMap();
 
     file.close();
@@ -162,7 +178,7 @@ void Map::updateStaticMap()
     {
         for(unsigned int tileIndex = 0;tileIndex < staticTiles[cLayer].size();tileIndex++)//Draw each tile to the vertex array
         {
-            sf::Sprite &cTile = staticTiles[cLayer][tileIndex];
+            StaticTile &cTile = staticTiles[cLayer][tileIndex];
 
             sf::FloatRect tileBounds = cTile.getGlobalBounds();
             sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];//Quad is (x + y + tileIndex) * 4
@@ -175,12 +191,36 @@ void Map::updateStaticMap()
 
             tileTex = cTile.getTextureRect();//get the texture rect of the tile to draw
 
-            //Project the texture rect onto a quad
-            quad[1].texCoords = {tileTex.left, tileTex.top};
-            quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
-            quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
-            quad[0].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
-
+            //Project the texture rect onto a quad based on rotation
+            switch(cTile.getRotation())
+            {
+                case 0: // Up
+                    quad[1].texCoords = {tileTex.left, tileTex.top};
+                    quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+                    quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+                    quad[0].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+                    break;
+                case 1: // Right
+                    quad[1].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+                    quad[2].texCoords = {tileTex.left, tileTex.top};
+                    quad[3].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+                    quad[0].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+                    break;
+                case 2: //Down
+                    quad[1].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+                    quad[2].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+                    quad[3].texCoords = {tileTex.left, tileTex.top};
+                    quad[0].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+                    break;
+                case 3: //Left
+                    quad[1].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+                    quad[2].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+                    quad[3].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+                    quad[0].texCoords = {tileTex.left, tileTex.top};
+                    break;
+                default:
+                    std::cout<<"Invalid rotation value for tile "<<tileIndex + 1<<std::endl;
+            }
         }
     }
 }

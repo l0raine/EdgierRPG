@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "AnimatedTile.h"
+#include "StaticTile.h"
 
 const unsigned int mapLayerCount = 5;
 
@@ -33,7 +34,7 @@ class Map
         int mapSizeY;
         std::vector<std::string> ambientMusicList;
         std::vector<std::string> dangerMusicList;
-        std::vector<sf::Sprite> staticTiles[mapLayerCount];
+        std::vector<StaticTile> staticTiles[mapLayerCount];
         std::vector<AnimatedTile> animatedTiles[mapLayerCount];
         unsigned int tileSize;
 
