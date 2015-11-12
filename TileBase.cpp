@@ -57,32 +57,32 @@ void TileBase::updateProjectedTexture()
 
     switch(getRotation())
     {
-    case 0: // Up
-        quad[1].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-        quad[2].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
-        quad[3].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
-        quad[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
-        break;
-    case 1: // Right
-        quad[1].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
-        quad[2].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-        quad[3].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
-        quad[0].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
-        break;
-    case 2: //Down
-        quad[1].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
-        quad[2].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
-        quad[3].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-        quad[0].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
-        break;
-    case 3: //Left
-        quad[1].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
-        quad[2].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
-        quad[3].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
-        quad[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
-        break;
-    default:
-        throw std::string("Invalid rotation value for tile!");
+        case 0: // Up
+            quad[1].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
+            quad[2].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
+            quad[3].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
+            quad[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
+            break;
+        case 1: // Right
+            quad[1].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
+            quad[2].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
+            quad[3].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
+            quad[0].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
+            break;
+        case 2: //Down
+            quad[1].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
+            quad[2].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
+            quad[3].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
+            quad[0].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
+            break;
+        case 3: //Left
+            quad[1].texCoords = sf::Vector2f(textureRect.left + textureRect.width , textureRect.top );
+            quad[2].texCoords = sf::Vector2f(textureRect.left + textureRect.width, textureRect.top  + textureRect.height);
+            quad[3].texCoords = sf::Vector2f(textureRect.left, textureRect.top  + textureRect.height);
+            quad[0].texCoords = sf::Vector2f(textureRect.left, textureRect.top);
+            break;
+        default:
+            throw std::string("Invalid rotation value for tile!");
     }
 }
 
