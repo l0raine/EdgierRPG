@@ -108,24 +108,6 @@ bool Map::load(const std::string& filepath)
 
             file >> rotation;
             animatedTiles[layerNumber].back().setRotation(rotation);
-
-            /*switch(rotation)
-            {
-                case 0:
-                    sprite.rotate(0);
-                    break;
-                case 1:
-                    animatedTiles[layerNumber].rotate(90);
-                    break;
-                case 2:
-                    animatedTiles[layerNumber].rotate(180);
-                    break;
-                case 3:
-                    animatedTiles[layerNumber].rotate(270);
-                    break;
-                default:
-                    std::cout<<"Invalid rotation value."<<std::endl;
-            }*/
         }
     }
     //Update static map
@@ -195,28 +177,28 @@ void Map::updateStaticMap()
             switch(cTile.getRotation())
             {
                 case 0: // Up
-                    quad[1].texCoords = {tileTex.left, tileTex.top};
-                    quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
-                    quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
-                    quad[0].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
+                    quad[1].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
+                    quad[2].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
+                    quad[3].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
+                    quad[0].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
                     break;
                 case 1: // Right
-                    quad[1].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
-                    quad[2].texCoords = {tileTex.left, tileTex.top};
-                    quad[3].texCoords = {tileTex.left + tileTex.width , tileTex.top };
-                    quad[0].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
+                    quad[1].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
+                    quad[2].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
+                    quad[3].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
+                    quad[0].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
                     break;
                 case 2: //Down
-                    quad[1].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
-                    quad[2].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
-                    quad[3].texCoords = {tileTex.left, tileTex.top};
-                    quad[0].texCoords = {tileTex.left + tileTex.width , tileTex.top };
+                    quad[1].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
+                    quad[2].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
+                    quad[3].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
+                    quad[0].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
                     break;
                 case 3: //Left
-                    quad[1].texCoords = {tileTex.left + tileTex.width , tileTex.top };
-                    quad[2].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
-                    quad[3].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
-                    quad[0].texCoords = {tileTex.left, tileTex.top};
+                    quad[1].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
+                    quad[2].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
+                    quad[3].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
+                    quad[0].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
                     break;
                 default:
                     std::cout<<"Invalid rotation value for tile "<<tileIndex + 1<<std::endl;
