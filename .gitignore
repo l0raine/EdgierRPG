@@ -36,3 +36,4 @@
 *.png
 bin/
 obj/
+.gitignore
