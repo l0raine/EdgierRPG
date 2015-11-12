@@ -28,12 +28,9 @@
 
 # Codeblocks files/Not Code
 *.cbp
-*.txt
-*.png
 *.depend
 *.layout
 *.otf
-*.png
 bin/
 obj/
 .gitignore
