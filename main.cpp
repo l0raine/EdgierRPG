@@ -3,7 +3,7 @@
 #include "Map.h"
 #include<fstream>
 #include "FRDGUI.h"
-#include "GUIManager.h"
+#include "GUI/GUIManager.h"
 
 using namespace std;
 
