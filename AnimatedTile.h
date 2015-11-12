@@ -16,20 +16,15 @@ class AnimatedTile : public TileBase
         virtual ~AnimatedTile();
 
         virtual sf::Vertex *getQuad();
-        virtual void setQuad(sf::Vertex *quad);
+        virtual void setQuad(sf::Vertex *quad){}; //Stub
         virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states);
 
         void setSwitchInterval(int switchIntervalNew);
-        void setTexture(sf::Texture *texture);
         void addFrame(const sf::IntRect &frameRect);
         void update();
-
-        virtual void setPosition(const sf::Vector2f newPosition);
-        virtual void setPosition(float x, float y);
-        virtual void setRotation(int &newRotation);
     protected:
     private:
-        sf::Sprite sprite;
+        sf::VertexArray frameVertexArray;
         unsigned int currentFrame;
         int switchInterval;
         std::vector<sf::IntRect> frames;
