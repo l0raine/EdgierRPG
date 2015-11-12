@@ -1,14 +1,14 @@
 #include "Map.h"
 
 Map::Map()
-: tileSize(32)
+    : tileSize(32)
 {
     //Load default tile sheet
     tileTexture.loadFromFile("texture.png");
 }
 
 Map::Map(const std::string& filepath)
-: Map()
+    : Map()
 {
     //Load the given map after calling the default constructor
     load(filepath);
@@ -55,13 +55,16 @@ bool Map::load(const std::string& filepath)
     }
 
     //Read in tiles
-    int tileNumber, layerNumber, tileSheetNumber, frameCount, spriteOffsetX, spriteOffsetY, frameInterval;
+    int tileNumber, layerNumber, tileSheetNumber, frameCount, spriteOffsetX, spriteOffsetY, frameInterval, rotation;
     while(file >> tileNumber >> layerNumber >> tileSheetNumber >> frameCount)
     {
         if(frameCount == 1) //Normal tile as only one frame
         {
             //Read in sprite offset
             file >> spriteOffsetX >> spriteOffsetY;
+
+            //Read in rotation (0 - up, 1 - right, 2 - down, 3 - left)
+            file >> rotation;
 
             //Allocate memory for the tile and set it up
             staticTiles[layerNumber].emplace_back(StaticTile());
@@ -71,6 +74,9 @@ bool Map::load(const std::string& filepath)
                 staticTiles[layerNumber].back().setPosition(0,0);
             else
                 staticTiles[layerNumber].back().setPosition((tileNumber%mapSizeX)*tileSize, std::floor(tileNumber/mapSizeX)*tileSize);
+
+            //Set the rotation of the tile
+            staticTiles[layerNumber].back().setRotation(rotation);
 
             //Set the visible texture
             staticTiles[layerNumber].back().setTextureRect(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
@@ -99,19 +105,12 @@ bool Map::load(const std::string& filepath)
             //Read in the frame interval and update the animated tile
             file >> frameInterval;
             animatedTiles[layerNumber].back().setSwitchInterval(frameInterval);
+
+            file >> rotation;
+            animatedTiles[layerNumber].back().setRotation(rotation);
         }
     }
     //Update static map
-    for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
-    {
-        //staticTileMap[cLayer].create(mapSizeX*tileSize, mapSizeY*tileSize);
-        /*staticTileMap[cLayer][0].position = sf::Vector2f(0,0);
-        staticTileMap[cLayer][1].position = sf::Vector2f(mapSizeX*tileSize,0);
-        staticTileMap[cLayer][2].position = sf::Vector2f(mapSizeX*tileSize, mapSizeY*tileSize);
-        staticTileMap[cLayer][3].position = sf::Vector2f(0, mapSizeY*tileSize);
-        */
-    }
-
     updateStaticMap();
 
     file.close();
@@ -123,12 +122,12 @@ bool Map::save(const std::string& filepath)
     return true;
 }
 
-void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states) const
+void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states)
 {
     //Iterate through each layer of tiles and draw each layer individually
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
     {
-        for(const auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
+        for(auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
             cTile.draw(target, states);
 
         target.draw(staticTileMap[cLayer], &tileTexture);
@@ -147,9 +146,8 @@ void Map::update()
 
 void Map::updateStaticMap()
 {
-    sf::IntRect tileTex;
-
-    for(unsigned int i=0;i<mapLayerCount;i++)
+    //Clear the VertexArrays and create them anew
+    for(unsigned int i=0; i< mapLayerCount; i++)
     {
         staticTileMap[i].clear();
         staticTileMap[i] = sf::VertexArray(sf::Quads);
@@ -159,25 +157,11 @@ void Map::updateStaticMap()
     //Iterate through each static layer
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
     {
-        for(unsigned int tileIndex = 0;tileIndex < staticTiles[cLayer].size();tileIndex++)//Draw each tile to the vertex array
+        for(unsigned int tileIndex = 0; tileIndex < staticTiles[cLayer].size(); tileIndex++) //Draw each tile to the vertex array
         {
-            StaticTile &cTile = staticTiles[cLayer][tileIndex];
-
-            sf::FloatRect tileBounds = cTile.getGlobalBounds();
-            sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];
-
-            quad[1].position = {tileBounds.left, tileBounds.top};
-            quad[2].position = {tileBounds.left + tileBounds.width , tileBounds.top };
-            quad[3].position = {tileBounds.left + tileBounds.width, tileBounds.top  + tileBounds.height};
-            quad[0].position = {tileBounds.left, tileBounds.top  + tileBounds.height};
-
-            tileTex = cTile.getTextureRect();
-
-            quad[1].texCoords = {tileTex.left, tileTex.top};
-            quad[2].texCoords = {tileTex.left + tileTex.width , tileTex.top };
-            quad[3].texCoords = {tileTex.left + tileTex.width, tileTex.top  + tileTex.height};
-            quad[0].texCoords = {tileTex.left, tileTex.top  + tileTex.height};
-
+            //Set the quad of each tile
+            sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];//Quad is (x + y + tileIndex) * 4
+            staticTiles[cLayer][tileIndex].setQuad(quad);
         }
     }
 }
