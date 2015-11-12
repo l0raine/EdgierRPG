@@ -1,14 +1,14 @@
 #include "Map.h"
 
 Map::Map()
-: tileSize(32)
+    : tileSize(32)
 {
     //Load default tile sheet
     tileTexture.loadFromFile("texture.png");
 }
 
 Map::Map(const std::string& filepath)
-: Map()
+    : Map()
 {
     //Load the given map after calling the default constructor
     load(filepath);
@@ -122,12 +122,12 @@ bool Map::save(const std::string& filepath)
     return true;
 }
 
-void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states) const
+void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states)
 {
     //Iterate through each layer of tiles and draw each layer individually
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
     {
-        for(const auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
+        for(auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
             cTile.draw(target, states);
 
         target.draw(staticTileMap[cLayer], &tileTexture);
@@ -146,9 +146,8 @@ void Map::update()
 
 void Map::updateStaticMap()
 {
-    sf::IntRect tileTex;
-
-    for(unsigned int i=0;i<mapLayerCount;i++)
+    //Clear the VertexArrays and create them anew
+    for(unsigned int i=0; i< mapLayerCount; i++)
     {
         staticTileMap[i].clear();
         staticTileMap[i] = sf::VertexArray(sf::Quads);
@@ -158,51 +157,11 @@ void Map::updateStaticMap()
     //Iterate through each static layer
     for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
     {
-        for(unsigned int tileIndex = 0;tileIndex < staticTiles[cLayer].size();tileIndex++)//Draw each tile to the vertex array
+        for(unsigned int tileIndex = 0; tileIndex < staticTiles[cLayer].size(); tileIndex++) //Draw each tile to the vertex array
         {
-            StaticTile &cTile = staticTiles[cLayer][tileIndex];
-
-            sf::FloatRect tileBounds = cTile.getGlobalBounds();
+            //Set the quad of each tile
             sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSizeX)*tileSize + std::floor(tileIndex/mapSizeX)*tileSize * mapSizeX/tileSize) * 4];//Quad is (x + y + tileIndex) * 4
-
-            //Set each tile's position
-            quad[1].position = {tileBounds.left , tileBounds.top};
-            quad[2].position = {tileBounds.left + tileBounds.width , tileBounds.top };
-            quad[3].position = {tileBounds.left + tileBounds.width, tileBounds.top  + tileBounds.height};
-            quad[0].position = {tileBounds.left, tileBounds.top  + tileBounds.height};
-
-            tileTex = cTile.getTextureRect();//get the texture rect of the tile to draw
-
-            //Project the texture rect onto a quad based on rotation
-            switch(cTile.getRotation())
-            {
-                case 0: // Up
-                    quad[1].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
-                    quad[2].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
-                    quad[3].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
-                    quad[0].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
-                    break;
-                case 1: // Right
-                    quad[1].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
-                    quad[2].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
-                    quad[3].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
-                    quad[0].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
-                    break;
-                case 2: //Down
-                    quad[1].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
-                    quad[2].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
-                    quad[3].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
-                    quad[0].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
-                    break;
-                case 3: //Left
-                    quad[1].texCoords = sf::Vector2f(tileTex.left + tileTex.width , tileTex.top );
-                    quad[2].texCoords = sf::Vector2f(tileTex.left + tileTex.width, tileTex.top  + tileTex.height);
-                    quad[3].texCoords = sf::Vector2f(tileTex.left, tileTex.top  + tileTex.height);
-                    quad[0].texCoords = sf::Vector2f(tileTex.left, tileTex.top);
-                    break;
-                default:
-                    std::cout<<"Invalid rotation value for tile "<<tileIndex + 1<<std::endl;
-            }
+            staticTiles[cLayer][tileIndex].setQuad(quad);
         }
     }
 }

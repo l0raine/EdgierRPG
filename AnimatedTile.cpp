@@ -40,16 +40,6 @@ void AnimatedTile::update()
     }
 }
 
-void AnimatedTile::rotate(int degrees)
-{
-    sprite.rotate(degrees);
-}
-
-int AnimatedTile::getRotation()
-{
-    return rotation;
-}
-
 void AnimatedTile::setRotation(int &newRotation)
 {
     rotation = newRotation;
@@ -60,25 +50,25 @@ void AnimatedTile::setRotation(int &newRotation)
     //Rotate
     switch(rotation)
     {
-        case 0:
-            sprite.rotate(0); //Don't rotate - retain original orientation.
-            break;
-        case 1:
-            sprite.rotate(90);
-            sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y);
-            break;
-        case 2:
-            sprite.setOrigin(0,32);
-            sprite.rotate(180);
-            sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y);
-            break;
-        case 3:
-            sprite.setOrigin(0,32);
-            sprite.rotate(270);
-            sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y + 32);
-            break;
-        default:
-            std::cout<<"Invalid rotation value."<<std::endl;
+    case 0:
+        sprite.rotate(0); //Don't rotate - retain original orientation.
+        break;
+    case 1:
+        sprite.rotate(90);
+        sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y);
+        break;
+    case 2:
+        sprite.setOrigin(0,32);
+        sprite.rotate(180);
+        sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y);
+        break;
+    case 3:
+        sprite.setOrigin(0,32);
+        sprite.rotate(270);
+        sprite.setPosition(sprite.getPosition().x + 32, sprite.getPosition().y + 32);
+        break;
+    default:
+        std::cout<<"Invalid rotation value."<<std::endl;
     }
 }
 
@@ -92,7 +82,18 @@ void AnimatedTile::setPosition(float x, float y)
     sprite.setPosition(x, y);
 }
 
-void AnimatedTile::draw(sf::RenderTarget& target, const sf::RenderStates &states) const
+void AnimatedTile::draw(sf::RenderTarget &target, const sf::RenderStates &states)
 {
     target.draw(sprite, states);
 }
+
+sf::Vertex *AnimatedTile::getQuad()
+{
+
+}
+
+void AnimatedTile::setQuad(sf::Vertex *quad)
+{
+
+}
+

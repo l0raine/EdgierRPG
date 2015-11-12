@@ -3,29 +3,23 @@
 
 #include <SFML/Graphics.hpp>
 
-class StaticTile
-{
-    public:
-        /** Default constructor */
-        StaticTile();
-        /** Default destructor */
-        virtual ~StaticTile();
+#include "TileBase.h"
 
-        //SFML-like functions
-        const sf::Vector2f &getPosition();
-        void setPosition(const sf::Vector2f &newPos);
-        void setPosition(float x, float y);
-        const sf::FloatRect &getGlobalBounds();
-        void setTextureRect(const sf::IntRect &newRect);
-        const sf::IntRect &getTextureRect();
-        void setRotation(int &newRotation);
-        int getRotation();
-    protected:
-    private:
-        sf::Vector2f position;
-        int rotation;
-        sf::FloatRect floatRect;
-        sf::IntRect intRect;
+class StaticTile : public TileBase
+{
+public:
+    /** Default constructor */
+    StaticTile();
+    /** Default destructor */
+    virtual ~StaticTile();
+
+    virtual sf::Vertex *getQuad();
+    virtual void setQuad(sf::Vertex *quad);
+    virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states){}; //Stub
+protected:
+private:
+    sf::Vertex *quad; //A pointer to out little quad in the huge map quad
+
 };
 
 #endif // STATICTILE_H
