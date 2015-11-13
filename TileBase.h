@@ -19,6 +19,7 @@ class TileBase
         virtual void setTextureRect(const sf::IntRect &newRect);
         virtual const sf::IntRect &getTextureRect();
         virtual const sf::FloatRect &getGlobalBounds();
+        bool isAnimated();
         int getRotation();
     protected:
         sf::Vector2f position;
@@ -26,6 +27,7 @@ class TileBase
         sf::FloatRect tileRect;
         sf::IntRect textureRect;
         sf::Texture *texture;
+        bool isTileAnimated;
         void updateProjectedTexture(); //Updates the texture projection
         void updateQuadPosition(); //Updates the quad's position
     private:

@@ -131,6 +131,71 @@ bool Map::load(const std::string& filepath)
 
 bool Map::save(const std::string& filepath)
 {
+    //Open output file
+    std::ofstream file;
+    file.open(filepath);
+    if(!file.is_open())
+        return false; //Failed to open
+
+    //Write map metadata
+
+    //Write map name
+    file.write(mapName.c_str(), mapName.size());
+
+    //Write map size
+    file << "\n" << mapSize.x << " " << mapSize.y << "\n";
+
+    //Write ambient music list
+    file << ambientMusicList.size() << " ";
+    for(unsigned int a = 0; a < ambientMusicList.size(); a++)
+    {
+        file << ambientMusicList[a] << " ";
+    }
+
+    //Now danger music list
+    file << dangerMusicList.size() << " ";
+    for(unsigned int a = 0; a < dangerMusicList.size(); a++)
+    {
+        file << dangerMusicList[a] << " ";
+    }
+    file << "\n";
+
+    //Now for the tiles
+
+    //Save each layer in order
+    for(unsigned int layer = 0; layer < getLayerCount(); layer++)
+    {
+        for(unsigned int tile = 0; tile < getTileCount(layer); tile++)
+        {
+            TileBase *cTile = tileStorage[layer][tile].get();
+            if(cTile->isAnimated()) //If the tile is animated, do this
+            {
+                //Typecast the tile to an AnimationTile to use its specialised functions
+                AnimatedTile *castTile = reinterpret_cast<AnimatedTile*>(cTile);
+
+                //tileNumber layerNumber tileSheetNumber frameCount SpriteOffsetX SpriteOffsetY SpriteOffsetX SpriteOffsetY frameSwitchInterval Rotation
+                file << tile << " " << layer << " " << 0 << " " << castTile->getFrameCount();
+
+                //Write all frames
+                for(unsigned int cFrame = 0; cFrame < castTile->getFrameCount(); cFrame++)
+                {
+                    sf::IntRect tempFrame = castTile->getFrame(cFrame);
+                    file << " " << tempFrame.left << " " << tempFrame.top;
+                }
+
+                //Write remaining data
+                file << " " << castTile->getSwitchInterval() << " " << castTile->getRotation() << "\n";
+
+
+            }
+            else //Else if the tile is not animated, do this
+            {
+                //tileNumber layerNumber tileSheetNumber frameCount SpriteOffsetX SpriteOffsetY Rotation
+                file << tile << " " << layer << " " << 0 << " " << 1 << " " << cTile->getTextureRect().left << " " << cTile->getTextureRect().top << " " << cTile->getRotation() << "\n";
+            }
+        }
+    }
+
     return true;
 }
 

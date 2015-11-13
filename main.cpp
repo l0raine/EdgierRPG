@@ -77,5 +77,6 @@ int main()
         window.draw(gui);
         window.display();
     }
+    aMap.save("savedMap.txt");
     return 0;
 }

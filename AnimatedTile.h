@@ -21,14 +21,17 @@ class AnimatedTile : public TileBase
 
         void setSwitchInterval(int switchIntervalNew);
         void addFrame(const sf::IntRect &frameRect);
+        sf::IntRect getFrame(unsigned int frameIndex);
+        unsigned int getFrameCount();
         void update();
+        unsigned int getSwitchInterval();
     protected:
     private:
         sf::VertexArray frameVertexArray;
         unsigned int currentFrame;
+        unsigned int frameCount;
         int switchInterval;
         std::vector<sf::IntRect> frames;
-        int rotation;
         sf::Clock updateClock;
 };
 
