@@ -3,9 +3,11 @@
 Map::Map()
     : tileSize(32)
 {
+    tileTexture = nullptr;
     //Load default tile sheet
-    //tileTexture.loadFromFile("texture.png");
-    tileTexture = ResourceManager::getInstance()->loadTexture("tiles.png", "tileset1");
+    //NOTE - apparently, C++ is automatically assigning this to tileTexture?
+    tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/texture.png");
+    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
 }
 
 Map::Map(const std::string& filepath)
@@ -22,6 +24,7 @@ Map::~Map()
 
 bool Map::load(const std::string& filepath)
 {
+    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
     //Open the map file
     std::ifstream file;
     file.open(filepath);
@@ -92,11 +95,7 @@ bool Map::load(const std::string& filepath)
             AnimatedTile *cTile = reinterpret_cast<AnimatedTile*>(tileStorage[layerNumber].back().get());
 
             //Set the tile texture
-<<<<<<< Updated upstream
-            cTile->setTexture(&tileTexture);
-=======
-            animatedTiles[layerNumber].back().setTexture(tileTexture);
->>>>>>> Stashed changes
+            cTile->setTexture(tileTexture);
 
             //Set the tile position
             if(tileNumber == 0) //To avoid division by 0

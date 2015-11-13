@@ -8,15 +8,16 @@ class GUIManager
 {
     public:
         virtual ~GUIManager();//Destructor
-        static GUIManager* getInstance();
 
-        frd::FRDGUI* getFRDGUIHandle();
+        static std::shared_ptr<GUIManager> getInstance();
+
+        std::shared_ptr<frd::FRDGUI> getFRDGUIHandle();
     protected:
     private:
-        static GUIManager* instance;//Single instance of GUIManager
+        static std::shared_ptr<GUIManager> instance;//Single instance of GUIManager
 
         GUIManager(sf::Vector2i &windowSize, const std::string &fontFilePath, const sf::Color &defaultFontColour, unsigned int defaultFontSize);//Private constructor for Singleton
-        frd::FRDGUI *gui;
+        std::shared_ptr<frd::FRDGUI> gui;
 
         std::vector<frd::Menu> menuList;
 };

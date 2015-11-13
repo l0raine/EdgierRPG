@@ -1,26 +1,29 @@
 #include "GUIManager.h"
 #include "FRDGUI.h"
 
+//Define static instance once
+std::shared_ptr<GUIManager> GUIManager::instance;
+
 GUIManager::GUIManager(sf::Vector2i &windowSize, const std::string &fontFilePath, const sf::Color &defaultFontColour, unsigned int defaultFontSize)
 {
-    gui = new frd::FRDGUI(windowSize, fontFilePath, defaultFontColour, defaultFontSize);
+    gui = std::shared_ptr<frd::FRDGUI>(new frd::FRDGUI(windowSize, fontFilePath, defaultFontColour, defaultFontSize));
 }
 
-GUIManager* GUIManager::getInstance()
+std::shared_ptr<GUIManager> GUIManager::getInstance()
 {
-    if(instance == nullptr)
+    if(!instance)
     {
-        instance = new GUIManager(gl::windowSize, gl::fontPath, sf::Color::Yellow, 15);
+        instance = std::shared_ptr<GUIManager>(new GUIManager(windowSize, guiFontPath, sf::Color::Yellow, 15));
     }
     return instance;
 }
 
 GUIManager::~GUIManager()
 {
-    delete gui;
+
 }
 
-frd::FRDGUI* GUIManager::getFRDGUIHandle()
+std::shared_ptr<frd::FRDGUI> GUIManager::getFRDGUIHandle()
 {
     return gui;
 }

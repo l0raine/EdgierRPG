@@ -10,20 +10,18 @@
 class ResourceManager
 {
     public:
-        static  ResourceManager* getInstance();
+        static  std::shared_ptr<ResourceManager> getInstance();
         virtual ~ResourceManager();
 
-        sf::Texture* loadTexture(const std::string filepath, std::string saveName) noexcept;
+        sf::Texture* loadTexture(const std::string filepath) noexcept; //Load a texture by passing the path relative to Textures folder.
     protected:
     private:
-        static ResourceManager* instance;//Instance
+        static std::shared_ptr<ResourceManager> instance;//Instance
 
         ResourceManager();//Private constructor for Singleton design
 
         std::vector<std::pair<std::string, sf::Texture*>> loadedTextures;
         std::string defaultPath;
-
-        sf::Texture* defaultTexture;
 };
 
 #endif // RESOURCEMANAGER_H

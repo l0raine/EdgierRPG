@@ -1,8 +1,14 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-    extern std::string texturePath = "./Files/Textures/";
-    extern std::string fontPath = "./Files/Fonts/";
-    extern sf::Vector2i windowSize(800,600);
+#include<SFML/Graphics.hpp>
+#include "ResourceManager.h"
+
+    //Forward global variable declarations
+    extern sf::Vector2i windowSize;
+    extern std::string texturePath;
+    extern std::string fontPath;
+    extern std::string guiFontPath;
+
 
 #endif // GLOBALS_H

@@ -12,11 +12,10 @@ using namespace std;
 int main()
 {
     sf::Clock loadTime;
-    Map aMap("./Files/Maps/test_level.txt");
+    Map aMap;
+    if(!aMap.load("./Files/Maps/test_level.txt"))
+        std::cout<<"Map failed to load.\n";
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
-
-    extern GUIManager guiManager;
-    extern ResourceManager ResourceManager;
 
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
@@ -49,7 +48,7 @@ int main()
     menu->addWidget(button);
     gui.addMenu(menu);
 
-    sf::RenderWindow window(sf::VideoMode(gl::windowSize.x, gl::windowSize.y), "EdgierRPG - Extremely Early Alpha");
+    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setFramerateLimit(60);
     while(window.isOpen())
     {
