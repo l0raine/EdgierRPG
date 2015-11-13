@@ -1,9 +1,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-namespace gl
-{
-    std::string texturePath = "./Files/Textures/";
-    std::string fontPath = "./Files/Fonts/";
-}
+    extern std::string texturePath = "./Files/Textures/";
+    extern std::string fontPath = "./Files/Fonts/";
+    extern sf::Vector2i windowSize(800,600);
+
 #endif // GLOBALS_H

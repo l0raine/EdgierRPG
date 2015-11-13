@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Map.h"
-#include<fstream>
+#include <fstream>
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
 #include "ResourceManager.h"
@@ -11,17 +11,15 @@ using namespace std;
 
 int main()
 {
-    sf::Vector2i windowSize(800,600);
     sf::Clock loadTime;
     Map aMap("./Files/Maps/test_level.txt");
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
 
-    //Initialize objects
-    GUIManager guiManager(windowSize, gl::fontPath + "arial.ttf", sf::Color::Yellow, 15);
-    //ResourceManager ResourceManager(gl::texturePath);
+    extern GUIManager guiManager;
+    extern ResourceManager ResourceManager;
 
     //Get instance of gui
-    auto gui = *guiManager.getGUIRef();
+    auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
     //Create a menu to hold our widgets
     auto menu = frd::Maker::make(frd::Menu());
@@ -32,14 +30,26 @@ int main()
     button->setBezelEnabled(true); //Enable button bezel. Button bezel thickness and colour can be specified with additional function calls.
     button->bindFunction(EventTypes::LeftClick_Up, std::bind([&]()
     {
+        sf::Clock clock;
         button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
+
+        //Change tiles on layer 0 to another type
+        unsigned int tileCount = aMap.getTileCount(0); //Get the number of tiles on this layer
+        for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
+        {
+            TileBase *tile = aMap.getTile(0, tileID); //Get a pointer to the current tile
+            tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
+        }
+        std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
+
+
     })); //Bind an event. On left click up, set the button colour to something random.
 
     //Add the button to the menu, and the menu to the GUI
     menu->addWidget(button);
     gui.addMenu(menu);
 
-    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
+    sf::RenderWindow window(sf::VideoMode(gl::windowSize.x, gl::windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setFramerateLimit(60);
     while(window.isOpen())
     {

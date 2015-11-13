@@ -1,10 +1,5 @@
 #include "Globals.h"
 
-namespace glob
-{
-
-}
-
 Globals::Globals()
 {
     //ctor

@@ -1,8 +1,18 @@
 #include "ResourceManager.h"
 
-ResourceManager::ResourceManager(std::string &newDefaultPath)
+ResourceManager::ResourceManager()
 {
-    defaultPath = newDefaultPath;
+    defaultPath = gl::texturePath;
+}
+
+ResourceManager* ResourceManager::getInstance()
+{
+    if(instance == nullptr)
+    {
+        instance = new ResourceManager;
+    }
+
+    return instance;
 }
 
 ResourceManager::~ResourceManager()
@@ -10,13 +20,13 @@ ResourceManager::~ResourceManager()
     //dtor
 }
 
-bool ResourceManager::loadTexture(const std::string &filepath, std::string &saveName) noexcept
+sf::Texture* ResourceManager::loadTexture(const std::string filepath, std::string saveName) noexcept
 {
     std::string fullPath = defaultPath + filepath;
 
     sf::Texture *texture;
     if(!texture->loadFromFile(filepath))
-        return false;
+        return nullptr;
     loadedTextures.emplace_back(std::make_pair(saveName, texture));
-    return true;
+    return texture;
 }

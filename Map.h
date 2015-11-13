@@ -8,9 +8,9 @@
 #include <algorithm>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
 #include "AnimatedTile.h"
 #include "StaticTile.h"
+#include "Globals.h"
 
 const unsigned int mapLayerCount = 5;
 
@@ -42,7 +42,7 @@ private:
     sf::VertexArray staticTileMap[mapLayerCount];
 
     //Temporary tile texture for everything
-    sf::Texture tileTexture;
+    sf::Texture* tileTexture;
 };
 
 #endif // MAP_H
