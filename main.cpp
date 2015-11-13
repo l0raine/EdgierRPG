@@ -1,7 +1,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Map.h"
-#include<fstream>
+#include <fstream>
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
 
@@ -29,7 +29,19 @@ int main()
     button->setBezelEnabled(true); //Enable button bezel. Button bezel thickness and colour can be specified with additional function calls.
     button->bindFunction(EventTypes::LeftClick_Up, std::bind([&]()
     {
+        sf::Clock clock;
         button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
+
+        //Change tiles on layer 0 to another type
+        unsigned int tileCount = aMap.getTileCount(0); //Get the number of tiles on this layer
+        for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
+        {
+            TileBase *tile = aMap.getTile(0, tileID); //Get a pointer to the current tile
+            tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
+        }
+        std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
+
+
     })); //Bind an event. On left click up, set the button colour to something random.
 
     //Add the button to the menu, and the menu to the GUI
