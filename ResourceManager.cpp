@@ -27,7 +27,7 @@ sf::Texture* ResourceManager::loadTexture(const std::string filepath) noexcept
 {
     std::string fullPath = texturePath + filepath;
 
-    sf::Texture *texture;
+    sf::Texture *texture = new sf::Texture();
     if(!texture->loadFromFile(fullPath))
     {
         return nullptr;

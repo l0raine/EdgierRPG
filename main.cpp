@@ -6,6 +6,7 @@
 #include "GUI/GUIManager.h"
 #include "ResourceManager.h"
 #include "Globals.h"
+#include "MessageHandler.h"
 
 using namespace std;
 
@@ -20,10 +21,11 @@ int main()
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
-    //Create a menu to hold our widgets
-    auto menu = frd::Maker::make(frd::Menu());
+    //Get instance of message handler
 
-    //Create our first widget
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
+    auto menu = frd::Maker::make(frd::Menu());
     auto button = frd::Maker::make(frd::Button());
     button->setWidgetInfo("Don't click me", sf::Vector2f(100, 50), sf::Vector2f(100, 100), sf::Color::Blue); //A blue, 100x50 button positioned at (100, 100) with the label "Hello World!". This function is a shortcut, instead of setting each of these button properties individually
     button->setBezelEnabled(true); //Enable button bezel. Button bezel thickness and colour can be specified with additional function calls.
@@ -47,6 +49,7 @@ int main()
     //Add the button to the menu, and the menu to the GUI
     menu->addWidget(button);
     gui.addMenu(menu);
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setFramerateLimit(60);
@@ -66,6 +69,16 @@ int main()
             }
             //Pass the event to FRDGUI to let the GUI respond to it
             gui.handleEvent(event);
+        }
+
+        std::unique_ptr<MessageBase> message;
+        while(MessageHandler::getInstance()->acquire(message))
+        {
+            switch(message->getType())
+            {
+            default:
+                std::cout << "\nUnknown message dispatched!";
+            }
         }
 
         //Update FRDGUI for things like animation

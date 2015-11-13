@@ -6,7 +6,8 @@ Map::Map()
     tileTexture = nullptr;
     //Load default tile sheet
     //NOTE - apparently, C++ is automatically assigning this to tileTexture?
-    tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/texture.png");
+    tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png");
+    std::cout << "\nAddress of resource manager:" << ResourceManager::getInstance().get() << std::endl;
     std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
 }
 
