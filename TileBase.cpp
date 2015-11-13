@@ -1,8 +1,8 @@
 #include "TileBase.h"
-
 TileBase::TileBase()
 {
     //ctor
+    isTileAnimated = false;
 }
 
 TileBase::~TileBase()
@@ -111,8 +111,14 @@ const sf::IntRect &TileBase::getTextureRect()
 {
     return textureRect;
 }
+
 const sf::FloatRect &TileBase::getGlobalBounds()
 {
     return tileRect;
+}
+
+bool TileBase::isAnimated()
+{
+    return isTileAnimated;
 }
 

@@ -4,6 +4,8 @@ AnimatedTile::AnimatedTile()
 {
     //Setup sprite vertex array
     frameVertexArray = sf::VertexArray(sf::Quads, 4);
+    isTileAnimated = true;
+    frameCount = 0;
 }
 
 AnimatedTile::~AnimatedTile()
@@ -19,6 +21,7 @@ void AnimatedTile::setSwitchInterval(int switchIntervalNew)
 void AnimatedTile::addFrame(const sf::IntRect &frameRect)
 {
     frames.emplace_back(frameRect);
+    frameCount++;
 }
 
 void AnimatedTile::update()
@@ -43,4 +46,19 @@ void AnimatedTile::draw(sf::RenderTarget &target, const sf::RenderStates &states
 sf::Vertex *AnimatedTile::getQuad()
 {
     return &frameVertexArray[0];
+}
+
+sf::IntRect AnimatedTile::getFrame(unsigned int frameIndex)
+{
+    return frames[frameIndex];
+}
+
+unsigned int AnimatedTile::getFrameCount()
+{
+    return frameCount;
+}
+
+unsigned int AnimatedTile::getSwitchInterval()
+{
+    return switchInterval;
 }
