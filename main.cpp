@@ -21,11 +21,12 @@ int main()
         std::cout<<"Map failed to load.\n";
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
 
+    //Resource/SoundHandler | Sample load for loading sounds
+    //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)
+    //ResourceManager::getSoundHandler()->play("Music/music1.wav"
+
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
-
-    //Get instance of message handler
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
     auto menu = frd::Maker::make(frd::Menu());
@@ -58,6 +59,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
+
     while(window.isOpen())
     {
         sf::Event event;
@@ -101,6 +104,6 @@ int main()
         window.draw(gui);
         window.display();
     }
-    aMap.save("savedMap.txt");
+    //aMap.save("./Files/Maps/savedMap.txt");
     return 0;
 }

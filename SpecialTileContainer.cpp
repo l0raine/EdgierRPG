@@ -25,6 +25,7 @@ void SpecialTileContainer::handleMessage(std::unique_ptr<MessageBase> message)
 {
     switch(message->getMessageType())
     {
-
+    default:
+        break;
     }
 }
