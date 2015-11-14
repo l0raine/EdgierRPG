@@ -15,7 +15,7 @@ MessageBase::~MessageBase()
     //dtor
 }
 
-MessageBase::Types MessageBase::getType()
+MessageBase::Types MessageBase::getMessageType()
 {
     return messageType;
 }

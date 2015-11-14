@@ -8,14 +8,14 @@ class MessageBase
 public:
     enum Types
     {
-
+        keyEvent
     };
 
     /** Default destructor */
     virtual ~MessageBase();
 
     static std::unique_ptr<MessageBase> make();
-    Types getType();
+    Types getMessageType();
 protected:
     /** Default constructor */
     MessageBase();

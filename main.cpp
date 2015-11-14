@@ -7,8 +7,9 @@
 #include "ResourceManager.h"
 #include "Globals.h"
 #include "MessageHandler.h"
-
 #include "SoundHandler.h"
+#include "EventTypes.h"
+#include "EntityManager.h"
 
 using namespace std;
 
@@ -53,12 +54,12 @@ int main()
     gui.addMenu(menu);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
 
+
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
+    window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
     while(window.isOpen())
     {
-        window.setFramerateLimit(60);
-        window.setVerticalSyncEnabled(true);
         sf::Event event;
         while(window.pollEvent(event))
         {
@@ -66,8 +67,11 @@ int main()
                 window.close();
             else if(event.type == sf::Event::KeyPressed)
             {
-                if(event.key.code == sf::Keyboard::Escape)
-                    window.close();
+                MessageHandler::getInstance()->dispatch(KeyEvent::make(true, event.key.code));
+            }
+            else if(event.type == sf::Event::KeyReleased)
+            {
+                MessageHandler::getInstance()->dispatch(KeyEvent::make(false, event.key.code));
             }
             //Pass the event to FRDGUI to let the GUI respond to it
             gui.handleEvent(event);
@@ -76,19 +80,24 @@ int main()
         std::unique_ptr<MessageBase> message;
         while(MessageHandler::getInstance()->acquire(message))
         {
-            switch(message->getType())
+            //Let game objects process the event
+            EntityManager::getInstance()->handleMessage(message);
+
+            switch(message->getMessageType())
             {
             default:
-                std::cout << "\nUnknown message dispatched!";
+                break;
             }
         }
 
         //Update FRDGUI for things like animation
         gui.update();
         aMap.update();
+        EntityManager::getInstance()->update();
 
         window.clear(sf::Color::Black);
         aMap.draw(window, sf::RenderStates::Default);
+        EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
         window.draw(gui);
         window.display();
     }
