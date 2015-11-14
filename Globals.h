@@ -8,6 +8,7 @@
     extern sf::Vector2i windowSize;
     extern std::string texturePath;
     extern std::string soundPath;
+    extern std::string musicPath;
     extern std::string fontPath;
     extern std::string guiFontPath;
 

@@ -8,8 +8,9 @@
 #include <time.h>
 #include <iostream>
 #include <memory>
-
 #include <SFML/Audio.hpp>
+
+class ResourceManager;
 
 enum soundType //What type of sound is it, a music, or a sound?
 {
@@ -48,11 +49,13 @@ struct fadeInfo //Contains information of a single active fade
 class SoundHandler //The main sound handling class. Contains and manages ALL sounds.
 {
 public:
+    //Make it best buddies with ResourceManager
+    friend ResourceManager;
+
     //Class functions
     void update(); //Updates fades
 
-    //Constructor/Deconstructor
-    SoundHandler();
+    //Deconstructor
     virtual ~SoundHandler();
 
     //Generic sound handling functions
@@ -113,6 +116,9 @@ private:
 
     float lastUpdateTime;
     std::string errorValue;
+protected:
+    //Protected constructor so that only ResourceManager can access it's functions
+    SoundHandler();
 };
 
 #endif

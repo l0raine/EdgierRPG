@@ -8,8 +8,6 @@
 #include "Globals.h"
 #include "MessageHandler.h"
 
-#include "SoundHandler.h"
-
 using namespace std;
 
 int main()
@@ -19,6 +17,10 @@ int main()
     if(!aMap.load("./Files/Maps/test_level.txt"))
         std::cout<<"Map failed to load.\n";
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
+
+    //Resource/SoundHandler | Sample load for loading sounds
+    //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)
+    //ResourceManager::getSoundHandler()->play("Music/music1.wav"
 
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
@@ -51,11 +53,12 @@ int main()
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
+
     window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
+
     while(window.isOpen())
     {
-        window.setFramerateLimit(60);
-        window.setVerticalSyncEnabled(true);
         sf::Event event;
         while(window.pollEvent(event))
         {

@@ -1,4 +1,5 @@
 #include "SoundHandler.h"
+#include "Globals.h"
 
 SoundHandler::SoundHandler()
 {
@@ -200,14 +201,16 @@ void SoundHandler::update()
 bool SoundHandler::loadSound(const std::string &filepath, bool shouldActivate)
 {
     cullSounds();
+    std::string newfilepath = soundPath + filepath;
+    std::cout<<"load sound path: "<<newfilepath<<std::endl;
     if(keyExists(filepath))
         return true; //Don't want to load the same sound twice...
 
     if(!(soundCount < 256)) //REMEMBER, SFML has an internal sound limit of 256, exceeding this would be bad, very bad indeed!
         return false; //Too many sounds
 
-    loadedSounds[filepath] = soundContainer();
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    loadedSounds[newfilepath] = soundContainer();
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
     cSound.type = soundType::sound;
     cSound.lastPlayTime = timeL.getElapsedTime().asMilliseconds();
     cSound.isActive = false;
@@ -216,9 +219,9 @@ bool SoundHandler::loadSound(const std::string &filepath, bool shouldActivate)
     {
         cSound.sound = std::unique_ptr<sf::Sound>(new sf::Sound());
         cSound.isActive = true;
-        if(!cSound.buffer.loadFromFile(filepath))
+        if(!cSound.buffer.loadFromFile(newfilepath))
         {
-            eraseKey(filepath);
+            eraseKey(newfilepath);
             return false; //Failed to load
         }
         cSound.sound->setBuffer(cSound.buffer);
@@ -231,14 +234,15 @@ bool SoundHandler::loadSound(const std::string &filepath, bool shouldActivate)
 bool SoundHandler::loadMusic(const std::string &filepath, bool shouldActivate)
 {
     cullSounds();
-    if(keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(keyExists(newfilepath))
         return true; //Don't want to load the same sound twice...
 
     if(!(soundCount < 256)) //REMEMBER, SFML has an internal sound limit of 256, exceeding this would be bad, very bad indeed!
         return false; //Too many sounds
 
-    loadedSounds[filepath] = soundContainer();
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    loadedSounds[newfilepath] = soundContainer();
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
     cSound.type = soundType::music;
     cSound.lastPlayTime = timeL.getElapsedTime().asMilliseconds();
     cSound.isActive = false;
@@ -246,9 +250,9 @@ bool SoundHandler::loadMusic(const std::string &filepath, bool shouldActivate)
     {
         cSound.music = std::unique_ptr<sf::Music>(new sf::Music());
         cSound.isActive = true;
-        if(!cSound.music->openFromFile(filepath))
+        if(!cSound.music->openFromFile(newfilepath))
         {
-            eraseKey(filepath);
+            eraseKey(newfilepath);
             return false; //Failed to load
         }
         soundCount++;
@@ -258,16 +262,16 @@ bool SoundHandler::loadMusic(const std::string &filepath, bool shouldActivate)
 
 bool SoundHandler::play(const std::string &filepath)
 {
-    if(!keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(!keyExists(newfilepath))
         return false; //No such sound
-
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
 
     //If the sound isn't active, then activate it
     if(!cSound.isActive)
     {
-        if(!activateSound(filepath))
-        {
+        if(!activateSound(newfilepath))
+        {   std::cout<<"Point 3: \n";
             return false; //If the sound couldn't be activated, return false
         }
     }
@@ -290,11 +294,12 @@ bool SoundHandler::play(const std::string &filepath)
 
 void SoundHandler::pause(const std::string &filepath)
 {
-    if(!keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(!keyExists(newfilepath))
         return; //No such sound
 
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
-    if(activateSound(filepath))
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    if(activateSound(newfilepath))
     {
         if(cSound.type == soundType::sound && cSound.sound != nullptr)
         {
@@ -309,10 +314,11 @@ void SoundHandler::pause(const std::string &filepath)
 
 void SoundHandler::resume(const std::string &filepath)
 {
-    if(!keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(!keyExists(newfilepath))
         return; //No such sound
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
-    if(activateSound(filepath))
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    if(activateSound(newfilepath))
     {
         if(cSound.type == soundType::sound && cSound.sound != nullptr)
         {
@@ -330,10 +336,11 @@ void SoundHandler::resume(const std::string &filepath)
 
 void SoundHandler::setVolume(const std::string &filepath, float vol)
 {
-    if(!keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(!keyExists(newfilepath))
         return; //No such sound
-    auto &cSound = loadedSounds[filepath]; //Take reference so we don't have to implicitly search loadedSounds every time
-    if(activateSound(filepath))
+    auto &cSound = loadedSounds[newfilepath]; //Take reference so we don't have to implicitly search loadedSounds every time
+    if(activateSound(newfilepath))
     {
         if(cSound.type == soundType::sound && cSound.sound != nullptr)
         {
@@ -408,30 +415,33 @@ void SoundHandler::cullSounds()
 
 bool SoundHandler::fadeToVolume(const std::string &filepath, float vol)
 {
-    if(!keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(!keyExists(newfilepath))
         return false; //No such sound
-    activeFades[filepath] = fadeInfo(); //Reset existing fades/create a new one
-    auto &fadeRef = activeFades[filepath];
-    fadeRef.sound = &loadedSounds[filepath];
+    activeFades[newfilepath] = fadeInfo(); //Reset existing fades/create a new one
+    auto &fadeRef = activeFades[newfilepath];
+    fadeRef.sound = &loadedSounds[newfilepath];
     fadeRef.targetVolume = vol;
     return true;
 }
 
 bool SoundHandler::fadeIn(const std::string &filepath)
 {
-    if(keyExists(filepath))
+    std::string newfilepath = soundPath + filepath;
+    if(keyExists(newfilepath))
     {
-        if(loadedSounds[filepath].type == soundType::music)
-            return fadeToVolume(filepath, globalMusicVolume);
-        else if(loadedSounds[filepath].type == soundType::sound)
-            return fadeToVolume(filepath, globalSoundVolume);
+        if(loadedSounds[newfilepath].type == soundType::music)
+            return fadeToVolume(newfilepath, globalMusicVolume);
+        else if(loadedSounds[newfilepath].type == soundType::sound)
+            return fadeToVolume(newfilepath, globalSoundVolume);
     }
     return false;
 }
 
 bool SoundHandler::fadeOut(const std::string &filepath)
 {
-    return fadeToVolume(filepath, 0);
+    std::string newfilepath = soundPath + filepath;
+    return fadeToVolume(newfilepath, 0);
 }
 
 bool SoundHandler::keyExists(const std::string &filepath)
@@ -513,19 +523,20 @@ void SoundHandler::createPlaylist(const std::string& playlistName, bool shouldLo
 
 void SoundHandler::addToPlaylist(const std::string& playlistName, const std::string& soundFilepath, soundType type)
 {
+    std::string newfilepath = soundPath + soundFilepath;
     //Check if the given playlist exists
     if(!(playlists.count(playlistName) > 0))
     {
         std::cerr << "\nAttempt to add sound to an invalid playlist was detected." << std::endl;
-        std::cerr << "Playlist name: " << playlistName << ", Sound filepath: " << soundFilepath << std::endl;
+        std::cerr << "Playlist name: " << playlistName << ", Sound filepath: " << newfilepath << std::endl;
         return; //No such playlist - Return
     }
 
-    playlists[playlistName].filenames.push_back(soundFilepath);
+    playlists[playlistName].filenames.push_back(newfilepath);
     if(type == soundType::sound) //All of the sounds in the playlist don't need to be loaded immediately... so set load immediately to false
-        loadSound(soundFilepath, false);
+        loadSound(newfilepath, false);
     else
-        loadMusic(soundFilepath, false);
+        loadMusic(newfilepath, false);
 }
 
 void SoundHandler::destroyPlaylist(const std::string& playlistName)
@@ -594,18 +605,19 @@ void SoundHandler::setPlaylistProperty(const std::string& playlistName, playlist
 
 void SoundHandler::removeFromPlaylist(const std::string& playlistName, const std::string& soundFilepath)
 {
+    std::string newfilepath = soundPath + soundFilepath;
     //Check to see if the playlist exists
     auto iter = playlists.find(playlistName);
     if(iter == playlists.end())
         return;
 
     //Remove the sound from the playlist
-    auto soundPos = std::find(playlists[playlistName].filenames.begin(), playlists[playlistName].filenames.end(), soundFilepath);
+    auto soundPos = std::find(playlists[playlistName].filenames.begin(), playlists[playlistName].filenames.end(), newfilepath);
     if(soundPos != playlists[playlistName].filenames.end())
         playlists[playlistName].filenames.erase(soundPos);
 
     //Deactivate the sound
-    auto nPos = loadedSounds.find(soundFilepath);
+    auto nPos = loadedSounds.find(newfilepath);
     if(nPos != loadedSounds.end())
     {
         if(nPos->second.type == soundType::music)
@@ -636,6 +648,7 @@ const std::string &SoundHandler::getPlayingFromPlaylist(const std::string& playl
 
 void SoundHandler::setPlayingToPlaylist(const std::string& playlistname, const std::string& soundFilepath)
 {
+    std::string newfilepath = soundPath + soundFilepath;
     //Check to see if the playlist exists
     auto iter = playlists.find(playlistname);
     if(iter == playlists.end())
@@ -667,9 +680,9 @@ void SoundHandler::setPlayingToPlaylist(const std::string& playlistname, const s
     //Add playlist to currently playing
     activePlaylists.push_back(playlistname);
     //Play the sound
-    play(soundFilepath);
+    play(newfilepath);
     //Update the playlist
-    playlists[playlistname].currentlyPlaying = soundFilepath;
+    playlists[playlistname].currentlyPlaying = newfilepath;
 }
 
 void SoundHandler::pausePlaylist(const std::string& playlistname)

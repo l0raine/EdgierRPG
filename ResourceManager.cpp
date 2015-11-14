@@ -3,6 +3,8 @@
 
 //Define static instance variable once
 std::shared_ptr<ResourceManager> ResourceManager::instance;
+std::shared_ptr<SoundHandler> ResourceManager::soundHandlerInstance;
+
 
 ResourceManager::ResourceManager()
 {
@@ -15,8 +17,16 @@ std::shared_ptr<ResourceManager> ResourceManager::getInstance()
     {
         instance = std::shared_ptr<ResourceManager>(new ResourceManager);
     }
-
     return instance;
+}
+
+std::shared_ptr<SoundHandler> ResourceManager::getSoundHandler()
+{
+    if(soundHandlerInstance == nullptr)
+    {
+        soundHandlerInstance= std::shared_ptr<SoundHandler>(new SoundHandler);
+    }
+    return soundHandlerInstance;
 }
 
 ResourceManager::~ResourceManager()
@@ -62,48 +72,6 @@ bool ResourceManager::isTextureLoaded(std::string &texture_in)
 bool ResourceManager::isTextureStorageEmpty()
 {
     if(!loadedTextures.empty())
-        return false;
-    return true;
-}
-
-sf::SoundBuffer* ResourceManager::loadSoundBuffer(const std::string filepath) noexcept
-{
-    std::string fullPath = soundPath + filepath;
-
-    sf::SoundBuffer *buffer = new sf::SoundBuffer();
-    if(!buffer->loadFromFile(fullPath))
-        return nullptr;
-    loadedSoundBuffers.insert(std::make_pair(fullPath, buffer));
-    std::cout<<"<ResourceManager>: Loaded sound buffer '"<<fullPath<<"'\n";
-    return buffer;
-}
-
-void ResourceManager::clearSoundBuffers()
-{
-    loadedSoundBuffers.clear();
-}
-
-sf::SoundBuffer* ResourceManager::getLoadedSound(std::string& sound_in)
-{
-    if(isSoundLoaded(sound_in))
-    {
-        return loadedSoundBuffers.find(sound_in)->second;
-    }
-    return nullptr;
-}
-
-bool ResourceManager::isSoundLoaded(std::string &sound_in)
-{
-    if(!isSoundStorageEmpty() && loadedSoundBuffers.find(sound_in) == loadedSoundBuffers.end())
-    {
-        return false;
-    }
-    return true;
-}
-
-bool ResourceManager::isSoundStorageEmpty()
-{
-    if(!loadedSoundBuffers.empty())
         return false;
     return true;
 }
