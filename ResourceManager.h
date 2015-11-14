@@ -22,8 +22,8 @@ class ResourceManager
         //Texture loading functions
         sf::Texture* loadTexture(const std::string filepath) noexcept; //Load a texture by passing the path relative to Textures folder.
         void clearTextures(); //Clear all textures from storage
-        sf::Texture* getLoadedTexture(std::string &texture_in); //Assign a reference of a loaded texture to a provided sound
-        bool isTextureLoaded(std::string &filepath_in); //Check if texture is loaded and stored in memory
+        sf::Texture* getLoadedTexture(const std::string &texture_in); //Assign a reference of a loaded texture to a provided sound
+        bool isTextureLoaded(const std::string &filepath_in); //Check if texture is loaded and stored in memory
         bool isTextureStorageEmpty();// Check if loadedTextures vector is empty
 
         //File utils

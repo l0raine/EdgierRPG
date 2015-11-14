@@ -50,7 +50,7 @@ sf::Texture* ResourceManager::loadTexture(const std::string filepath) noexcept
      loadedTextures.clear();
  }
 
-sf::Texture* ResourceManager::getLoadedTexture(std::string &texture_in)
+sf::Texture* ResourceManager::getLoadedTexture(const std::string &texture_in)
 {
     if(isTextureLoaded(texture_in))
     {
@@ -59,9 +59,9 @@ sf::Texture* ResourceManager::getLoadedTexture(std::string &texture_in)
     return nullptr;
 }
 
-bool ResourceManager::isTextureLoaded(std::string &texture_in)
+bool ResourceManager::isTextureLoaded(const std::string &texture_in)
 {
-    if(!isTextureStorageEmpty() && loadedTextures.find(texture_in) == loadedTextures.end())
+    if(!isTextureStorageEmpty() || loadedTextures.find(texture_in) == loadedTextures.end())
     {
         return false;
     }
