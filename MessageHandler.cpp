@@ -12,6 +12,25 @@ MessageHandler::~MessageHandler()
     //dtor
 }
 
+void MessageHandler::dispatch(std::unique_ptr<MessageBase> theMessage)
+{
+    std::lock_guard<std::mutex> lockGuard(messageMutex);
+
+    messageQueue.push(std::move(theMessage));
+}
+
+bool MessageHandler::acquire(std::unique_ptr<MessageBase> &message_out)
+{
+    std::lock_guard<std::mutex> lockGuard(messageMutex);
+
+    if(messageQueue.empty())
+        return false;
+
+    message_out = std::move(messageQueue.front());
+    messageQueue.pop();
+    return true;
+}
+
 std::shared_ptr<MessageHandler> MessageHandler::getInstance()
 {
     if(instance == nullptr)
@@ -20,30 +39,4 @@ std::shared_ptr<MessageHandler> MessageHandler::getInstance()
     }
 
     return instance;
-}
-
-void MessageHandler::dispatch(std::unique_ptr<MessageBase> theMessage)
-{
-    messageMutex.lock();
-
-    messageQueue.push(std::unique_ptr<MessageBase>());
-    messageQueue.top() = std::move(theMessage);
-
-    messageMutex.unlock();
-}
-
-bool MessageHandler::acquire(std::unique_ptr<MessageBase> &message_out)
-{
-    messageMutex.lock();
-    if(messageQueue.empty())
-    {
-        messageMutex.unlock();
-        return false;
-    }
-
-    message_out = std::move(messageQueue.top());
-    messageQueue.pop();
-
-    messageMutex.unlock();
-    return true;
 }
