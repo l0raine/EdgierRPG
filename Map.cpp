@@ -4,11 +4,7 @@ Map::Map()
     : tileSize(32)
 {
     tileTexture = nullptr;
-    //Load default tile sheet
-    //NOTE - apparently, C++ is automatically assigning this to tileTexture?
     tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png");
-    std::cout << "\nAddress of resource manager:" << ResourceManager::getInstance().get() << std::endl;
-    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
 }
 
 Map::Map(const std::string& filepath)
@@ -25,7 +21,6 @@ Map::~Map()
 
 bool Map::load(const std::string& filepath)
 {
-    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
     //Open the map file
     std::ifstream file;
     file.open(filepath);

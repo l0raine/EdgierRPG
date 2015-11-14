@@ -21,9 +21,6 @@ int main()
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
-    //Get instance of message handler
-
-
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
     auto menu = frd::Maker::make(frd::Menu());
     auto button = frd::Maker::make(frd::Button());
@@ -90,6 +87,6 @@ int main()
         window.draw(gui);
         window.display();
     }
-    aMap.save("savedMap.txt");
+    //aMap.save("./Files/Maps/savedMap.txt");
     return 0;
 }
