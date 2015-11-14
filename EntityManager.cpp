@@ -18,14 +18,15 @@ EntityManager::~EntityManager()
 void EntityManager::draw(sf::RenderTarget& target, const sf::RenderStates& states)
 {
     //Iterate through each entity and draw it
-    for(unsigned int a = 0; a < entities.size(); a++)
+    for(auto iter = entities.begin(); iter != entities.end(); iter++)
     {
-        target.draw(entities[a]->getVertexArray(), entities[a]->getTexture());
+        (*iter)->draw(target);
     }
 }
 
 void EntityManager::registerEntity(std::unique_ptr<EntityBase>& entity)
 {
+    //Take ownership and store
     entities.emplace_back(std::move(entity));
 }
 
@@ -62,5 +63,9 @@ void EntityManager::removeEntity(std::unique_ptr<EntityBase> &entity)
 
 void EntityManager::update()
 {
-
+    //Update all of the entities
+    for(auto iter = entities.begin(); iter != entities.end(); iter++)
+    {
+        (*iter)->update();
+    }
 }

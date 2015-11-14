@@ -11,12 +11,12 @@ EntityBase::~EntityBase()
     //dtor
 }
 
-sf::VertexArray &EntityBase::getVertexArray()
+void EntityBase::draw(sf::RenderTarget& target)
 {
-    return shape;
+    sprite.draw(target);
 }
 
-sf::Texture *EntityBase::getTexture()
+void EntityBase::update()
 {
-    return spriteSheet;
+    sprite.update();
 }

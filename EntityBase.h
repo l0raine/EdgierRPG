@@ -4,6 +4,8 @@
 #include <string>
 #include <SFML/Graphics.hpp>
 
+#include "EntityAnimation.h"
+
 class EntityBase
 {
     public:
@@ -12,8 +14,10 @@ class EntityBase
         /** Default destructor */
         virtual ~EntityBase();
 
-        sf::VertexArray &getVertexArray(); //For drawing
-        sf::Texture *getTexture(); //For texturing the vertex array
+        void draw(sf::RenderTarget &target);
+        void update();
+
+        EntityAnimation sprite; //The visible aspect of the entity - will be private once setup functions are done
     protected:
 
     private:
@@ -27,9 +31,6 @@ class EntityBase
         unsigned int id;
         unsigned int direction;
         unsigned int mapID;
-
-        sf::VertexArray shape; //Temp
-        sf::Texture *spriteSheet;
 };
 
 #endif // ENTITYBASE_H
