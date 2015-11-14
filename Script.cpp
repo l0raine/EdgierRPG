@@ -39,5 +39,5 @@ void setClasses(lna::State& state)
 	
 	// template arguments: ClassType, constructor arguments (none for an empty constructor)
 	// function arguments: name of variable in Lua, C++ member pointer, ...
-	state.setClass<sf::Vector2f, float, float>("x", &sf::Vector2f::x, "y", &sf::Vector2f::y);
+	state["Vector2f"].setClass<sf::Vector2f, float, float>("x", &sf::Vector2f::x, "y", &sf::Vector2f::y);
 }
