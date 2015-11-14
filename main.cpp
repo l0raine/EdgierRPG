@@ -6,10 +6,12 @@
 #include "GUI/GUIManager.h"
 #include "ResourceManager.h"
 #include "Globals.h"
+#include "MessageBase.h"
 #include "MessageHandler.h"
 #include "SoundHandler.h"
 #include "EventTypes.h"
 #include "EntityManager.h"
+#include "InputHandler.h"
 
 using namespace std;
 
@@ -68,16 +70,10 @@ int main()
         {
             if(event.type == sf::Event::Closed)
                 window.close();
-            else if(event.type == sf::Event::KeyPressed)
-            {
-                MessageHandler::getInstance()->dispatch(KeyEvent::make(true, event.key.code));
-            }
-            else if(event.type == sf::Event::KeyReleased)
-            {
-                MessageHandler::getInstance()->dispatch(KeyEvent::make(false, event.key.code));
-            }
             //Pass the event to FRDGUI to let the GUI respond to it
             gui.handleEvent(event);
+
+            InputHandler::getInstance()->handleEvent(event);
         }
 
         std::unique_ptr<MessageBase> message;
@@ -88,8 +84,14 @@ int main()
 
             switch(message->getMessageType())
             {
-            default:
-                break;
+                case MessageBase::Types::mouseEvent:
+                {
+                    MouseEvent* event = dynamic_cast<MouseEvent*>(message.get());
+                    std::cout<<"Mouse Event arrested, position: ("<<event->getMousePosition().x<<", "<<event->getMousePosition().y<<")"<<std::endl;
+                    break;
+                }
+                default:
+                    break;
             }
         }
 
