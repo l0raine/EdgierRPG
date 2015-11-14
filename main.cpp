@@ -8,6 +8,8 @@
 #include "Globals.h"
 #include "MessageHandler.h"
 
+#include "SoundHandler.h"
+
 using namespace std;
 
 int main()
