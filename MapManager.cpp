@@ -38,7 +38,7 @@ Map* MapManager::loadMap(const std::string &filepath)
         return nullptr;
     }
     currentlyDisplayedMap = loadedMaps.back().get();
-    std::cout<<"<MapManager> Loaded Map: '"<<newfilepath<<"'"<<std::endl;
+    std::cout<<"<MapManager>: Loaded Map: '"<<newfilepath<<"'"<<std::endl;
     return loadedMaps.back().get();
 }
 

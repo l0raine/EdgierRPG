@@ -1,9 +1,9 @@
 #ifndef MAPMANAGER_H
 #define MAPMANAGER_H
 
-#include<vector>
-
-#include<SFML/Graphics.hpp>
+#include <vector>
+#include <memory>
+#include <SFML/Graphics.hpp>
 
 #include "Map.h"
 

@@ -12,6 +12,7 @@ class HelperClass
         virtual ~HelperClass();
 
         static unsigned int getTileIDFromPosition(const sf::Vector2f &position, Map &theMap);
+        static sf::Vector2f getPositionFromTileID(unsigned int tileID, Map &theMap);
     protected:
     private:
 };

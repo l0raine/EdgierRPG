@@ -5,8 +5,11 @@
 #include<string>
 #include <SFML/Graphics.hpp>
 
-
+#include "HelperClass.h"
+#include "MapManager.h"
+#include "MessageHandler.h"
 #include "EntityAnimation.h"
+#include "EventTypes.h"
 
 class EntityBase
 {

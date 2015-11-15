@@ -12,7 +12,6 @@
 
 #include "AnimatedTile.h"
 #include "StaticTile.h"
-
 #include "ResourceManager.h"
 
 const unsigned int mapLayerCount = 5;

@@ -25,10 +25,11 @@ class EntityManager
 
         void handleMessage(std::unique_ptr<MessageBase> &message);
 
-
-        //TODO
         void removeEntity(std::unique_ptr<EntityBase> &entity);
         void update();
+
+        unsigned int getSelectedEntityID();
+        EntityBase *getEntity(unsigned int entityID);
     protected:
     private:
         /** Default constructor */

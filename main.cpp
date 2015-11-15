@@ -1,7 +1,9 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Map.h"
 #include <fstream>
+#include <Theme.h>
+
+#include "Map.h"
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
 #include "ResourceManager.h"
@@ -14,11 +16,18 @@
 #include "InputHandler.h"
 #include "MapManager.h"
 #include "HelperClass.h"
+#include "SpecialTileContainer.h"
+#include "Editor.h"
 
 using namespace std;
 
 int main()
 {
+   // frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 13, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
+   // theme.save("myTheme.txt");
+
+    Editor editor;
+
     sf::Clock loadTime;
     Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
 
@@ -80,16 +89,14 @@ int main()
     entity->sprite.addSpecialFrame(0, 0, sf::IntRect(600,447,26,41));
     entity->sprite.addSpecialFrame(0, 0, sf::IntRect(625,447,26,41));
 
-    entity->sprite.setPosition(rand() % 800 + 0, rand() % 600 + 0);
-    entity->sprite.setDirection(1);
+    entity->setDirection(1);
     entity->sprite.setFrameInterval(100);
     entity->sprite.setTexture(text);
     EntityManager::getInstance()->registerEntity(entity);
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
-    window.setFramerateLimit(60);
-    window.setVerticalSyncEnabled(true);
+
 
     while(window.isOpen())
     {
@@ -109,6 +116,8 @@ int main()
         {
             //Let game objects process the event
             EntityManager::getInstance()->handleMessage(message);
+            SpecialTileContainer::getInstance()->handleMessage(message);
+            editor.handleMessage(message);
 
             switch(message->getMessageType())
             {
@@ -126,6 +135,8 @@ int main()
         gui.update();
         aMap->update();
         EntityManager::getInstance()->update();
+        editor.update();
+
 
         window.clear(sf::Color::Black);
         aMap->draw(window, sf::RenderStates::Default);
@@ -133,6 +144,6 @@ int main()
         window.draw(gui);
         window.display();
     }
-    //aMap->save("./Files/Maps/savedMap.txt");
+  //  aMap->save("./Files/Maps/savedMap.txt");
     return 0;
 }

@@ -96,3 +96,13 @@ void EntityManager::update()
         entities[selectedEntityID]->sprite.startSpecialAnimation(0);
     }
 }
+
+unsigned int EntityManager::getSelectedEntityID()
+{
+    return selectedEntityID;
+}
+
+EntityBase *EntityManager::getEntity(unsigned int entityID)
+{
+    return entities[entityID].get();
+}

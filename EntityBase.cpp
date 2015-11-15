@@ -50,7 +50,12 @@ void EntityBase::update()
         sprite.start();
     }
 
+    //Send movement event and calculate if we've moved a tile or not
+    Map &tempMap = *MapManager::getInstance()->getCurrentMap();
+    unsigned int tileIDCurrent = HelperClass::getTileIDFromPosition(position, tempMap);
+    unsigned int tileIDOld = HelperClass::getTileIDFromPosition(positionOld, tempMap);
 
+    MessageHandler::getInstance()->dispatch(EntityMoveEvent::make(id, tileIDCurrent, tileIDOld, positionOld, position));
 
     //After setting the directions, update the position
     sprite.setPosition(position);
