@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <memory>
 
 #include "MessageBase.h"

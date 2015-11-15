@@ -22,6 +22,8 @@ class EntityAnimation
         unsigned int getFrameInterval();
         void update();
         bool isAnimationRunning();
+        void addSpecialFrame(unsigned int specialID, unsigned int direction, const sf::IntRect &frameRect);
+        void startSpecialAnimation(unsigned int specialID);
 
         //Vertex array related
         void setTexture(sf::Texture *texture);
@@ -36,11 +38,18 @@ class EntityAnimation
     protected:
     private:
         //Animation related
+
+        //Normal animation
         std::vector<sf::IntRect> frames[4]; //4 lots of frames, one for each direction. (Frame Offset, Frame Size)
         unsigned int currentFrame;
         sf::Clock updateClock;
         unsigned int switchInterval;
         bool isRunning;
+
+        //Special animation (attacks, etc). One time.
+        std::map<int, std::vector<sf::IntRect>[4]> specialFrames; //Special frames referenced by their ID. Each special animation has 4 directions. Each direction has a variable number of frames.
+        bool isSpecialAnimationRunning;
+        unsigned int specialID;
 
         //Vertex array related
         unsigned int currentDirection; //0 = up, 1 = down, 2 = right, 3 = left

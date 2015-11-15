@@ -89,4 +89,10 @@ void EntityManager::update()
     {
         entities[selectedEntityID]->move(4);
     }
+
+    //Special animation test
+    if(InputHandler::getInstance()->isMousePressed(sf::Mouse::Left))
+    {
+        entities[selectedEntityID]->sprite.startSpecialAnimation(0);
+    }
 }

@@ -1,4 +1,5 @@
 #include "EntityAnimation.h"
+#include <iostream>
 
 EntityAnimation::EntityAnimation()
 {
@@ -6,6 +7,7 @@ EntityAnimation::EntityAnimation()
     currentFrame = 0;
     isRunning = true;
     sprite = sf::VertexArray(sf::Quads, 4);
+    isSpecialAnimationRunning = false;
 }
 
 EntityAnimation::~EntityAnimation()
@@ -60,12 +62,30 @@ void EntityAnimation::update()
 {
     if(updateClock.getElapsedTime().asMilliseconds() > static_cast<int>(switchInterval) && isRunning)
     {
-        currentFrame++;
-        if(currentFrame >= frames[currentDirection].size())
-            currentFrame = 0;
-        setTextureRect(frames[currentDirection][currentFrame]);
+        if(isSpecialAnimationRunning == false) //Maintain normal animation
+        {
+            setTextureRect(frames[currentDirection][currentFrame]);
+        }
+        else //Update the special animation
+        {
+            if(currentFrame >= specialFrames[specialID][currentDirection].size()) //If the special animation has finished, reset frame count and disable special animation
+            {
+                currentFrame = 0;
+                isSpecialAnimationRunning = false;
+            }
+            else
+            {
+                setTextureRect(specialFrames[specialID][currentDirection][currentFrame]);
+            }
+        }
         updateQuadPosition();
         updateClock.restart();
+        currentFrame++;
+        if(currentFrame >= frames[currentDirection].size())
+        {
+            isSpecialAnimationRunning = false;
+            currentFrame = 0;
+        }
     }
 
 }
@@ -147,4 +167,19 @@ void EntityAnimation::move(float x, float y)
 void EntityAnimation::move(const sf::Vector2f& offset)
 {
     position += offset;
+}
+
+void EntityAnimation::addSpecialFrame(unsigned int specialID, unsigned int direction, const sf::IntRect& frameRect)
+{
+    specialFrames[specialID][direction].emplace_back(frameRect);
+}
+
+void EntityAnimation::startSpecialAnimation(unsigned int newSpecialID)
+{
+    if(isSpecialAnimationRunning == false) //Only if a special animation is not already running
+    {
+        isSpecialAnimationRunning = true;
+        specialID = newSpecialID;
+        currentFrame = 0;
+    }
 }
