@@ -13,7 +13,6 @@ HelperClass::~HelperClass()
 
 unsigned int HelperClass::getTileIDFromPosition(const sf::Vector2f& position, Map &theMap)
 {
-    const sf::Vector2i &mapSize = theMap.getMapSize();
     unsigned int tileSize = theMap.getTileSize();
 
     unsigned int tileX = std::floor(position.x/tileSize);

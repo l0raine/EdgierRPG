@@ -123,7 +123,7 @@ int main()
             {
                 case MessageBase::Types::mouseEvent:
                 {
-                    MouseEvent* event = dynamic_cast<MouseEvent*>(message.get());
+
                     break;
                 }
                 default:
@@ -141,6 +141,7 @@ int main()
         window.clear(sf::Color::Black);
         aMap->draw(window, sf::RenderStates::Default);
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
+        editor.drawMapOverlay(window);
         window.draw(gui);
         window.display();
     }
