@@ -12,15 +12,15 @@
 #include "EventTypes.h"
 #include "EntityManager.h"
 #include "InputHandler.h"
+#include "MapManager.h"
 
 using namespace std;
 
 int main()
 {
     sf::Clock loadTime;
-    Map aMap;
-    if(!aMap.load("./Files/Maps/test_level.txt"))
-        std::cout<<"Map failed to load.\n";
+    Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
+
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
 
     //Resource/SoundHandler | Sample load for loading sounds
@@ -41,10 +41,10 @@ int main()
         button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
 
         //Change tiles on layer 0 to another type
-        unsigned int tileCount = aMap.getTileCount(0); //Get the number of tiles on this layer
+        unsigned int tileCount = aMap->getTileCount(0); //Get the number of tiles on this layer
         for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
         {
-            TileBase *tile = aMap.getTile(0, tileID); //Get a pointer to the current tile
+            TileBase *tile = aMap->getTile(0, tileID); //Get a pointer to the current tile
             tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
         }
         std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
@@ -123,15 +123,15 @@ int main()
 
         //Update FRDGUI for things like animation
         gui.update();
-        aMap.update();
+        aMap->update();
         EntityManager::getInstance()->update();
 
         window.clear(sf::Color::Black);
-        aMap.draw(window, sf::RenderStates::Default);
+        aMap->draw(window, sf::RenderStates::Default);
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
         window.draw(gui);
         window.display();
     }
-    //aMap.save("./Files/Maps/savedMap.txt");
+    //aMap->save("./Files/Maps/savedMap.txt");
     return 0;
 }

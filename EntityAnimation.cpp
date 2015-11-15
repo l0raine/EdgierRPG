@@ -31,6 +31,7 @@ void EntityAnimation::setDirection(unsigned int direction)
     //As the frame count of each direction may differ, ensure that the current frame is still within valid bounds
     if(currentFrame >= frames[currentFrame].size())
         currentFrame = 0;
+    updateProjectedTexture();
 }
 
 void EntityAnimation::stop()
@@ -103,8 +104,6 @@ void EntityAnimation::setPosition(const sf::Vector2f &newPosition)
     //Update global bounds
     tileRect.left = newPosition.x;
     tileRect.top = newPosition.y;
-    tileRect.width = 32;
-    tileRect.height = 32;
 
     //Update quad position
     updateQuadPosition();

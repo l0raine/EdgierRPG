@@ -11,6 +11,7 @@
     extern std::string musicPath;
     extern std::string fontPath;
     extern std::string guiFontPath;
+    extern std::string mapPath;
 
 
 #endif // GLOBALS_H

@@ -87,7 +87,7 @@ void EntityManager::update()
     }
     else
     {
-        entities[selectedEntityID]->move(4);
+        entities[selectedEntityID]->move(4); //Stop moving
     }
 
     //Special animation test
