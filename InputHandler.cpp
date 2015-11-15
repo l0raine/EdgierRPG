@@ -8,6 +8,8 @@ std::shared_ptr<InputHandler> InputHandler::instance;
 InputHandler::InputHandler()
 {
     //ctor
+    rightMouse = false;
+    leftMouse = false;
 }
 
 InputHandler::~InputHandler()
@@ -71,6 +73,13 @@ void InputHandler::handleEvent(const sf::Event event)
         }
     }
     //Add possible middle mouse support
+}
 
-
+bool InputHandler::isMousePressed(sf::Mouse::Button button)
+{
+    if(button == sf::Mouse::Left && leftMouse)
+        return true;
+    else if(button == sf::Mouse::Right && rightMouse)
+        return true;
+    return false;
 }

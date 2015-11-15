@@ -62,6 +62,10 @@ int main()
     entity->sprite.addFrame(0, sf::IntRect(522,447,26,41));
     entity->sprite.addFrame(0, sf::IntRect(546,447,26,41));
 
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(572,447,28,41));
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(600,447,26,41));
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(625,447,26,41));
+
     entity->sprite.setPosition(rand() % 800 + 0, rand() % 600 + 0);
     entity->sprite.setDirection(0);
     entity->sprite.setFrameInterval(100);
@@ -69,9 +73,9 @@ int main()
     EntityManager::getInstance()->registerEntity(entity);
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
-    //window.setKeyRepeatEnabled(false);
-   // window.setFramerateLimit(60);
-    //window.setVerticalSyncEnabled(true);
+    window.setKeyRepeatEnabled(false);
+    window.setFramerateLimit(60);
+    window.setVerticalSyncEnabled(true);
 
     while(window.isOpen())
     {
@@ -97,7 +101,6 @@ int main()
                 case MessageBase::Types::mouseEvent:
                 {
                     MouseEvent* event = dynamic_cast<MouseEvent*>(message.get());
-                    std::cout<<"Mouse Event arrested, position: ("<<event->getMousePosition().x<<", "<<event->getMousePosition().y<<")"<<std::endl;
                     break;
                 }
                 default:
