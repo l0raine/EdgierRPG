@@ -20,3 +20,13 @@ void EntityBase::update()
 {
     sprite.update();
 }
+
+void EntityBase::setPosition(sf::Vector2f pos)
+{
+    position = pos;
+}
+
+sf::Vector2f EntityBase::getPosition()
+{
+    return position;
+}
