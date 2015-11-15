@@ -134,3 +134,13 @@ void EntityAnimation::draw(sf::RenderTarget& target)
     //Draw current frame to window
     target.draw(sprite, frameTexture);
 }
+
+void EntityAnimation::move(float x, float y)
+{
+    setPosition(position.x+x, position.y+y);
+}
+
+void EntityAnimation::move(const sf::Vector2f& offset)
+{
+    position += offset;
+}

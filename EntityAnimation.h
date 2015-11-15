@@ -31,6 +31,8 @@ class EntityAnimation
         void setTextureRect(const sf::IntRect &newRect);
         const sf::IntRect &getTextureRect();
         const sf::FloatRect &getGlobalBounds();
+        void move(float x, float y);
+        void move(const sf::Vector2f &offset);
     protected:
     private:
         //Animation related

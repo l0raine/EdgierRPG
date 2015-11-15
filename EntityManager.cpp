@@ -7,7 +7,6 @@ EntityManager::EntityManager()
 {
     //ctor
     selectedEntityID = 0;
-    isUPressed = false, isDPressed = false, isLPressed = false, isRPressed = false;
 }
 
 EntityManager::~EntityManager()
@@ -67,5 +66,23 @@ void EntityManager::update()
     for(auto iter = entities.begin(); iter != entities.end(); iter++)
     {
         (*iter)->update();
+    }
+
+    //Move selected unit if needed
+    if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::D))
+    {
+        entities[selectedEntityID]->sprite.move(1,0);
+    }
+    else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::A))
+    {
+        entities[selectedEntityID]->sprite.move(-1,0);
+    }
+    else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::W))
+    {
+        entities[selectedEntityID]->sprite.move(0,-1);
+    }
+    else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::S))
+    {
+        entities[selectedEntityID]->sprite.move(0,1);
     }
 }
