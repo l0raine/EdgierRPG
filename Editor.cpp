@@ -12,15 +12,107 @@ Editor::Editor()
 
     //Setup the left-hand buttons to manipulate the map
     auto editButtonsContainer = frd::Maker::make(frd::Container());
-    editButtonsContainer->setSize({100, 100});
+    editButtonsContainer->setSize({116, 525});
+    editButtonsContainer->setAllocation(Allocation::vertical);
+    editButtonsContainer->setSpacing(sf::Vector2f(0,10));
+    editButtonsContainer->setPosition({666,45});
 
+    //ClearLayer Button
     auto clearLayerButton = frd::Maker::make(frd::Button());
     clearLayerButton->setLabel("Clear layer");
     clearLayerButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::clearLayer, this));
     theme.applyTheme(clearLayerButton);
 
+    //FillLayer Button
+    auto fillLayerButton = frd::Maker::make(frd::Button());
+    fillLayerButton->setLabel("Fill Layer");
+    fillLayerButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::fillLayer, this));
+    theme.applyTheme(fillLayerButton);
+
+    //Create Animated Tile Button
+    auto createAnimatedTileButton = frd::Maker::make(frd::Button());
+    createAnimatedTileButton->setLabel("Create Animated Tile");
+    createAnimatedTileButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::createAnimatedTile, this));
+    theme.applyTheme(createAnimatedTileButton);
+
+    //Toggle Special Tiles Visible Button
+    auto toggleSpecialTilesVisibleButton = frd::Maker::make(frd::Button());
+    toggleSpecialTilesVisibleButton->setLabel("Toggle Special Tiles Visible");
+    toggleSpecialTilesVisibleButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::toggleSpecialTilesVisible, this));
+    theme.applyTheme(toggleSpecialTilesVisibleButton);
+
+    //Rotate Clockwise Button
+    auto rotateClockwiseButton = frd::Maker::make(frd::Button());
+    rotateClockwiseButton->setLabel("Rotate Clockwise");
+    rotateClockwiseButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::rotateSelectionClockwise, this));
+    theme.applyTheme(rotateClockwiseButton);
+
+    //Toggle Placement Grid Button
+    auto togglePlacementGridButton = frd::Maker::make(frd::Button());
+    togglePlacementGridButton->setLabel("Toggle Placement Grid");
+    togglePlacementGridButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::togglePlacementGrid, this));
+    theme.applyTheme(togglePlacementGridButton);
+
+    //Create Special Tile Button
+    auto createSpecialTileButton = frd::Maker::make(frd::Button());
+    createSpecialTileButton->setLabel("Create Special Tile");
+    createSpecialTileButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::createSpecialTile, this));
+    theme.applyTheme(createSpecialTileButton);
+
+    //Paint Tile Button
+    auto paintTileButton = frd::Maker::make(frd::Button());
+    paintTileButton->setLabel("Paint Tile");
+    paintTileButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::paintTile, this));
+    theme.applyTheme(paintTileButton);
+
+    //Place Entity Button
+    auto placeEntityButton = frd::Maker::make(frd::Button());
+    placeEntityButton->setLabel("Place Entity");
+    placeEntityButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::placeEntity, this));
+    theme.applyTheme(placeEntityButton);
+
+    //Replace Tile Type Button
+    auto replaceTileTypeButton = frd::Maker::make(frd::Button());
+    replaceTileTypeButton->setLabel("Replace Tile Type");
+    replaceTileTypeButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::replaceTileType, this));
+    theme.applyTheme(replaceTileTypeButton);
+
+    //Set Aggressive Music Button
+    auto setAggressiveMusicButton = frd::Maker::make(frd::Button());
+    setAggressiveMusicButton->setLabel("Set Aggressive Music");
+    setAggressiveMusicButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::setAggressiveMusic, this));
+    theme.applyTheme(setAggressiveMusicButton);
+
+    //Set Passive Music Button
+    auto setPassiveMusicButton = frd::Maker::make(frd::Button());
+    setPassiveMusicButton->setLabel("Set Passive Music");
+    setPassiveMusicButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::setPassiveMusic, this));
+    theme.applyTheme(setPassiveMusicButton);
+
+    //Toggle Layer View Button
+    auto toggleLayerViewButton = frd::Maker::make(frd::Button());
+    toggleLayerViewButton->setLabel("Toggle Layer View");
+    toggleLayerViewButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::toggleLayerView, this));
+    theme.applyTheme(toggleLayerViewButton);
+
+    //Add buttons to the editing buttons container
     editButtonsContainer->addWidget(clearLayerButton);
+    editButtonsContainer->addWidget(fillLayerButton);
+    editButtonsContainer->addWidget(createAnimatedTileButton);
+    editButtonsContainer->addWidget(rotateClockwiseButton);
+    editButtonsContainer->addWidget(toggleSpecialTilesVisibleButton);
+    editButtonsContainer->addWidget(togglePlacementGridButton);
+    editButtonsContainer->addWidget(createSpecialTileButton);
+    editButtonsContainer->addWidget(paintTileButton);
+    editButtonsContainer->addWidget(placeEntityButton);
+    editButtonsContainer->addWidget(replaceTileTypeButton);
+    editButtonsContainer->addWidget(setAggressiveMusicButton);
+    editButtonsContainer->addWidget(setPassiveMusicButton);
+    editButtonsContainer->addWidget(toggleLayerViewButton);
+
+    //Add container to main menu
     mainMenu->addWidget(editButtonsContainer);
+
 }
 
 Editor::~Editor()
