@@ -9,7 +9,8 @@ class MessageBase
         enum Types
         {
             keyEvent,
-            mouseEvent
+            mouseEvent,
+            entityMoveEvent
         };
 
         /** Default destructor */

@@ -13,6 +13,7 @@
 #include "EntityManager.h"
 #include "InputHandler.h"
 #include "MapManager.h"
+#include "HelperClass.h"
 
 using namespace std;
 

@@ -50,6 +50,8 @@ void EntityBase::update()
         sprite.start();
     }
 
+
+
     //After setting the directions, update the position
     sprite.setPosition(position);
     sprite.update();
