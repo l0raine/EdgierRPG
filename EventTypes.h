@@ -4,6 +4,7 @@
 //Includes for all the event types.
 #include "Events/KeyEvent.h"
 #include "Events/MouseEvent.h"
+#include "Events/EntityMoveEvent.h"
 
 
 #endif // EVENTTYPES_H

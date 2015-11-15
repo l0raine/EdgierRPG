@@ -12,6 +12,7 @@
 #include "EventTypes.h"
 #include "EntityManager.h"
 #include "InputHandler.h"
+#include "HelperClass.h"
 
 using namespace std;
 
@@ -21,7 +22,7 @@ int main()
     Map aMap;
     if(!aMap.load("./Files/Maps/test_level.txt"))
         std::cout<<"Map failed to load.\n";
-    std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
+    std::cout << "\nTime taken to load map: " << loadTime.restart().asMilliseconds() << "ms\n";
 
     //Resource/SoundHandler | Sample load for loading sounds
     //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)
