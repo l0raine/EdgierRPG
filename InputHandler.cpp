@@ -26,7 +26,12 @@ std::shared_ptr<InputHandler> InputHandler::getInstance()
 
 bool InputHandler::isKeyPressed(sf::Keyboard::Key key)
 {
-    return pressedKeys[key];
+    for(auto iter = pressedKeys.begin(); iter != pressedKeys.end(); iter++)
+    {
+        if(iter->first == key)
+            return iter->second;
+    }
+    return false;
 }
 
 void InputHandler::handleEvent(const sf::Event event)

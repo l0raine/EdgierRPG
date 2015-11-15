@@ -58,12 +58,25 @@ int main()
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
     sf::Texture *text = ResourceManager::getInstance()->loadTexture("tilesheets/LX.png");
     std::unique_ptr<EntityBase> entity(new EntityBase());
-    entity->sprite.addFrame(0, sf::IntRect(495,447,28,41));
-    entity->sprite.addFrame(0, sf::IntRect(522,447,26,41));
-    entity->sprite.addFrame(0, sf::IntRect(546,447,26,41));
+    entity->sprite.addFrame(0, sf::IntRect(495,404,27,42));
+    entity->sprite.addFrame(0, sf::IntRect(522,404,23,42));
+    entity->sprite.addFrame(0, sf::IntRect(545,404,23,42));
+
+    entity->sprite.addFrame(1, sf::IntRect(495,447,28,41));
+    entity->sprite.addFrame(1, sf::IntRect(522,447,26,41));
+    entity->sprite.addFrame(1, sf::IntRect(546,447,26,41));
+
+    entity->sprite.addFrame(2, sf::IntRect(495,531,18,40));
+    entity->sprite.addFrame(2, sf::IntRect(513,530,20,40));
+    entity->sprite.addFrame(2, sf::IntRect(533,529,21,40));
+
+    entity->sprite.addFrame(3, sf::IntRect(495,489,18,40));
+    entity->sprite.addFrame(3, sf::IntRect(513,489,20,40));
+    entity->sprite.addFrame(3, sf::IntRect(533,489,21,40));
+
 
     entity->sprite.setPosition(rand() % 800 + 0, rand() % 600 + 0);
-    entity->sprite.setDirection(0);
+    entity->sprite.setDirection(1);
     entity->sprite.setFrameInterval(100);
     entity->sprite.setTexture(text);
     EntityManager::getInstance()->registerEntity(entity);

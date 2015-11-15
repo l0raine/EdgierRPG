@@ -20,6 +20,10 @@ void EntityAnimation::addFrame(unsigned int direction, const sf::IntRect &frameD
 
 void EntityAnimation::setDirection(unsigned int direction)
 {
+    //If direction is out of bounds, set it to facing downwards.
+    if(direction > 3)
+        direction = 1;
+
     currentDirection = direction;
 
     //As the frame count of each direction may differ, ensure that the current frame is still within valid bounds
@@ -54,7 +58,7 @@ unsigned int EntityAnimation::getFrameInterval()
 
 void EntityAnimation::update()
 {
-    if(updateClock.getElapsedTime().asMilliseconds() > static_cast<int>(switchInterval))
+    if(updateClock.getElapsedTime().asMilliseconds() > static_cast<int>(switchInterval) && isRunning)
     {
         currentFrame++;
         if(currentFrame >= frames[currentDirection].size())

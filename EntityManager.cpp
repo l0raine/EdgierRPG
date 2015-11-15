@@ -71,18 +71,22 @@ void EntityManager::update()
     //Move selected unit if needed
     if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::D))
     {
-        entities[selectedEntityID]->sprite.move(1,0);
+        entities[selectedEntityID]->move(2);
     }
     else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::A))
     {
-        entities[selectedEntityID]->sprite.move(-1,0);
+        entities[selectedEntityID]->move(3);
     }
     else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::W))
     {
-        entities[selectedEntityID]->sprite.move(0,-1);
+        entities[selectedEntityID]->move(0);
     }
     else if(InputHandler::getInstance()->isKeyPressed(sf::Keyboard::S))
     {
-        entities[selectedEntityID]->sprite.move(0,1);
+        entities[selectedEntityID]->move(1);
+    }
+    else
+    {
+        entities[selectedEntityID]->move(4);
     }
 }

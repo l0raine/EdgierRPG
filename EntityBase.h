@@ -1,9 +1,10 @@
 #ifndef ENTITYBASE_H
 #define ENTITYBASE_H
 
-#include <string>
-#include <SFML/Graphics.hpp>
 #include <iostream>
+#include<string>
+#include <SFML/Graphics.hpp>
+
 
 #include "EntityAnimation.h"
 
@@ -17,6 +18,7 @@ class EntityBase
 
         void draw(sf::RenderTarget &target);
         void update();
+        void move(int newDirection);
 
         sf::Vector2f getPosition();
         void setPosition(sf::Vector2f);
@@ -33,8 +35,8 @@ class EntityBase
         float getRemainingMana();
         void setRemainingMana(float mana);
 
-        std:;string getDisplayName();
-        void setMaximumHealth(std::string newName);
+        std::string getDisplayName();
+        void setDisplayName(std::string newName);
 
         unsigned int getDirection();
         void setDirection(int newDirection);
@@ -44,6 +46,9 @@ class EntityBase
 
         unsigned int getEntityID();
         void setEntityID(unsigned int newID);
+
+        float getBaseMovementSpeed();
+        void setBaseMovementSpeed(float newSpeed);
 
         EntityAnimation sprite; //The visible aspect of the entity - will be private once setup functions are done
     protected:
@@ -59,6 +64,9 @@ class EntityBase
         unsigned int id;
         unsigned int direction;
         unsigned int mapID;
+        float baseMovementSpeed;
+
+        sf::Clock movementClock;
 };
 
 #endif // ENTITYBASE_H
