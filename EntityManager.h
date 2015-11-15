@@ -9,6 +9,7 @@
 #include "MessageBase.h"
 #include "EntityBase.h"
 #include "Events/KeyEvent.h"
+#include "InputHandler.h"
 
 class EntityManager
 {
@@ -35,8 +36,6 @@ class EntityManager
 
         std::vector<std::unique_ptr<EntityBase>> entities; //List of loaded entities
         unsigned int selectedEntityID;
-
-        bool isLPressed, isRPressed, isUPressed, isDPressed;
 
 
 };

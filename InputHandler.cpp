@@ -26,15 +26,7 @@ std::shared_ptr<InputHandler> InputHandler::getInstance()
 
 bool InputHandler::isKeyPressed(sf::Keyboard::Key key)
 {
-    typedef std::map<sf::Keyboard::Key, bool>::iterator it_type;
-    for(it_type iterator = pressedKeys.begin(); iterator != pressedKeys.end(); iterator++)
-    {
-
-        // iterator->first = key
-        // iterator->second = value
-        // Repeat if you also want to iterate through the second map.
-    }
-    return false;
+    return pressedKeys[key];
 }
 
 void InputHandler::handleEvent(const sf::Event event)

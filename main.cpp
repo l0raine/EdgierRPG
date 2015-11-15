@@ -57,19 +57,16 @@ int main()
     gui.addMenu(menu);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
     sf::Texture *text = ResourceManager::getInstance()->loadTexture("tilesheets/LX.png");
-    for(unsigned int a = 0;a < 10000; a++)
-    {
-        std::unique_ptr<EntityBase> entity(new EntityBase());
-        entity->sprite.addFrame(0, sf::IntRect(495,447,28,41));
-        entity->sprite.addFrame(0, sf::IntRect(522,447,26,41));
-        entity->sprite.addFrame(0, sf::IntRect(546,447,26,41));
+    std::unique_ptr<EntityBase> entity(new EntityBase());
+    entity->sprite.addFrame(0, sf::IntRect(495,447,28,41));
+    entity->sprite.addFrame(0, sf::IntRect(522,447,26,41));
+    entity->sprite.addFrame(0, sf::IntRect(546,447,26,41));
 
-        entity->sprite.setPosition(rand() % 800 + 0, rand() % 600 + 0);
-        entity->sprite.setDirection(0);
-        entity->sprite.setFrameInterval(100);
-        entity->sprite.setTexture(text);
-        EntityManager::getInstance()->registerEntity(entity);
-    }
+    entity->sprite.setPosition(rand() % 800 + 0, rand() % 600 + 0);
+    entity->sprite.setDirection(0);
+    entity->sprite.setFrameInterval(100);
+    entity->sprite.setTexture(text);
+    EntityManager::getInstance()->registerEntity(entity);
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     //window.setKeyRepeatEnabled(false);
