@@ -96,6 +96,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
+    window.setFramerateLimit(60);
 
 
     while(window.isOpen())

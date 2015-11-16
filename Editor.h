@@ -28,8 +28,19 @@ class Editor
     private:
         sf::RenderWindow window;
         frd::Theme theme;
+        sf::VertexArray mapPlacementGrid;
 
-        //Editor functions
+        //Editor core variables
+        unsigned int currentlySelectedLayer;
+
+        //Editor core functions
+        void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
+
+        //Editor map functions
+        //Editor settings change
+        void selectLayer(unsigned int newLayerID);
+
+        //Direct modification
         void clearLayer();
         void fillLayer();
         void createAnimatedTile();

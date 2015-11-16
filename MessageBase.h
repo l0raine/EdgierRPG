@@ -10,7 +10,8 @@ class MessageBase
         {
             keyEvent,
             mouseEvent,
-            entityMoveEvent
+            entityMoveEvent,
+            mapChangeEvent
         };
 
         /** Default destructor */

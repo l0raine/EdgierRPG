@@ -13,6 +13,7 @@
     extern std::string guiFontPath;
     extern std::string mapPath;
     extern std::string themePath;
+    extern unsigned int mapLayerCount;
 
 
 #endif // GLOBALS_H

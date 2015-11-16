@@ -6,6 +6,11 @@ Map::Map()
 {
     tileTexture = nullptr;
     tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png");
+
+    //Resize tile storage layer count to correct number of layers
+    animatedTiles.resize(mapLayerCount);
+    tileStorage.resize(mapLayerCount);
+    staticTileMap.resize(mapLayerCount);
 }
 
 Map::Map(const std::string& filepath)

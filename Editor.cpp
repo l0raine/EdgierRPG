@@ -6,6 +6,9 @@ Editor::Editor()
     frd::FRDGUI *gui = GUIManager::getInstance()->getEditorFRDGUIHandle().get();
     theme.load(themePath + "myTheme.txt");
 
+    //Initialise some core editor variables
+    currentlySelectedLayer = 0;
+
     //Setup menu to store the main page of the editor
     auto mainMenu = frd::Maker::make(frd::Menu());
     gui->addMenu(mainMenu);
@@ -37,7 +40,7 @@ Editor::Editor()
 
     //Toggle Special Tiles Visible Button
     auto toggleSpecialTilesVisibleButton = frd::Maker::make(frd::Button());
-    toggleSpecialTilesVisibleButton->setLabel("Toggle Special Tiles\n            Visible");
+    toggleSpecialTilesVisibleButton->setLabel("Toggle Special Tiles Visible");
     toggleSpecialTilesVisibleButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::toggleSpecialTilesVisible, this));
     theme.applyTheme(toggleSpecialTilesVisibleButton);
 
@@ -49,7 +52,7 @@ Editor::Editor()
 
     //Toggle Placement Grid Button
     auto togglePlacementGridButton = frd::Maker::make(frd::Button());
-    togglePlacementGridButton->setLabel("Toggle Placement\n            Grid");
+    togglePlacementGridButton->setLabel("Toggle Placement Grid");
     togglePlacementGridButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::togglePlacementGrid, this));
     theme.applyTheme(togglePlacementGridButton);
 
@@ -79,7 +82,7 @@ Editor::Editor()
 
     //Set Aggressive Music Button
     auto setAggressiveMusicButton = frd::Maker::make(frd::Button());
-    setAggressiveMusicButton->setLabel("Set Aggressive\n        Music");
+    setAggressiveMusicButton->setLabel("Set Aggressive Music");
     setAggressiveMusicButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::setAggressiveMusic, this));
     theme.applyTheme(setAggressiveMusicButton);
 
@@ -113,6 +116,21 @@ Editor::Editor()
     //Add container to main menu
     mainMenu->addWidget(editButtonsContainer);
 
+
+    //Now setup the layer selection buttons
+    auto layerSelectContainer = frd::Maker::make(frd::Container());
+    layerSelectContainer->setAllocation(Allocation::horizontal);
+    layerSelectContainer->setSize({500, 50});
+    for(unsigned int a = 0; a < mapLayerCount; a++)
+    {
+        auto cLayerButton = frd::Maker::make(frd::Button());
+        theme.applyTheme(cLayerButton);
+        cLayerButton->setLabel("Layer " + std::to_string(a));
+        cLayerButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::selectLayer, this, a));
+        layerSelectContainer->addWidget(cLayerButton);
+    }
+    mainMenu->addWidget(layerSelectContainer);
+
 }
 
 Editor::~Editor()
@@ -128,7 +146,7 @@ void Editor::open()
         window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::Close);
         window.setFramerateLimit(60);
         window.setKeyRepeatEnabled(false);
-        window.setPosition({50, 200});
+        window.setPosition({50, 50});
     }
 }
 
@@ -158,7 +176,7 @@ void Editor::update()
 
         GUIManager::getInstance()->getEditorFRDGUIHandle()->update();
 
-        window.clear(sf::Color::Black);
+        window.clear(sf::Color::White);
         window.draw(*GUIManager::getInstance()->getEditorFRDGUIHandle().get());
         window.display();
     }
@@ -177,6 +195,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             }
             break;
         }
+    case MessageBase::mapChangeEvent:
+            //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
+            updatePlacementGrid();
+        break;
     default:
         break;
     }
@@ -187,19 +209,21 @@ void Editor::drawMapOverlay(sf::RenderTarget& target)
     if(!window.isOpen())
         return;
 
-    //Create red grid out of vertex's
-   // Map *cMap = MapManager::getInstance()->getCurrentMap();
-
+    //Draw the red placement grid over the main window
+    target.draw(mapPlacementGrid);
 }
 
 void Editor::clearLayer()
 {
     Map *tempMap = MapManager::getInstance()->getCurrentMap();
-    //Change tiles on layer 0 to another type
-    unsigned int tileCount = tempMap->getTileCount(0); //Get the number of tiles on this layer
+
+    //Get the number of tiles on the selected layer
+    unsigned int tileCount = tempMap->getTileCount(currentlySelectedLayer);
+
+    //Iterate through each tile on this layer and set its textureRect to a transparent one
     for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
     {
-        TileBase *tile = tempMap->getTile(0, tileID); //Get a pointer to the current tile
+        TileBase *tile = tempMap->getTile(currentlySelectedLayer, tileID); //Get a pointer to the current tile
         tile->setTextureRect(sf::IntRect(96, 0, 32, 32)); //Set a new texture
     }
 }
@@ -262,6 +286,41 @@ void Editor::setPassiveMusic()
 void Editor::toggleLayerView()
 {
 
+}
+
+void Editor::updatePlacementGrid()
+{
+    //Create red grid out of sf::Lines
+    unsigned int halfTileSize = MapManager::getInstance()->getCurrentMap()->getTileSize()/2;
+    mapPlacementGrid = sf::VertexArray(sf::Lines, (windowSize.y/halfTileSize)+ 1 + (windowSize.x/halfTileSize) + 1);
+    unsigned int cVertex = 0;
+
+    //Generate vertical lines
+    for(unsigned int y = 0; y < windowSize.y/halfTileSize; y+=2)
+    {
+        mapPlacementGrid[cVertex].position = sf::Vector2f(0, y*halfTileSize);
+        mapPlacementGrid[cVertex+1].position = sf::Vector2f(windowSize.x, y*halfTileSize);
+
+        mapPlacementGrid[cVertex].color = sf::Color::Red;
+        mapPlacementGrid[cVertex+1].color = sf::Color::Red;
+        cVertex+=2;
+    }
+
+    //Generate horizontal lines
+    for(unsigned int x = 0; x < windowSize.x/halfTileSize; x+=2)
+    {
+        mapPlacementGrid[cVertex].position = sf::Vector2f(x*halfTileSize, 0);
+        mapPlacementGrid[cVertex+1].position = sf::Vector2f(x*halfTileSize, windowSize.y);
+
+        mapPlacementGrid[cVertex].color = sf::Color::Red;
+        mapPlacementGrid[cVertex+1].color = sf::Color::Red;
+        cVertex+=2;
+    }
+}
+
+void Editor::selectLayer(unsigned int newLayerID)
+{
+    currentlySelectedLayer = newLayerID;
 }
 
 

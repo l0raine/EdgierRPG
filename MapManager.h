@@ -6,6 +6,8 @@
 #include <SFML/Graphics.hpp>
 
 #include "Map.h"
+#include "MessageHandler.h"
+#include "EventTypes.h"
 
 
 class MapManager

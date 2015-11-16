@@ -29,6 +29,7 @@ Map* MapManager::getCurrentMap()
 
 Map* MapManager::loadMap(const std::string &filepath)
 {
+    //Allocate memory and load the map
     std::string newfilepath = mapPath + filepath;
     loadedMaps.emplace_back(new Map());
     if(!loadedMaps.back()->load(newfilepath))
@@ -37,8 +38,14 @@ Map* MapManager::loadMap(const std::string &filepath)
         loadedMaps.pop_back();
         return nullptr;
     }
+
+    //Update pointer to current map
     currentlyDisplayedMap = loadedMaps.back().get();
     std::cout<<"<MapManager>: Loaded Map: '"<<newfilepath<<"'"<<std::endl;
+
+    //Dispatch map change event
+    MessageHandler::getInstance()->dispatch(MapChangeEvent::make());
+
     return loadedMaps.back().get();
 }
 

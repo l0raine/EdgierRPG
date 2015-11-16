@@ -13,8 +13,7 @@
 #include "AnimatedTile.h"
 #include "StaticTile.h"
 #include "ResourceManager.h"
-
-const unsigned int mapLayerCount = 5;
+#include "Globals.h"
 
 class Map
 {
@@ -44,12 +43,12 @@ private:
     sf::Vector2i mapSize;
     std::vector<std::string> ambientMusicList;
     std::vector<std::string> dangerMusicList;
-    std::vector<std::unique_ptr<TileBase>> tileStorage[mapLayerCount];
-    std::vector<AnimatedTile*> animatedTiles[mapLayerCount];
+    std::vector<std::vector<std::unique_ptr<TileBase>>> tileStorage;
+    std::vector<std::vector<AnimatedTile*>> animatedTiles;
     unsigned int tileSize;
 
     //Storage for pre-rendered static tile layers
-    sf::VertexArray staticTileMap[mapLayerCount];
+    std::vector<sf::VertexArray> staticTileMap;
 
     //Temporary tile texture for everything
     sf::Texture* tileTexture;
