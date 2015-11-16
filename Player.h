@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "EntityBase.h"
+#include "ResourceManager.h"
 
 
 class Player : public EntityBase

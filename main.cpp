@@ -86,7 +86,6 @@ int main()
 
 
     //Poll events
-    sf::View defaultView = window.getView();
     while(window.isOpen())
     {
         sf::Event event;

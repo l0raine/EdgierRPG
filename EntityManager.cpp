@@ -41,13 +41,6 @@ void EntityManager::handleMessage(std::unique_ptr<MessageBase>& message)
 {
     switch(message->getMessageType())
     {
-        case MessageBase::mouseEvent:
-        {
-            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-
-            break;
-        }
-
         default:
             break;
     }

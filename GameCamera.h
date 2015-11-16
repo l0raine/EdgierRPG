@@ -1,7 +1,8 @@
 #ifndef GAMECAMERA_H
 #define GAMECAMERA_H
 
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
+#include <memory>
 
 class EntityBase;
 
