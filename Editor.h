@@ -23,6 +23,11 @@ class Editor
         void close();
         void update();
         void handleMessage(std::unique_ptr<MessageBase> &message);
+        void drawMapOverlay(sf::RenderTarget &target); //Draw things like the placement grid over the main window
+    protected:
+    private:
+        sf::RenderWindow window;
+        frd::Theme theme;
 
         //Editor functions
         void clearLayer();
@@ -38,10 +43,6 @@ class Editor
         void setAggressiveMusic();
         void setPassiveMusic();
         void toggleLayerView();
-    protected:
-    private:
-        sf::RenderWindow window;
-        frd::Theme theme;
 };
 
 #endif // EDITOR_H

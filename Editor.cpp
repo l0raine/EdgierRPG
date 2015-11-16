@@ -12,10 +12,10 @@ Editor::Editor()
 
     //Setup the left-hand buttons to manipulate the map
     auto editButtonsContainer = frd::Maker::make(frd::Container());
-    editButtonsContainer->setSize({116, 525});
+    editButtonsContainer->setSize({160, 530});
     editButtonsContainer->setAllocation(Allocation::vertical);
     editButtonsContainer->setSpacing(sf::Vector2f(0,10));
-    editButtonsContainer->setPosition({666,45});
+    editButtonsContainer->setPosition({620,45});
 
     //ClearLayer Button
     auto clearLayerButton = frd::Maker::make(frd::Button());
@@ -128,6 +128,7 @@ void Editor::open()
         window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::Close);
         window.setFramerateLimit(60);
         window.setKeyRepeatEnabled(false);
+        window.setPosition({50, 200});
     }
 }
 
@@ -181,6 +182,15 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     }
 }
 
+void Editor::drawMapOverlay(sf::RenderTarget& target)
+{
+    if(!window.isOpen())
+        return;
+
+    //Create red grid out of vertex's
+   // Map *cMap = MapManager::getInstance()->getCurrentMap();
+
+}
 
 void Editor::clearLayer()
 {
