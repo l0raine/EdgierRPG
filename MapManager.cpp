@@ -49,6 +49,11 @@ Map* MapManager::loadMap(const std::string &filepath)
     return loadedMaps.back().get();
 }
 
+void MapManager::setCurrentMap(Map* cMap)
+{
+    currentlyDisplayedMap = cMap;
+}
+
 bool MapManager::isMapLoaded(std::unique_ptr<Map> mapToCheck)
 {
     for(auto iter = loadedMaps.begin(); iter != loadedMaps.end(); iter++)

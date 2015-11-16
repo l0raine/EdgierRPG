@@ -36,10 +36,10 @@ void EntityManager::handleMessage(std::unique_ptr<MessageBase>& message)
 {
     switch(message->getMessageType())
     {
-        case MessageBase::entityMoveEvent:
+        case MessageBase::mouseEvent:
         {
-            EntityMoveEvent *event = dynamic_cast<EntityMoveEvent*>(message.get());
-            cameraView.setCenter(entities[selectedEntityID]->getPosition());
+            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+
             break;
         }
 

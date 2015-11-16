@@ -19,6 +19,7 @@
 #include "SpecialTileContainer.h"
 #include "Editor.h"
 #include "GameCamera.h"
+#include "Player.h"
 
 using namespace std;
 
@@ -29,12 +30,12 @@ int main()
 
     Editor editor;
 
-    GameCamera camera;
-
     sf::Clock loadTime;
     Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
 
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
+
+     MapManager::getInstance()->setCurrentMap(aMap);
 
     //Resource/SoundHandler | Sample load for loading sounds
     //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)
@@ -54,10 +55,10 @@ int main()
         button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
 
         //Change tiles on layer 0 to another type
-        unsigned int tileCount = aMap->getTileCount(0); //Get the number of tiles on this layer
+        unsigned int tileCount = MapManager::getInstance()->getCurrentMap()->getTileCount(0); //Get the number of tiles on this layer
         for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
         {
-            TileBase *tile = aMap->getTile(0, tileID); //Get a pointer to the current tile
+            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(0, tileID); //Get a pointer to the current tile
             tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
         }
         std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
@@ -69,41 +70,19 @@ int main()
     menu->addWidget(button);
     gui.addMenu(menu);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
-    sf::Texture *text = ResourceManager::getInstance()->loadTexture("tilesheets/LX.png");
-    std::unique_ptr<EntityBase> entity(new EntityBase());
-    entity->sprite.addFrame(0, sf::IntRect(495,404,27,42));
-    entity->sprite.addFrame(0, sf::IntRect(522,404,23,42));
-    entity->sprite.addFrame(0, sf::IntRect(545,404,23,42));
 
-    entity->sprite.addFrame(1, sf::IntRect(495,447,28,41));
-    entity->sprite.addFrame(1, sf::IntRect(522,447,26,41));
-    entity->sprite.addFrame(1, sf::IntRect(546,447,26,41));
+    //Create a test entity to roam the map with
+    std::unique_ptr<EntityBase> gamePlayer(new Player());
+    EntityManager::getInstance()->registerEntity(gamePlayer);
 
-    entity->sprite.addFrame(2, sf::IntRect(495,531,18,40));
-    entity->sprite.addFrame(2, sf::IntRect(513,530,20,40));
-    entity->sprite.addFrame(2, sf::IntRect(533,529,21,40));
+    GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 
-    entity->sprite.addFrame(3, sf::IntRect(495,489,18,40));
-    entity->sprite.addFrame(3, sf::IntRect(513,489,20,40));
-    entity->sprite.addFrame(3, sf::IntRect(533,489,21,40));
-
-
-    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(572,447,28,41));
-    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(600,447,26,41));
-    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(625,447,26,41));
-
-    entity->setDirection(1);
-    entity->sprite.setFrameInterval(100);
-    entity->sprite.setTexture(text);
-    EntityManager::getInstance()->registerEntity(entity);
-    camera.setFocus(EntityManager::getInstance()->getEntity(0));
-
+    //Define the main render window
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
 
-    sf::View defaultView = window.getView();
-
+    //Poll events
     while(window.isOpen())
     {
         sf::Event event;
@@ -117,6 +96,7 @@ int main()
             InputHandler::getInstance()->handleEvent(event);
         }
 
+        //Arrest incoming messages and handle them
         std::unique_ptr<MessageBase> message;
         while(MessageHandler::getInstance()->acquire(message))
         {
@@ -124,6 +104,7 @@ int main()
             EntityManager::getInstance()->handleMessage(message);
             SpecialTileContainer::getInstance()->handleMessage(message);
             editor.handleMessage(message);
+
 
             switch(message->getMessageType())
             {
@@ -139,20 +120,40 @@ int main()
 
         //Update FRDGUI for things like animation
         gui.update();
-        aMap->update();
-        EntityManager::getInstance()->update();
-        editor.update();
-        camera.update();
 
+        //Update currently loaded map
+        MapManager::getInstance()->getCurrentMap()->update();
+
+        //Update all entities
+        EntityManager::getInstance()->update();
+
+        //Update the map editor
+        editor.update();
+
+        //Update the game camera
+        GameCamera::getInstance()->update();
+
+        //Clear game window to black
         window.clear(sf::Color::Black);
-        window.setView(camera.getCameraView());
-        aMap->draw(window, sf::RenderStates::Default);
+
+        //Set the window's view to the game camera
+        window.setView(GameCamera::getInstance()->getCameraView());
+
+        //Draw the currently Loaded Map
+        MapManager::getInstance()->getCurrentMap()->draw(window, sf::RenderStates::Default);
+
+        //Draw all entities
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
+
+        //Draw map overlay grid for the editor
         editor.drawMapOverlay(window);
-        window.setView(defaultView);
+
+        //Draw gui elements
         window.draw(gui);
+
+        //Display the window
         window.display();
     }
-  //  aMap->save("./Files/Maps/savedMap.txt");
+  //  MapManager::getInstance()->getCurrentMap()->save("./Files/Maps/savedMap.txt");
     return 0;
 }

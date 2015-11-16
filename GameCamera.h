@@ -10,7 +10,7 @@ class GameCamera
     public:
         GameCamera();
         virtual ~GameCamera();
-
+        static std::shared_ptr<GameCamera> getInstance();
 
         void setFocus(EntityBase* entity);
         const sf::View& getCameraView();
@@ -20,6 +20,8 @@ class GameCamera
     private:
         unsigned int currentEntityID;
         sf::View cameraView;
+
+        static std::shared_ptr<GameCamera> instance;
 };
 
 #endif // GAMECAMERA_H

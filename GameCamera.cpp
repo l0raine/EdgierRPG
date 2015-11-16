@@ -1,6 +1,8 @@
 #include "GameCamera.h"
 #include "EntityManager.h"
 
+std::shared_ptr<GameCamera> GameCamera::instance;
+
 GameCamera::GameCamera()
 {
     //ctor
@@ -12,6 +14,15 @@ GameCamera::~GameCamera()
     //dtor
 }
 
+std::shared_ptr<GameCamera> GameCamera::getInstance()
+{
+    if(instance == nullptr)
+    {
+        instance = std::shared_ptr<GameCamera>(new GameCamera);
+    }
+    return instance;
+}
+
 void GameCamera::setFocus(EntityBase* entity)
 {
     currentEntityID = entity->getEntityID();
@@ -19,18 +30,27 @@ void GameCamera::setFocus(EntityBase* entity)
 
 void GameCamera::update()
 {
-    sf::Vector2f position;
+    float posX, posY;
+    const sf::Vector2f &unitPos = EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID())->getPosition();
+    sf::Vector2i mapSize = MapManager::getInstance()->getCurrentMap()->getMapSizePixels();
 
-    position.x = EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID())->getPosition().x - (cameraView.getSize().x / 2);
-    position.y = EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID())->getPosition().y - (cameraView.getSize().x / 2);
+    if( unitPos.x > windowSize.x / 2)
+        posX = unitPos.x;
+    else
+        posX = windowSize.x / 2;
 
-    if(position.x < 0)
-        position.x = 0;
-    if(position.y < 0)
-        position.y = 0;
+    if(unitPos.y > windowSize.y / 2)
+        posY = unitPos.y;
+    else
+        posY = windowSize.y / 2;
 
+    if (posX + windowSize.x / 2 > mapSize.x)
+    	posX = float(mapSize.x - windowSize.x / 2);
 
-    cameraView.reset(sf::FloatRect(position.x, position.y, cameraView.getSize().x, cameraView.getSize().y));
+    if (posY + windowSize.y / 2 > mapSize.y )
+    	posY = float(mapSize.y - windowSize.y / 2);
+
+    cameraView.setCenter(posX, posY);
 }
 
 const sf::View& GameCamera::getCameraView()
