@@ -4,7 +4,7 @@ Editor::Editor()
 {
     //Setup UI
     frd::FRDGUI *gui = GUIManager::getInstance()->getEditorFRDGUIHandle().get();
-    theme.load("myTheme.txt");
+    theme.load(themePath + "myTheme.txt");
 
     //Setup menu to store the main page of the editor
     auto mainMenu = frd::Maker::make(frd::Menu());
@@ -37,7 +37,7 @@ Editor::Editor()
 
     //Toggle Special Tiles Visible Button
     auto toggleSpecialTilesVisibleButton = frd::Maker::make(frd::Button());
-    toggleSpecialTilesVisibleButton->setLabel("Toggle Special Tiles Visible");
+    toggleSpecialTilesVisibleButton->setLabel("Toggle Special Tiles\n            Visible");
     toggleSpecialTilesVisibleButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::toggleSpecialTilesVisible, this));
     theme.applyTheme(toggleSpecialTilesVisibleButton);
 
@@ -49,7 +49,7 @@ Editor::Editor()
 
     //Toggle Placement Grid Button
     auto togglePlacementGridButton = frd::Maker::make(frd::Button());
-    togglePlacementGridButton->setLabel("Toggle Placement Grid");
+    togglePlacementGridButton->setLabel("Toggle Placement\n            Grid");
     togglePlacementGridButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::togglePlacementGrid, this));
     theme.applyTheme(togglePlacementGridButton);
 
@@ -79,7 +79,7 @@ Editor::Editor()
 
     //Set Aggressive Music Button
     auto setAggressiveMusicButton = frd::Maker::make(frd::Button());
-    setAggressiveMusicButton->setLabel("Set Aggressive Music");
+    setAggressiveMusicButton->setLabel("Set Aggressive\n        Music");
     setAggressiveMusicButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::setAggressiveMusic, this));
     theme.applyTheme(setAggressiveMusicButton);
 

@@ -12,6 +12,7 @@
     extern std::string fontPath;
     extern std::string guiFontPath;
     extern std::string mapPath;
+    extern std::string themePath;
 
 
 #endif // GLOBALS_H

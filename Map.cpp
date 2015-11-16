@@ -152,9 +152,12 @@ bool Map::load(const std::string& filepath)
 
 bool Map::save(const std::string& filepath)
 {
+    //Change to Maps folder
+    std::string newfilepath = mapPath + filepath;
+
     //Open output file
     std::ofstream file;
-    file.open(filepath);
+    file.open(newfilepath);
     if(!file.is_open())
         return false; //Failed to open
 

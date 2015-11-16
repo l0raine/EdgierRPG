@@ -7,3 +7,4 @@
     std::string mapPath = "./Files/Maps/";
     sf::Vector2i windowSize(800,600);
     std::string guiFontPath = fontPath + "arial.ttf";
+    std::string themePath = "./Files/Themes/";
