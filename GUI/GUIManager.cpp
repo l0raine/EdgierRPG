@@ -6,7 +6,8 @@ std::shared_ptr<GUIManager> GUIManager::instance;
 
 GUIManager::GUIManager(sf::Vector2i &windowSize, const std::string &fontFilePath, const sf::Color &defaultFontColour, unsigned int defaultFontSize)
 {
-    gui = std::shared_ptr<frd::FRDGUI>(new frd::FRDGUI(windowSize, fontFilePath, defaultFontColour, defaultFontSize));
+    gameGui = std::shared_ptr<frd::FRDGUI>(new frd::FRDGUI(windowSize, fontFilePath, defaultFontColour, defaultFontSize));
+    editorGui = std::shared_ptr<frd::FRDGUI>(new frd::FRDGUI(windowSize, fontFilePath, defaultFontColour, defaultFontSize));
 }
 
 std::shared_ptr<GUIManager> GUIManager::getInstance()
@@ -25,5 +26,10 @@ GUIManager::~GUIManager()
 
 std::shared_ptr<frd::FRDGUI> GUIManager::getFRDGUIHandle()
 {
-    return gui;
+    return gameGui;
+}
+
+std::shared_ptr<frd::FRDGUI> GUIManager::getEditorFRDGUIHandle()
+{
+    return editorGui;
 }

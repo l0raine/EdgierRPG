@@ -1,14 +1,11 @@
 #include "Map.h"
+#include "SpecialTileContainer.h"
 
 Map::Map()
     : tileSize(32)
 {
     tileTexture = nullptr;
-    //Load default tile sheet
-    //NOTE - apparently, C++ is automatically assigning this to tileTexture?
     tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png");
-    std::cout << "\nAddress of resource manager:" << ResourceManager::getInstance().get() << std::endl;
-    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
 }
 
 Map::Map(const std::string& filepath)
@@ -25,7 +22,6 @@ Map::~Map()
 
 bool Map::load(const std::string& filepath)
 {
-    std::cout<<"Address of texture at load time: "<<tileTexture<<std::endl;
     //Open the map file
     std::ifstream file;
     file.open(filepath);
@@ -59,7 +55,31 @@ bool Map::load(const std::string& filepath)
         dangerMusicList.emplace_back(tempDangerMusic);
     }
 
-    //Read in tiles
+    //Read in special tiles
+    std::string tileID;
+    unsigned int tileType, argumentCount;
+    std::vector<std::string> tileArguments;
+    while(file.good())
+    {
+        file >> tileID;
+        if(tileID == "END")
+            break;
+
+        file >> tileType >> argumentCount;
+        for(unsigned int a = 0; a < argumentCount; a++)
+        {
+            tileArguments.emplace_back(std::string());
+            file >> tileArguments.back();
+        }
+        //Register the special tile
+        SpecialTileContainer::getInstance()->registerSpecialTile(tileType, stoi(tileID), tileArguments);
+        tileArguments.clear();
+        tileType = 0;
+        argumentCount = 0;
+    }
+
+
+    //Read in animated/static
     int tileNumber, layerNumber, tileSheetNumber, frameCount, spriteOffsetX, spriteOffsetY, frameInterval, rotation;
     while(file >> tileNumber >> layerNumber >> tileSheetNumber >> frameCount)
     {
@@ -162,8 +182,20 @@ bool Map::save(const std::string& filepath)
     file << "\n";
 
     //Now for the tiles
+    //Save the special tiles first
+    for(unsigned int a = 0; a < SpecialTileContainer::getInstance()->getSpecialTileCount(); a++)
+    {
+        const SpecialTileContainer::SpecialTile &cTile = SpecialTileContainer::getInstance()->getSpecialTile(a);
+        file << cTile.position << " " << cTile.tileType << " " << cTile.arguments.size();
+        for(const auto &argument : cTile.arguments)
+        {
+            file << " " << argument;
+        }
+        file << "\n";
+    }
+    file << "END\n";
 
-    //Save each layer in order
+    //Save each layer of static and animated tiles in order
     for(unsigned int layer = 0; layer < getLayerCount(); layer++)
     {
         for(unsigned int tile = 0; tile < getTileCount(layer); tile++)

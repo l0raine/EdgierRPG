@@ -1,7 +1,7 @@
 #ifndef MESSAGEHANDLER_H
 #define MESSAGEHANDLER_H
 
-#include <stack>
+#include <queue>
 #include <mutex>
 #include <memory>
 
@@ -25,7 +25,7 @@ private:
     static std::shared_ptr<MessageHandler> instance;
 
     //Message container
-    std::stack<std::unique_ptr<MessageBase>> messageQueue;
+    std::queue<std::unique_ptr<MessageBase>> messageQueue;
 
     //Message mutex to prevent multiple modifications at once
     std::mutex messageMutex;

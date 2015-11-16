@@ -1,28 +1,44 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include "Map.h"
 #include <fstream>
+#include <Theme.h>
+
+#include "Map.h"
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
 #include "ResourceManager.h"
 #include "Globals.h"
+#include "MessageBase.h"
 #include "MessageHandler.h"
+#include "SoundHandler.h"
+#include "EventTypes.h"
+#include "EntityManager.h"
+#include "InputHandler.h"
+#include "MapManager.h"
+#include "HelperClass.h"
+#include "SpecialTileContainer.h"
+#include "Editor.h"
 
 using namespace std;
 
 int main()
 {
+    //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
+    //theme.save("myTheme.txt");
+
+    Editor editor;
+
     sf::Clock loadTime;
-    Map aMap;
-    if(!aMap.load("./Files/Maps/test_level.txt"))
-        std::cout<<"Map failed to load.\n";
+    Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
+
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
+
+    //Resource/SoundHandler | Sample load for loading sounds
+    //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)
+    //ResourceManager::getSoundHandler()->play("Music/music1.wav"
 
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
-
-    //Get instance of message handler
-
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
     auto menu = frd::Maker::make(frd::Menu());
@@ -35,10 +51,10 @@ int main()
         button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
 
         //Change tiles on layer 0 to another type
-        unsigned int tileCount = aMap.getTileCount(0); //Get the number of tiles on this layer
+        unsigned int tileCount = aMap->getTileCount(0); //Get the number of tiles on this layer
         for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
         {
-            TileBase *tile = aMap.getTile(0, tileID); //Get a pointer to the current tile
+            TileBase *tile = aMap->getTile(0, tileID); //Get a pointer to the current tile
             tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
         }
         std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
@@ -50,46 +66,85 @@ int main()
     menu->addWidget(button);
     gui.addMenu(menu);
     //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
+    sf::Texture *text = ResourceManager::getInstance()->loadTexture("tilesheets/LX.png");
+    std::unique_ptr<EntityBase> entity(new EntityBase());
+    entity->sprite.addFrame(0, sf::IntRect(495,404,27,42));
+    entity->sprite.addFrame(0, sf::IntRect(522,404,23,42));
+    entity->sprite.addFrame(0, sf::IntRect(545,404,23,42));
+
+    entity->sprite.addFrame(1, sf::IntRect(495,447,28,41));
+    entity->sprite.addFrame(1, sf::IntRect(522,447,26,41));
+    entity->sprite.addFrame(1, sf::IntRect(546,447,26,41));
+
+    entity->sprite.addFrame(2, sf::IntRect(495,531,18,40));
+    entity->sprite.addFrame(2, sf::IntRect(513,530,20,40));
+    entity->sprite.addFrame(2, sf::IntRect(533,529,21,40));
+
+    entity->sprite.addFrame(3, sf::IntRect(495,489,18,40));
+    entity->sprite.addFrame(3, sf::IntRect(513,489,20,40));
+    entity->sprite.addFrame(3, sf::IntRect(533,489,21,40));
+
+
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(572,447,28,41));
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(600,447,26,41));
+    entity->sprite.addSpecialFrame(0, 0, sf::IntRect(625,447,26,41));
+
+    entity->setDirection(1);
+    entity->sprite.setFrameInterval(100);
+    entity->sprite.setTexture(text);
+    EntityManager::getInstance()->registerEntity(entity);
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
-    window.setFramerateLimit(60);
+    window.setKeyRepeatEnabled(false);
+
+
     while(window.isOpen())
     {
-        window.setFramerateLimit(60);
-        window.setVerticalSyncEnabled(true);
         sf::Event event;
         while(window.pollEvent(event))
         {
             if(event.type == sf::Event::Closed)
                 window.close();
-            else if(event.type == sf::Event::KeyPressed)
-            {
-                if(event.key.code == sf::Keyboard::Escape)
-                    window.close();
-            }
             //Pass the event to FRDGUI to let the GUI respond to it
             gui.handleEvent(event);
+
+            InputHandler::getInstance()->handleEvent(event);
         }
 
         std::unique_ptr<MessageBase> message;
         while(MessageHandler::getInstance()->acquire(message))
         {
-            switch(message->getType())
+            //Let game objects process the event
+            EntityManager::getInstance()->handleMessage(message);
+            SpecialTileContainer::getInstance()->handleMessage(message);
+            editor.handleMessage(message);
+
+            switch(message->getMessageType())
             {
-            default:
-                std::cout << "\nUnknown message dispatched!";
+                case MessageBase::Types::mouseEvent:
+                {
+
+                    break;
+                }
+                default:
+                    break;
             }
         }
 
         //Update FRDGUI for things like animation
         gui.update();
-        aMap.update();
+        aMap->update();
+        EntityManager::getInstance()->update();
+        editor.update();
+
 
         window.clear(sf::Color::Black);
-        aMap.draw(window, sf::RenderStates::Default);
+        aMap->draw(window, sf::RenderStates::Default);
+        EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
+        editor.drawMapOverlay(window);
         window.draw(gui);
         window.display();
     }
-    aMap.save("savedMap.txt");
+  //  aMap->save("./Files/Maps/savedMap.txt");
     return 0;
 }
