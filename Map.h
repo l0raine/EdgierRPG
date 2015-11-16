@@ -10,10 +10,8 @@
 #include <iostream>
 #include <memory>
 
-#include "AnimatedTile.h"
-#include "StaticTile.h"
-#include "ResourceManager.h"
-#include "Globals.h"
+class TileBase;
+class AnimatedTile;
 
 class Map
 {

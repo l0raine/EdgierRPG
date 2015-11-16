@@ -1,4 +1,8 @@
 #include "MapManager.h"
+
+#include "Map.h"
+#include "MessageHandler.h"
+#include "EventTypes.h"
 #include "Globals.h"
 
 std::shared_ptr<MapManager> MapManager::instance;

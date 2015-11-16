@@ -1,5 +1,7 @@
 #include "HelperClass.h"
 
+#include "Map.h"
+
 HelperClass::HelperClass()
 {
     //ctor

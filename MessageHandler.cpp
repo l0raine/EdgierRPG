@@ -1,5 +1,6 @@
 #include "MessageHandler.h"
-#include <iostream>
+#include "MessageBase.h"
+
 std::shared_ptr<MessageHandler> MessageHandler::instance;
 
 MessageHandler::MessageHandler()

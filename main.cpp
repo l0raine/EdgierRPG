@@ -19,6 +19,8 @@
 #include "SpecialTileContainer.h"
 #include "Editor.h"
 #include "GameCamera.h"
+#include "EntityBase.h"
+#include "TileBase.h"
 
 using namespace std;
 
@@ -103,7 +105,7 @@ int main()
     window.setFramerateLimit(60);
 
     sf::View defaultView = window.getView();
-
+#include <Theme.h>
     while(window.isOpen())
     {
         sf::Event event;

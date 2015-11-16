@@ -7,10 +7,9 @@
 #include <SFML/Window/Mouse.hpp>
 #include <memory>
 
-#include "MessageBase.h"
-#include "EntityBase.h"
-#include "Events/KeyEvent.h"
-#include "InputHandler.h"
+class EntityBase;
+class EntityManager;
+class MessageBase;
 
 class EntityManager
 {

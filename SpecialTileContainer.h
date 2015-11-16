@@ -2,11 +2,9 @@
 #define SPECIALTILECONTAINER_H
 
 #include <vector>
+#include <memory>
 
-#include "MessageBase.h"
-#include "EventTypes.h"
-#include "MapManager.h"
-#include "EntityManager.h"
+class MessageBase;
 
 class SpecialTileContainer
 {

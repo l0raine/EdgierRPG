@@ -1,8 +1,9 @@
 #ifndef INPUTHANDLER_H
 #define INPUTHANDLER_H
+
 #include <map>
 #include <memory>
-#include<SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 
 class InputHandler

@@ -1,7 +1,9 @@
 #ifndef HELPERCLASS_H
 #define HELPERCLASS_H
 
-#include "Map.h"
+#include <SFML/Graphics.hpp>
+
+class Map;
 
 class HelperClass
 {

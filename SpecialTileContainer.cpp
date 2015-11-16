@@ -1,4 +1,12 @@
 #include "SpecialTileContainer.h"
+
+#include "MessageBase.h"
+#include "EventTypes.h"
+#include "MapManager.h"
+#include "HelperClass.h"
+#include "EntityManager.h"
+#include "EntityBase.h"
+
 std::shared_ptr<SpecialTileContainer> SpecialTileContainer::instance;
 SpecialTileContainer::SpecialTileContainer()
 {

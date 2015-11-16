@@ -1,5 +1,10 @@
 #include "Map.h"
+
 #include "SpecialTileContainer.h"
+#include "AnimatedTile.h"
+#include "StaticTile.h"
+#include "ResourceManager.h"
+#include "Globals.h"
 
 Map::Map()
     : tileSize(32)
