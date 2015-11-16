@@ -32,7 +32,8 @@ public:
     void updateStaticMap(); //Re-renders the static tiles
     unsigned int getTileSize(); //Returns the tile width/height
     TileBase *getTile(unsigned int layer, unsigned int tileID); //Gets the tile at the requested layer/tileID
-    const sf::Vector2i &getMapSize(); //Returns map size in tiles
+    const sf::Vector2i &getMapSizeTiles(); //Returns map size in tiles
+    const sf::Vector2i &getMapSizePixels();
     unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
     unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
     void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
@@ -47,6 +48,7 @@ private:
     std::vector<std::vector<std::unique_ptr<TileBase>>> tileStorage;
     std::vector<std::vector<AnimatedTile*>> animatedTiles;
     unsigned int tileSize;
+    sf::Vector2i mapSizePixels;
 
     //Storage for pre-rendered static tile layers
     std::vector<sf::VertexArray> staticTileMap;

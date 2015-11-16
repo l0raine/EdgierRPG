@@ -19,9 +19,7 @@ void GameCamera::setFocus(EntityBase* entity)
 
 void GameCamera::update()
 {
-    //if(cameraView.getCenter().x > cameraView.getSize().x/2 || cameraView.getCenter().y > cameraView.getSize().y/2)
 
-        cameraView.setCenter(EntityManager::getInstance()->getEntity(currentEntityID)->getPosition());
 }
 
 const sf::View& GameCamera::getCameraView()

@@ -7,6 +7,7 @@ TileBase::TileBase()
 {
     //ctor
     isTileAnimated = false;
+    rotation = 0;
 }
 
 TileBase::~TileBase()

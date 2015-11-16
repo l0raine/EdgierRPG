@@ -102,6 +102,7 @@ int main()
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
 
+    sf::View defaultView = window.getView();
 
     while(window.isOpen())
     {
@@ -143,12 +144,12 @@ int main()
         editor.update();
         camera.update();
 
-
         window.clear(sf::Color::Black);
         window.setView(camera.getCameraView());
         aMap->draw(window, sf::RenderStates::Default);
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
         editor.drawMapOverlay(window);
+        window.setView(defaultView);
         window.draw(gui);
         window.display();
     }
