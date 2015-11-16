@@ -18,30 +18,18 @@
 #include "HelperClass.h"
 #include "SpecialTileContainer.h"
 #include "Editor.h"
+#include "GameCamera.h"
 
 using namespace std;
 
-class Empty
-{
-};
-struct X : Empty {
-    int a;
-};
-
-void f(X* p)
-{
-    void* p1 = p;
-    void* p2 = &p->a;
-    if (p1 == p2) cout << "nice: good optimizer";
-}
 int main()
 {
-    X bob;
-    f(&bob);
     //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
     //theme.save("myTheme.txt");
 
     Editor editor;
+
+    GameCamera camera;
 
     sf::Clock loadTime;
     Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
@@ -108,6 +96,7 @@ int main()
     entity->sprite.setFrameInterval(100);
     entity->sprite.setTexture(text);
     EntityManager::getInstance()->registerEntity(entity);
+    camera.setFocus(EntityManager::getInstance()->getEntity(0));
 
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
@@ -152,9 +141,11 @@ int main()
         aMap->update();
         EntityManager::getInstance()->update();
         editor.update();
+        camera.update();
 
 
         window.clear(sf::Color::Black);
+        window.setView(camera.getCameraView());
         aMap->draw(window, sf::RenderStates::Default);
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
         editor.drawMapOverlay(window);

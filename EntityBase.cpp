@@ -3,7 +3,8 @@
 EntityBase::EntityBase()
 {
     direction = 1;
-    baseMovementSpeed = 0.1;
+    baseMovementSpeed = 0.5;
+    position = sf::Vector2f(0,0);
     //ctor
 }
 

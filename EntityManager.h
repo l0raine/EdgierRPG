@@ -38,6 +38,9 @@ class EntityManager
 
         std::vector<std::unique_ptr<EntityBase>> entities; //List of loaded entities
         unsigned int selectedEntityID;
+        unsigned int entityCounter;
+
+        sf::View cameraView;
 
 
 };

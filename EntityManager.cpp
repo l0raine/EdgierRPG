@@ -7,6 +7,8 @@ EntityManager::EntityManager()
 {
     //ctor
     selectedEntityID = 0;
+    entityCounter = 0;
+
 }
 
 EntityManager::~EntityManager()
@@ -27,14 +29,22 @@ void EntityManager::registerEntity(std::unique_ptr<EntityBase>& entity)
 {
     //Take ownership and store
     entities.emplace_back(std::move(entity));
+    entities.back()->setEntityID(entityCounter++);
 }
 
 void EntityManager::handleMessage(std::unique_ptr<MessageBase>& message)
 {
     switch(message->getMessageType())
     {
-    default:
-        break;
+        case MessageBase::entityMoveEvent:
+        {
+            EntityMoveEvent *event = dynamic_cast<EntityMoveEvent*>(message.get());
+            cameraView.setCenter(entities[selectedEntityID]->getPosition());
+            break;
+        }
+
+        default:
+            break;
     }
 }
 
@@ -104,5 +114,10 @@ unsigned int EntityManager::getSelectedEntityID()
 
 EntityBase *EntityManager::getEntity(unsigned int entityID)
 {
-    return entities[entityID].get();
+    for(auto &cEntity : entities)
+    {
+        if(cEntity->getEntityID() == entityID)
+            return cEntity.get();
+    }
+    return nullptr;
 }
