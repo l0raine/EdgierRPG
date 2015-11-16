@@ -62,4 +62,12 @@ void EditorTilesheetView::updateRedGrid()
     }
 }
 
+bool EditorTilesheetView::handleEvent(const sf::Event& event)
+{
+    if(event.type == sf::Event::MouseButtonPressed && spritesheet.getTexture() != nullptr)
+    {
+
+    }
+}
+
 }

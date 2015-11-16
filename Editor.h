@@ -5,6 +5,8 @@
 #include <Theme.h>
 #include <functional>
 
+#include "EditorTilesheetView.h"
+
 class MessageBase;
 
 //Editor is the map editor for the game. This class stores its own self-contained window to act as the render target for the editor. And so it's FRDGUI instance is separated from the rest of the game.
@@ -28,6 +30,7 @@ class Editor
 
         //Editor core variables
         unsigned int currentlySelectedLayer;
+        std::shared_ptr<frd::EditorTilesheetView> tileSelect;
 
         //Editor core functions
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window

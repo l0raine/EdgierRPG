@@ -16,6 +16,8 @@ class EditorTilesheetView : public WidgetBase
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states);
 
         void setTexture(sf::Texture *texture);
+        void processEvent(const sf::Event &event);
+        virtual bool handleEvent(const sf::Event& event);
     protected:
     private:
         void updateRedGrid();

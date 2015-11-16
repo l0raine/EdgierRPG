@@ -143,7 +143,7 @@ Editor::Editor()
 
 
     //Now add the tile selection window
-    auto tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
+    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
     tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
     tileSelect->setPosition({10, 60});
     mainMenu->addWidget(tileSelect);
@@ -189,6 +189,7 @@ void Editor::update()
                     close();
             }
             GUIManager::getInstance()->getEditorFRDGUIHandle()->handleEvent(event);
+            tileSelect->handleEvent(event);
         }
 
         GUIManager::getInstance()->getEditorFRDGUIHandle()->update();
