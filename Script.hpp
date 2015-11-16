@@ -17,11 +17,10 @@ class Script
 		bool openFile(const std::string& file);
 		
 		// given the name of a function in the Lua script, will call it
-		// returns true if running was succesful, false otherwise
 		template<typename... Args>
 		void call(const std::string& function, Args&&... args);
 		
-	private:
+	protected:
 		lna::State luaState;
 };
 
