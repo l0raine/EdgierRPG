@@ -131,6 +131,14 @@ Editor::Editor()
     }
     mainMenu->addWidget(layerSelectContainer);
 
+
+
+
+    //Now add the tile selection window
+    auto tileSelectionContainer = frd::Maker::make(frd::Container());
+
+    mainMenu->addWidget(tileSelectionContainer);
+
 }
 
 Editor::~Editor()
@@ -224,7 +232,7 @@ void Editor::clearLayer()
     for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
     {
         TileBase *tile = tempMap->getTile(currentlySelectedLayer, tileID); //Get a pointer to the current tile
-        tile->setTextureRect(sf::IntRect(96, 0, 32, 32)); //Set a new texture
+        tempMap->removeTile(currentlySelectedLayer, tileID);
     }
 }
 

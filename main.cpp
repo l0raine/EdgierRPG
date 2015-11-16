@@ -21,8 +21,23 @@
 
 using namespace std;
 
+class Empty
+{
+};
+struct X : Empty {
+    int a;
+};
+
+void f(X* p)
+{
+    void* p1 = p;
+    void* p2 = &p->a;
+    if (p1 == p2) cout << "nice: good optimizer";
+}
 int main()
 {
+    X bob;
+    f(&bob);
     //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
     //theme.save("myTheme.txt");
 

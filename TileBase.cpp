@@ -1,4 +1,8 @@
 #include "TileBase.h"
+
+#include "StaticTile.h"
+#include "AnimatedTile.h"
+
 TileBase::TileBase()
 {
     //ctor
@@ -14,12 +18,6 @@ void TileBase::setPosition(const sf::Vector2f &newPosition)
 {
     //Update position
     position = newPosition;
-
-    //Update global bounds
-    tileRect.left = newPosition.x;
-    tileRect.top = newPosition.y;
-    tileRect.width = 32;
-    tileRect.height = 32;
 
     //Update quad position
     updateQuadPosition();
@@ -94,10 +92,10 @@ void TileBase::updateQuadPosition()
     //Update the quads position if the quad is set
     if(quad != nullptr)
     {
-        quad[1].position = {tileRect.left , tileRect.top};
-        quad[2].position = {tileRect.left + tileRect.width , tileRect.top };
-        quad[3].position = {tileRect.left + tileRect.width, tileRect.top  + tileRect.height};
-        quad[0].position = {tileRect.left, tileRect.top  + tileRect.height};
+        quad[1].position = {position.x , position.y};
+        quad[2].position = {position.x + textureRect.width , position.y};
+        quad[3].position = {position.x + textureRect.width, position.y  + textureRect.height};
+        quad[0].position = {position.x, position.y  + textureRect.height};
     }
 }
 
@@ -112,9 +110,9 @@ const sf::IntRect &TileBase::getTextureRect()
     return textureRect;
 }
 
-const sf::FloatRect &TileBase::getGlobalBounds()
+const sf::FloatRect TileBase::getGlobalBounds()
 {
-    return tileRect;
+    return sf::FloatRect(position.x, position.y, textureRect.width, textureRect.height);
 }
 
 bool TileBase::isAnimated()
@@ -122,3 +120,12 @@ bool TileBase::isAnimated()
     return isTileAnimated;
 }
 
+const sf::Vector2f &TileBase::getPosition()
+{
+    return position;
+}
+
+sf::Texture *TileBase::getTexture()
+{
+    return texture;
+}

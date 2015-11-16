@@ -308,3 +308,22 @@ unsigned int Map::getLayerCount()
 {
     return mapLayerCount;
 }
+
+void Map::removeTile(unsigned int layer, unsigned int tileID)
+{
+    //Replace the tile with a static, transparent one
+    TileBase *oldTile = tileStorage[layer][tileID].get();
+
+    auto pos = oldTile->getPosition();
+    auto quad = oldTile->getQuad();
+    auto rect = oldTile->getTextureRect();
+    auto text = oldTile->getTexture();
+
+    tileStorage[layer][tileID].reset(new StaticTile());
+    TileBase *newTile = tileStorage[layer][tileID].get();
+
+    newTile->setTextureRect(sf::IntRect(96, 0, rect.width, rect.height));
+    newTile->setQuad(quad);
+    newTile->setPosition(pos);
+    newTile->setTexture(text);
+}

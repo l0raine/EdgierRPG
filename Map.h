@@ -35,6 +35,7 @@ public:
     const sf::Vector2i &getMapSize(); //Returns map size in tiles
     unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
     unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
+    void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
 protected:
 private:
     //Map data
