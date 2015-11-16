@@ -38,6 +38,7 @@ bool Map::load(const std::string& filepath)
 
     //Read map size
     file >> mapSize.x >> mapSize.y;
+    mapSizePixels = sf::Vector2i(mapSize.x*tileSize, mapSize.y*tileSize);
 
     //Read ambient music list
     unsigned int musicCount = 0;
@@ -294,9 +295,14 @@ unsigned int Map::getTileSize()
     return tileSize;
 }
 
-const sf::Vector2i &Map::getMapSize()
+const sf::Vector2i &Map::getMapSizeTiles()
 {
     return mapSize;
+}
+
+const sf::Vector2i &Map::getMapSizePixels()
+{
+    return mapSizePixels;
 }
 
 unsigned int Map::getTileCount(unsigned int layer)
@@ -314,14 +320,21 @@ void Map::removeTile(unsigned int layer, unsigned int tileID)
     //Replace the tile with a static, transparent one
     TileBase *oldTile = tileStorage[layer][tileID].get();
 
+    //Store old info
     auto pos = oldTile->getPosition();
     auto quad = oldTile->getQuad();
     auto rect = oldTile->getTextureRect();
     auto text = oldTile->getTexture();
 
+    //If it's an animated tile, remove it from the AnimatedTile draw queue
+    if(oldTile->isAnimated())
+        animatedTiles[layer].erase(std::find(animatedTiles[layer].begin(), animatedTiles[layer].end(), dynamic_cast<AnimatedTile*>(oldTile)));
+
+    //Replace the tile
     tileStorage[layer][tileID].reset(new StaticTile());
     TileBase *newTile = tileStorage[layer][tileID].get();
 
+    //Update the new tile
     newTile->setTextureRect(sf::IntRect(96, 0, rect.width, rect.height));
     newTile->setQuad(quad);
     newTile->setPosition(pos);

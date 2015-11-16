@@ -300,14 +300,15 @@ void Editor::updatePlacementGrid()
 {
     //Create red grid out of sf::Lines
     unsigned int halfTileSize = MapManager::getInstance()->getCurrentMap()->getTileSize()/2;
-    mapPlacementGrid = sf::VertexArray(sf::Lines, (windowSize.y/halfTileSize)+ 1 + (windowSize.x/halfTileSize) + 1);
+    const sf::Vector2i &mapSize = MapManager::getInstance()->getCurrentMap()->getMapSizePixels();
+    mapPlacementGrid = sf::VertexArray(sf::Lines, (mapSize.y/halfTileSize)+ 1 + (mapSize.x/halfTileSize) + 1);
     unsigned int cVertex = 0;
 
     //Generate vertical lines
-    for(unsigned int y = 0; y < windowSize.y/halfTileSize; y+=2)
+    for(unsigned int y = 0; y < mapSize.y/halfTileSize; y+=2)
     {
         mapPlacementGrid[cVertex].position = sf::Vector2f(0, y*halfTileSize);
-        mapPlacementGrid[cVertex+1].position = sf::Vector2f(windowSize.x, y*halfTileSize);
+        mapPlacementGrid[cVertex+1].position = sf::Vector2f(mapSize.x, y*halfTileSize);
 
         mapPlacementGrid[cVertex].color = sf::Color::Red;
         mapPlacementGrid[cVertex+1].color = sf::Color::Red;
@@ -315,10 +316,10 @@ void Editor::updatePlacementGrid()
     }
 
     //Generate horizontal lines
-    for(unsigned int x = 0; x < windowSize.x/halfTileSize; x+=2)
+    for(unsigned int x = 0; x < mapSize.x/halfTileSize; x+=2)
     {
         mapPlacementGrid[cVertex].position = sf::Vector2f(x*halfTileSize, 0);
-        mapPlacementGrid[cVertex+1].position = sf::Vector2f(x*halfTileSize, windowSize.y);
+        mapPlacementGrid[cVertex+1].position = sf::Vector2f(x*halfTileSize, mapSize.y);
 
         mapPlacementGrid[cVertex].color = sf::Color::Red;
         mapPlacementGrid[cVertex+1].color = sf::Color::Red;
