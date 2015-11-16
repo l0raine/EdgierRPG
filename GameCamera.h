@@ -2,8 +2,8 @@
 #define GAMECAMERA_H
 
 #include<SFML/Graphics.hpp>
-#include "EntityBase.h"
 
+class EntityBase;
 
 class GameCamera
 {

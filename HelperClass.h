@@ -2,7 +2,9 @@
 #define HELPERCLASS_H
 
 #include "MapManager.h"
+#include <SFML/Graphics.hpp>
 
+class Map;
 class HelperClass
 {
     public:

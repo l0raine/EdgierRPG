@@ -1,5 +1,7 @@
 #include "GameCamera.h"
 #include "EntityManager.h"
+#include "Globals.h"
+#include "EntityBase.h"
 
 std::shared_ptr<GameCamera> GameCamera::instance;
 

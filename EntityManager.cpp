@@ -1,5 +1,10 @@
 #include "EntityManager.h"
-#include <iostream>
+
+#include "MessageBase.h"
+#include "EntityBase.h"
+#include "Events/KeyEvent.h"
+#include "InputHandler.h"
+#include "EventTypes.h"
 
 std::shared_ptr<EntityManager> EntityManager::instance;
 

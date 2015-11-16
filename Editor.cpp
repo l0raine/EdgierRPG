@@ -1,5 +1,13 @@
 #include "Editor.h"
 
+#include "GUI/GUIManager.h"
+#include "MessageBase.h"
+#include "MessageHandler.h"
+#include "EventTypes.h"
+#include "MapManager.h"
+#include "EditorTilesheetView.h"
+#include "Map.h"
+
 Editor::Editor()
 {
     //Setup UI
@@ -135,9 +143,10 @@ Editor::Editor()
 
 
     //Now add the tile selection window
-    auto tileSelectionContainer = frd::Maker::make(frd::Container());
-
-    mainMenu->addWidget(tileSelectionContainer);
+    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
+    tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
+    tileSelect->setPosition({10, 60});
+    mainMenu->addWidget(tileSelect);
 
 }
 
@@ -180,6 +189,7 @@ void Editor::update()
                     close();
             }
             GUIManager::getInstance()->getEditorFRDGUIHandle()->handleEvent(event);
+            tileSelect->handleEvent(event);
         }
 
         GUIManager::getInstance()->getEditorFRDGUIHandle()->update();
@@ -304,18 +314,17 @@ void Editor::updatePlacementGrid()
     mapPlacementGrid = sf::VertexArray(sf::Lines, (mapSize.y/halfTileSize)+ 1 + (mapSize.x/halfTileSize) + 1);
     unsigned int cVertex = 0;
 
-    //Generate vertical lines
+    //Generate horizontal lines
     for(unsigned int y = 0; y < mapSize.y/halfTileSize; y+=2)
     {
         mapPlacementGrid[cVertex].position = sf::Vector2f(0, y*halfTileSize);
         mapPlacementGrid[cVertex+1].position = sf::Vector2f(mapSize.x, y*halfTileSize);
-
         mapPlacementGrid[cVertex].color = sf::Color::Red;
         mapPlacementGrid[cVertex+1].color = sf::Color::Red;
         cVertex+=2;
     }
 
-    //Generate horizontal lines
+    //Generate vertical lines
     for(unsigned int x = 0; x < mapSize.x/halfTileSize; x+=2)
     {
         mapPlacementGrid[cVertex].position = sf::Vector2f(x*halfTileSize, 0);

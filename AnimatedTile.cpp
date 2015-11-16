@@ -1,5 +1,10 @@
 #include "AnimatedTile.h"
 
+#include "AnimatedTile.h"
+#include "StaticTile.h"
+#include "ResourceManager.h"
+#include "Globals.h"
+
 AnimatedTile::AnimatedTile()
 {
     //Setup sprite vertex array

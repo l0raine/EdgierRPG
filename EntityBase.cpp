@@ -1,5 +1,10 @@
 #include "EntityBase.h"
 
+#include "HelperClass.h"
+#include "MapManager.h"
+#include "MessageHandler.h"
+#include "EventTypes.h"
+
 EntityBase::EntityBase()
 {
     direction = 1;

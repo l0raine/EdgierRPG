@@ -20,6 +20,8 @@
 #include "Editor.h"
 #include "GameCamera.h"
 #include "Player.h"
+#include "EntityBase.h"
+#include "TileBase.h"
 
 using namespace std;
 
@@ -82,7 +84,9 @@ int main()
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
 
+
     //Poll events
+    sf::View defaultView = window.getView();
     while(window.isOpen())
     {
         sf::Event event;
