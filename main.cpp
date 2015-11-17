@@ -29,6 +29,14 @@ int main()
 {
     //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
     //theme.save("myTheme.txt");
+/*
+    Map test;
+    test.setMapSize({500, 500});
+    test.setMapName("MyMap");
+    test.setAggressiveMusicList({"music1.wav", "music2.wav"});
+    test.setAmbientMusicList({"musicPassive1.wav", "musicPassive2.wav"});
+    test.save("OUT.txt");
+*/
 
     Editor editor;
 
@@ -83,7 +91,6 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
-
 
     //Poll events
     while(window.isOpen())

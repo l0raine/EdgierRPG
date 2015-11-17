@@ -1,6 +1,9 @@
 #include "InputHandler.h"
 #include "MessageHandler.h"
 #include "EventTypes.h"
+#include "Globals.h"
+#include "GameCamera.h"
+
 #include <iostream>
 
 std::shared_ptr<InputHandler> InputHandler::instance;
@@ -36,8 +39,22 @@ bool InputHandler::isKeyPressed(sf::Keyboard::Key key)
     return false;
 }
 
-void InputHandler::handleEvent(const sf::Event event)
+void InputHandler::handleEvent(sf::Event event)
 {
+    //If its a mouse related event then offset the event positions by the view offset
+    if(event.type == sf::Event::MouseMoved)
+    {
+        const sf::View &cView = GameCamera::getInstance()->getCameraView();
+        event.mouseMove.x += cView.getCenter().x-(windowSize.x/2);
+        event.mouseMove.y += cView.getCenter().y-(windowSize.y/2);
+    }
+    else if(event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased)
+    {
+        const sf::View &cView = GameCamera::getInstance()->getCameraView();
+        event.mouseButton.x += cView.getCenter().x-(windowSize.x/2);
+        event.mouseButton.y += cView.getCenter().y-(windowSize.y/2);
+    }
+
     //Process key events such as pressing and releasing
     if(event.type == sf::Event::KeyPressed)
     {

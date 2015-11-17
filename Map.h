@@ -25,6 +25,12 @@ class Map
 		bool save(const std::string &filepath);
 		void draw(sf::RenderTarget &target, const sf::RenderStates &states);
 
+		//Map creation functions. Note, calling these functions *could* destroy the loaded map
+		void setMapSize(const sf::Vector2i &newSize);
+		void setAmbientMusicList(const std::vector<std::string> &songList);
+		void setAggressiveMusicList(const std::vector<std::string> &songList);
+		void setMapName(const std::string &newName);
+
 		//Minimal map interface
 		void update(); //Updates animated tiles
 		void updateStaticMap(); //Re-renders the static tiles
@@ -35,9 +41,10 @@ class Map
 		unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
 		unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
 		void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
-	
+		const std::string &getMapName();
+
 	protected:
-	
+
 	private:
 		//Map data
 		std::string filepath;

@@ -5,9 +5,10 @@
 
 namespace frd
 {
-	EditorTilesheetView::EditorTilesheetView()
+	EditorTilesheetView::EditorTilesheetView(std::function<void(sf::IntRect)> tileSelectFunc)
 	{
 		//ctor
+		tileSelectFunction = tileSelectFunc;
 	}
 
 	EditorTilesheetView::~EditorTilesheetView()
@@ -66,9 +67,26 @@ namespace frd
 	{
 		if(event.type == sf::Event::MouseButtonPressed && spritesheet.getTexture() != nullptr)
 		{
+		    //Get mouse position in relation to tile selection grid
+		    sf::Vector2i mousePosOffset = sf::Vector2i(event.mouseButton.x-getPosition().x, event.mouseButton.y-getPosition().y);
 
+		    //Check if mouse is over tile
+            if(mousePosOffset.x > 0 && mousePosOffset.y > 0 && mousePosOffset.x < spritesheet.getTexture()->getSize().x && mousePosOffset.y < spritesheet.getTexture()->getSize().y)
+            {
+                //Get the tile they clicked
+                unsigned int tileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
+                unsigned int tileX = mousePosOffset.x/tileSize;
+                unsigned int tileY = mousePosOffset.y/tileSize;
+                std::cout << "\nTile: " << tileX << ", " << tileY;
+                tileSelectFunction(sf::IntRect(tileX*tileSize, tileY*tileSize, tileSize, tileSize));
+            }
 		}
 
 		return false;
 	}
+
+    const sf::Vector2u EditorTilesheetView::getSize()
+    {
+        return spritesheet.getTexture()->getSize();
+    }
 }

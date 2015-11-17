@@ -161,6 +161,32 @@ bool Map::load(const std::string& filepath)
 	return true;
 }
 
+void Map::updateStaticMap()
+{
+	//Clear the VertexArrays and create them anew
+	for(unsigned int i = 0; i < mapLayerCount; i++)
+	{
+	    std::cout << "\nTile storage size: " << tileStorage[i].size();
+		staticTileMap[i].clear();
+		staticTileMap[i] = sf::VertexArray(sf::Quads);
+		staticTileMap[i].resize(mapSize.x*mapSize.y*4);
+	}
+
+	//Iterate through each static layer
+	for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+	{
+	    unsigned int cQuad = 0;
+		for(unsigned int tileIndex = 0; tileIndex < tileStorage[cLayer].size(); tileIndex++) //Draw each tile to the vertex array
+		{
+			//Set the quad of each tile
+			sf::Vertex* quad = &staticTileMap[cLayer][cQuad];//Quad is (x + y + tileIndex) * 4
+			tileStorage[cLayer][tileIndex]->setQuad(quad);
+			cQuad+=4;
+		}
+	}
+}
+
+
 bool Map::save(const std::string& filepath)
 {
 	//Change to Maps folder
@@ -188,7 +214,7 @@ bool Map::save(const std::string& filepath)
 	}
 
 	//Now danger music list
-	file << dangerMusicList.size() << " ";
+	file << "\n" << dangerMusicList.size() << " ";
 	for(unsigned int a = 0; a < dangerMusicList.size(); a++)
 	{
 		file << dangerMusicList[a] << " ";
@@ -268,28 +294,6 @@ void Map::update()
 	}
 }
 
-void Map::updateStaticMap()
-{
-	//Clear the VertexArrays and create them anew
-	for(unsigned int i = 0; i < mapLayerCount; i++)
-	{
-		staticTileMap[i].clear();
-		staticTileMap[i] = sf::VertexArray(sf::Quads);
-		staticTileMap[i].resize(mapSize.x*mapSize.y * 4);
-	}
-
-	//Iterate through each static layer
-	for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
-	{
-		for(unsigned int tileIndex = 0; tileIndex < tileStorage[cLayer].size(); tileIndex++) //Draw each tile to the vertex array
-		{
-			//Set the quad of each tile
-			sf::Vertex* quad = &staticTileMap[cLayer][((tileIndex%mapSize.x)*tileSize + std::floor(tileIndex / mapSize.x)*tileSize * mapSize.x / tileSize) * 4];//Quad is (x + y + tileIndex) * 4
-			tileStorage[cLayer][tileIndex]->setQuad(quad);
-		}
-	}
-}
-
 TileBase *Map::getTile(unsigned int layer, unsigned int tileID)
 {
 	return tileStorage[layer][tileID].get();
@@ -344,4 +348,64 @@ void Map::removeTile(unsigned int layer, unsigned int tileID)
 	newTile->setQuad(quad);
 	newTile->setPosition(pos);
 	newTile->setTexture(text);
+}
+
+void Map::setMapSize(const sf::Vector2i &newSize)
+{
+    mapSize = newSize;
+
+    //Clear layers
+	animatedTiles.clear();
+	tileStorage.clear();
+	staticTileMap.clear();
+
+	//Set to correct size
+	animatedTiles.resize(mapLayerCount);
+	tileStorage.resize(mapLayerCount);
+	staticTileMap.resize(mapLayerCount);
+
+	//Setup blank tiles on each layer
+    for(unsigned int y = 0; y < mapSize.y; y++)
+    {
+        for(unsigned int x = 0; x < mapSize.x; x++)
+        {
+            for(unsigned int layer = 0; layer < mapLayerCount; layer++)
+            {
+                //Allocate memory for the tile and set it up
+                tileStorage[layer].emplace_back(new StaticTile());
+
+                //Store pointer to new tile for setup
+                TileBase *cTile = tileStorage[layer].back().get();
+
+                //Set the position of the tile
+                cTile->setPosition(x*tileSize, y*tileSize);
+
+                //Set the rotation
+                cTile->setRotation(0);
+
+                //Set the visible texture
+                cTile->setTextureRect(sf::IntRect(96, 0, tileSize, tileSize));
+            }
+        }
+    }
+}
+
+void Map::setAmbientMusicList(const std::vector<std::string> &songList)
+{
+    ambientMusicList = songList;
+}
+
+void Map::setAggressiveMusicList(const std::vector<std::string> &songList)
+{
+    dangerMusicList = songList;
+}
+
+void Map::setMapName(const std::string &newName)
+{
+    mapName = newName;
+}
+
+const std::string &Map::getMapName()
+{
+    return mapName;
 }

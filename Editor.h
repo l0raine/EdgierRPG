@@ -9,7 +9,9 @@
 
 class MessageBase;
 
-//Editor is the map editor for the game. This class stores its own self-contained window to act as the render target for the editor. And so it's FRDGUI instance is separated from the rest of the game.
+//Editor is the map editor for the game.
+//This class stores its own self-contained window to act as the render target for the editor.
+//And so it's FRDGUI instance is separated from the rest of the game.
 class Editor
 {
     public:
@@ -23,6 +25,7 @@ class Editor
         void handleMessage(std::unique_ptr<MessageBase> &message);
         void drawMapOverlay(sf::RenderTarget &target); //Draw things like the placement grid over the main window
     protected:
+
     private:
         sf::RenderWindow window;
         frd::Theme theme;
@@ -31,9 +34,11 @@ class Editor
         //Editor core variables
         unsigned int currentlySelectedLayer;
         std::shared_ptr<frd::EditorTilesheetView> tileSelect;
+        sf::IntRect selectedTileRect;
 
         //Editor core functions
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
+        void setSelectedTile(sf::IntRect tileTexturePos); //Sets the selected placement tile
 
         //Editor map functions
         //Editor settings change

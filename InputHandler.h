@@ -19,7 +19,7 @@ class InputHandler
         bool isKeyPressed(sf::Keyboard::Key key); //Check if key is currently pressed
         bool isMousePressed(sf::Mouse::Button button); //Check if key is currently pressed
 
-        void handleEvent(const sf::Event event);
+        void handleEvent(sf::Event event);
 
     protected:
     private:

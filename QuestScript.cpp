@@ -1,4 +1,5 @@
 #include "QuestScript.hpp"
+#include "make_unique.h"
 
 namespace
 {
@@ -23,21 +24,21 @@ bool QuestScript::initialize(const std::string& file)
 		luaState["SUCCESS"] = SUCCESS;
 		luaState["IN_PROGRESS"] = IN_PROGRESS;
 		luaState["FAILURE"] = FAILURE;
-		
+
 		luaState["Start"]();
-		
+
 		// pass any saved variables to this call
 		luaState["Load"]();
-		
+
 		// run Lua code to query number of objectives
 		luaState("numObjs = #Objectives");
 		totalObjectives = luaState["numObjs"];
-		
+
 		// quest save file should contain the current objective index
 //		currentObjectiveIdx = blahBlahBlah
 
 		updateObjective();
-		
+
 		return true;
 	}
 	else
@@ -50,27 +51,27 @@ bool QuestScript::initialize(const std::string& file)
 bool QuestScript::update()
 {
 	std::size_t status = (*currentTask)();
-	
+
 	if(status != IN_PROGRESS)
 	{
 		bool success = status == SUCCESS;
-		
+
 		(*currentComplete)(success);
-		
+
 		if(success)
 		{
 			++currentObjectiveIdx;
-			
+
 			if(currentObjectiveIdx <= totalObjectives)
 			{
 				updateObjective();
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -78,7 +79,7 @@ bool QuestScript::save()
 {
 	return false;
 }
-		
+
 const std::string& QuestScript::getCurrentDescription()
 {
 	return description;
@@ -103,7 +104,7 @@ void QuestScript::updateObjective()
 	description = objective["description"].operator std::string();
 	success = objective["success"].operator std::string();
 	failure = objective["failure"].operator std::string();
-	
+
 	// initialize objective
 	objective["start"]();
 }

@@ -7,6 +7,7 @@
 #include "MapManager.h"
 #include "EditorTilesheetView.h"
 #include "Map.h"
+#include "StaticTile.h"
 
 Editor::Editor()
 {
@@ -143,7 +144,7 @@ Editor::Editor()
 
 
     //Now add the tile selection window
-    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
+    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView(std::bind(&Editor::setSelectedTile, this, std::placeholders::_1)));
     tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
     tileSelect->setPosition({10, 60});
     mainMenu->addWidget(tileSelect);
@@ -189,7 +190,6 @@ void Editor::update()
                     close();
             }
             GUIManager::getInstance()->getEditorFRDGUIHandle()->handleEvent(event);
-            tileSelect->handleEvent(event);
         }
 
         GUIManager::getInstance()->getEditorFRDGUIHandle()->update();
@@ -202,9 +202,10 @@ void Editor::update()
 
 void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
 {
+    //Process events that may be processed even if the editor is closed here
     switch(message->getMessageType())
     {
-    case MessageBase::keyEvent: //Check to see if we should open the editor
+        case MessageBase::keyEvent: //Check to see if we should open the editor
         {
             KeyEvent *event = dynamic_cast<KeyEvent*>(message.get());
             if(event->isKeyPress() && event->getKey() == sf::Keyboard::F1) //If it's the key to open the editor
@@ -213,10 +214,25 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             }
             break;
         }
-    case MessageBase::mapChangeEvent:
-            //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
-            updatePlacementGrid();
-        break;
+        case MessageBase::mapChangeEvent:
+                //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
+                updatePlacementGrid();
+            break;
+    }
+
+    if(!window.isOpen()) //Don't process events if editor is closed
+        return;
+
+    //Process events which should only be processed if the editor is open
+    switch(message->getMessageType())
+    {
+    case MessageBase::mouseEvent:
+        {
+            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+            unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
+            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
+            tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+        }
     default:
         break;
     }
@@ -238,7 +254,7 @@ void Editor::clearLayer()
     //Get the number of tiles on the selected layer
     unsigned int tileCount = tempMap->getTileCount(currentlySelectedLayer);
 
-    //Iterate through each tile on this layer and set its textureRect to a transparent one
+    //Iterate through each tile on this layer and remove it
     for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
     {
         TileBase *tile = tempMap->getTile(currentlySelectedLayer, tileID); //Get a pointer to the current tile
@@ -248,7 +264,17 @@ void Editor::clearLayer()
 
 void Editor::fillLayer()
 {
+    Map *tempMap = MapManager::getInstance()->getCurrentMap();
 
+    //Get the number of tiles on the selected layer
+    unsigned int tileCount = tempMap->getTileCount(currentlySelectedLayer);
+
+    //Iterate through each tile on this layer and set its textureRect to the selected one
+    for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
+    {
+        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileID); //Get said tile
+        tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+    }
 }
 
 void Editor::createAnimatedTile()
@@ -341,5 +367,9 @@ void Editor::selectLayer(unsigned int newLayerID)
     currentlySelectedLayer = newLayerID;
 }
 
+void Editor::setSelectedTile(sf::IntRect tileTexturePos)
+{
+    selectedTileRect = tileTexturePos;
+}
 
 
