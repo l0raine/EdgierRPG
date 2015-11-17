@@ -5,6 +5,11 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
+#include "MessageHandler.h"
+#include "EventTypes.h"
+#include "Globals.h"
+#include "GameCamera.h"
+
 
 class InputHandler
 {

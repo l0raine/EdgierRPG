@@ -50,6 +50,8 @@ class Editor
         void createAnimatedTile();
         void rotateSelectionClockwise();
         void toggleSpecialTilesVisible();
+
+        //Toggles red placeable grids
         void togglePlacementGrid();
         void createSpecialTile();
         void paintTile();

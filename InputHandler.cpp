@@ -1,8 +1,4 @@
 #include "InputHandler.h"
-#include "MessageHandler.h"
-#include "EventTypes.h"
-#include "Globals.h"
-#include "GameCamera.h"
 
 #include <iostream>
 
@@ -94,7 +90,6 @@ void InputHandler::handleEvent(sf::Event event)
             MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
         }
     }
-    //Add possible middle mouse support
 }
 
 bool InputHandler::isMousePressed(sf::Mouse::Button button)

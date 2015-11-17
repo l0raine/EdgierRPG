@@ -10,6 +10,7 @@ class MessageBase
         {
             keyEvent,
             mouseEvent,
+            mouseMoveEvent,
             entityMoveEvent,
             mapChangeEvent
         };

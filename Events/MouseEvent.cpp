@@ -8,6 +8,13 @@ MouseEvent::MouseEvent(sf::Mouse::Button buttonType, bool isKeyPress, const sf::
     mousePosition = mousePos;
 }
 
+MouseEvent::MouseEvent(bool isPressed, const sf::Vector2i &mousePos)
+ : MessageBase (Types::mouseMoveEvent)
+{
+    mousePosition = mousePos;
+    isPress = isPressed;
+}
+
 MouseEvent::~MouseEvent()
 {
     //dtor
@@ -16,6 +23,11 @@ MouseEvent::~MouseEvent()
 std::unique_ptr<MouseEvent> MouseEvent::make(sf::Mouse::Button button, bool isPress, const sf::Vector2i &mousePos)
 {
     return std::unique_ptr<MouseEvent>(new MouseEvent(button, isPress, mousePos));
+}
+
+std::unique_ptr<MouseEvent> MouseEvent::make(bool isPressed, const sf::Vector2i &mousePos)
+{
+    return std::unique_ptr<MouseEvent>(new MouseEvent(isPressed, mousePos));
 }
 
 const sf::Vector2i& MouseEvent::getMousePosition()

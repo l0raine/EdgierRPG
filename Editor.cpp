@@ -140,15 +140,11 @@ Editor::Editor()
     }
     mainMenu->addWidget(layerSelectContainer);
 
-
-
-
     //Now add the tile selection window
     tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView(std::bind(&Editor::setSelectedTile, this, std::placeholders::_1)));
     tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
     tileSelect->setPosition({10, 60});
     mainMenu->addWidget(tileSelect);
-
 }
 
 Editor::~Editor()
@@ -232,6 +228,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
             TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
             tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+        }
+    case MessageBase::mouseMoveEvent:
+        {
+
         }
     default:
         break;
