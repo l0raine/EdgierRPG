@@ -5,7 +5,7 @@
 #include <mutex>
 #include <memory>
 
-#include "MessageBase.h"
+class MessageBase;
 
 class MessageHandler
 {

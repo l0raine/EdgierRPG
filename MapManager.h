@@ -5,8 +5,7 @@
 #include <memory>
 #include <SFML/Graphics.hpp>
 
-#include "Map.h"
-
+class Map;
 
 class MapManager
 {
@@ -16,6 +15,7 @@ class MapManager
         static std::shared_ptr<MapManager> getInstance();
 
         Map* getCurrentMap();
+        void setCurrentMap(Map* cMap);
         Map* loadMap(const std::string &filepath);
         bool isMapLoaded(std::unique_ptr<Map> mapToCheck);
 

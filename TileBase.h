@@ -1,6 +1,7 @@
 #ifndef TILEBASE_H
 #define TILEBASE_H
 
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 class TileBase
@@ -11,20 +12,21 @@ class TileBase
         virtual sf::Vertex *getQuad()=0;
         virtual void setQuad(sf::Vertex *quad)=0;
 
-        virtual void setPosition(const sf::Vector2f &newPosition);
-        virtual void setPosition(float x, float y);
+        void setPosition(const sf::Vector2f &newPosition);
+        void setPosition(float x, float y);
         virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states)=0;
-        virtual void setRotation(int newRotation);
-        virtual void setTexture(sf::Texture* newTexture);
-        virtual void setTextureRect(const sf::IntRect &newRect);
-        virtual const sf::IntRect &getTextureRect();
-        virtual const sf::FloatRect &getGlobalBounds();
+        void setRotation(int newRotation);
+        void setTexture(sf::Texture* newTexture);
+        void setTextureRect(const sf::IntRect &newRect);
+        const sf::IntRect &getTextureRect();
+        const sf::FloatRect getGlobalBounds();
+        const sf::Vector2f &getPosition();
+        sf::Texture *getTexture();
         bool isAnimated();
         int getRotation();
     protected:
         sf::Vector2f position;
         int rotation;
-        sf::FloatRect tileRect;
         sf::IntRect textureRect;
         sf::Texture *texture;
         bool isTileAnimated;

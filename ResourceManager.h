@@ -1,16 +1,18 @@
 #ifndef RESOURCEMANAGER_H
 #define RESOURCEMANAGER_H
+
 #include<vector>
 #include<unordered_map>
 #include<memory>
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <algorithm>
-#include<SFML/Audio.hpp>
+#include <SFML/Audio.hpp>
+#include <fstream>
 #include <SFML/Graphics.hpp>
-#include "Globals.h"
-#include "SoundHandler.h"
 
+#include "SoundHandler.h"
+class SoundHandler;
 
 class ResourceManager
 {

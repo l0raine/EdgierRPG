@@ -7,10 +7,9 @@
 #include <SFML/Window/Mouse.hpp>
 #include <memory>
 
-#include "MessageBase.h"
-#include "EntityBase.h"
-#include "Events/KeyEvent.h"
-#include "InputHandler.h"
+class EntityBase;
+class EntityManager;
+class MessageBase;
 
 class EntityManager
 {
@@ -38,6 +37,9 @@ class EntityManager
 
         std::vector<std::unique_ptr<EntityBase>> entities; //List of loaded entities
         unsigned int selectedEntityID;
+        unsigned int entityCounter;
+
+        sf::View cameraView;
 
 
 };

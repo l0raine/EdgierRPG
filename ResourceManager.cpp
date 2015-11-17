@@ -1,5 +1,6 @@
 #include "ResourceManager.h"
-#include <fstream>
+
+#include "Globals.h"
 
 //Define static instance variable once
 std::shared_ptr<ResourceManager> ResourceManager::instance;
@@ -52,16 +53,19 @@ sf::Texture* ResourceManager::loadTexture(const std::string filepath) noexcept
 
 sf::Texture* ResourceManager::getLoadedTexture(const std::string &texture_in)
 {
-    if(isTextureLoaded(texture_in))
+    std::string fullPath = texturePath + texture_in;
+    if(isTextureLoaded(fullPath))
     {
-        return loadedTextures.find(texture_in)->second;
+        return loadedTextures.find(fullPath)->second;
     }
+    std::cout << "\n<ResourceManager>: Get loaded texture failed for path: " + fullPath;
     return nullptr;
 }
 
 bool ResourceManager::isTextureLoaded(const std::string &texture_in)
 {
-    if(!isTextureStorageEmpty() || loadedTextures.find(texture_in) == loadedTextures.end())
+    std::string fullPath = texturePath + texture_in;
+    if(!isTextureStorageEmpty() || loadedTextures.find(fullPath) == loadedTextures.end())
     {
         return false;
     }

@@ -1,8 +1,10 @@
 #ifndef HELPERCLASS_H
 #define HELPERCLASS_H
 
-#include "Map.h"
+#include "MapManager.h"
+#include <SFML/Graphics.hpp>
 
+class Map;
 class HelperClass
 {
     public:
@@ -12,6 +14,7 @@ class HelperClass
         virtual ~HelperClass();
 
         static unsigned int getTileIDFromPosition(const sf::Vector2f &position, Map &theMap);
+        static unsigned int getTileIDFromPosition(const sf::Vector2f& position);
         static sf::Vector2f getPositionFromTileID(unsigned int tileID, Map &theMap);
     protected:
     private:

@@ -15,6 +15,12 @@ namespace math
 	{
 		return std::sqrt(vec.x * vec.x + vec.y * vec.y);
 	}
+	
+	template<typename T>
+	T magnitudeSquared(const sf::Vector2<T>& vec)
+	{
+		return vec.x * vec.x + vec.y * vec.y;
+	}
 
 	template<typename T>
 	sf::Vector2<T> unit(const sf::Vector2<T>& vec)

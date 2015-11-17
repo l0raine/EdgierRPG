@@ -4,6 +4,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include "../MessageBase.h"
+#include "../HelperClass.h"
 
 
 class MouseEvent : public MessageBase
@@ -19,7 +20,7 @@ class MouseEvent : public MessageBase
         const sf::Vector2i& getMousePosition();
         bool isPressed();
         sf::Mouse::Button getType();
-
+        unsigned int getClickedTileID();
 
     protected:
     private:

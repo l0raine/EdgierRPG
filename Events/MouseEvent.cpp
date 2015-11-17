@@ -32,3 +32,8 @@ sf::Mouse::Button MouseEvent::getType()
 {
     return buttonType;
 }
+
+unsigned int MouseEvent::getClickedTileID()
+{
+    return HelperClass::getTileIDFromPosition(sf::Vector2f(mousePosition.x, mousePosition.y));
+}

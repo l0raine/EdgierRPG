@@ -1,9 +1,15 @@
 #include "EntityBase.h"
 
+#include "HelperClass.h"
+#include "MapManager.h"
+#include "MessageHandler.h"
+#include "EventTypes.h"
+
 EntityBase::EntityBase()
 {
     direction = 1;
-    baseMovementSpeed = 0.1;
+    baseMovementSpeed = 0.2;
+    position = sf::Vector2f(0,0);
     //ctor
 }
 
