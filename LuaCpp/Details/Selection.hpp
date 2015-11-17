@@ -79,7 +79,7 @@ namespace lna
 			Functions& functions;
 	};
 	
-	Selection::Selection(const Selection& other)
+	inline Selection::Selection(const Selection& other)
 	:	state(other.state),
 		name(other.name),
 		index(other.index),
