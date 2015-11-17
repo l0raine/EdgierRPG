@@ -21,6 +21,8 @@ namespace lna
 		friend class State;
 		
 		public:
+			Selection(const Selection& other);
+			
 			~Selection() = default;
 			
 			// assigning C++ objects
@@ -62,7 +64,9 @@ namespace lna
 			
 			// operator chaining
 			Selection operator [](const std::string& n);
+			Selection operator [](const char* n);
 			Selection operator [](int i);
+			Selection operator [](std::size_t i);
 
 		private:
 			// if this Selection is part of a table, idx will not be 0, and will be the index in the stack of the table this Selection is part of
@@ -74,6 +78,13 @@ namespace lna
 			
 			Functions& functions;
 	};
+	
+	Selection::Selection(const Selection& other)
+	:	state(other.state),
+		name(other.name),
+		index(other.index),
+		functions(other.functions)
+	{}
 	
 	// assigning C++ objects
 	template<typename T, typename... Args, typename... Funcs>
@@ -241,6 +252,11 @@ namespace lna
 		
 		return Selection(state, newName, functions, -1);
 	}
+
+	inline Selection Selection::operator [](const char* n)
+	{
+		return (*this)[std::string(n)];
+	}
 	
 	inline Selection Selection::operator [](int i)
 	{
@@ -254,6 +270,21 @@ namespace lna
 		
 		lua_rawgeti(state, -1, i);
 		
+		return Selection(state, newName, functions, -1);
+	}
+
+	inline Selection Selection::operator [](std::size_t i)
+	{
+		if(index == 0)
+			lua_getglobal(state, name.c_str());
+
+		std::string newName = name + '[' + std::to_string(i) + ']';
+
+		if(!lua_istable(state, -1))
+			luaL_error(state, "Value on top of stack is not a table");
+
+		lua_rawgeti(state, -1, i);
+
 		return Selection(state, newName, functions, -1);
 	}
 	

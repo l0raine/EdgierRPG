@@ -51,6 +51,12 @@ namespace lna
 			return 1;
 		}
 
+		inline int pushValue(lua_State* state, std::size_t i)
+		{
+			lua_pushinteger(state, i);
+			return 1;
+		}
+
 		inline int pushValue(lua_State* state, lua_Number n)
 		{
 			lua_pushnumber(state, n);
@@ -184,12 +190,17 @@ namespace lna
 		// primitives
 		inline bool checkGet(id<bool>, lua_State* state, int idx = -1)
 		{
-			return lua_toboolean(state, idx);
+			return lua_toboolean(state, idx) != 0;
 		}
 
 		inline int checkGet(id<int>, lua_State* state, int idx = -1)
 		{
-			return lua_tointeger(state, idx);
+			return static_cast<int>(lua_tointeger(state, idx));
+		}
+
+		inline std::size_t checkGet(id<std::size_t>, lua_State* state, int idx = -1)
+		{
+			return static_cast<std::size_t>(lua_tointeger(state, idx));
 		}
 
 		inline lua_Number checkGet(id<lua_Number>, lua_State* state, int idx = -1)

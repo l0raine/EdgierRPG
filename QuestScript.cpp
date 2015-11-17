@@ -19,6 +19,7 @@ bool QuestScript::initialize(const std::string& file)
 {
 	if(openFile(file))
 	{
+		// make status values visible to Lua
 		luaState["SUCCESS"] = SUCCESS;
 		luaState["IN_PROGRESS"] = IN_PROGRESS;
 		luaState["FAILURE"] = FAILURE;
@@ -48,13 +49,13 @@ bool QuestScript::initialize(const std::string& file)
 // may have to play with the objective failure logic to get it to exactly what we want
 bool QuestScript::update()
 {
-	std::size_t status = currentTask();
+	std::size_t status = (*currentTask)();
 	
 	if(status != IN_PROGRESS)
 	{
 		bool success = status == SUCCESS;
 		
-		currentComplete(success);
+		(*currentComplete)(success);
 		
 		if(success)
 		{
@@ -97,11 +98,11 @@ void QuestScript::updateObjective()
 {
 	// cache functions and strings so we don't have to index to them every update
 	auto objective = luaState["Objectives"][currentObjectiveIdx];
-	currentTask = objective["task"];
-	currentComplete = objective["complete"];
-	description = objective["description"];
-	success = objective["success"];
-	failure = objective["failure"];
+	currentTask = std::make_unique<lna::Selection>(objective["task"]);
+	currentComplete = std::make_unique<lna::Selection>(objective["complete"]);
+	description = objective["description"].operator std::string();
+	success = objective["success"].operator std::string();
+	failure = objective["failure"].operator std::string();
 	
 	// initialize objective
 	objective["start"]();

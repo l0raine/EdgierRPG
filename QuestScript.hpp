@@ -1,6 +1,8 @@
 #ifndef QUEST_SCRIPT_HPP
 #define QUEST_SCRIPT_HPP
 
+#include <memory>
+
 #include "Script.hpp"
 
 /*
@@ -124,8 +126,8 @@ class QuestScript : public Script
 		std::size_t currentObjectiveIdx;
 		std::size_t totalObjectives;
 		
-		lna::Selection currentTask;
-		lna::Selection currentComplete;
+		std::unique_ptr<lna::Selection> currentTask;
+		std::unique_ptr<lna::Selection> currentComplete;
 		
 		std::string description;
 		std::string success;
