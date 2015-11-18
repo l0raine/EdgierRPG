@@ -62,7 +62,7 @@ int main()
     button->bindFunction(EventTypes::LeftClick_Up, std::bind([&]()
     {
         sf::Clock clock;
-        button->setColor(sf::Color(rand() % 255 + 0, rand() % 255 + 0, rand() % 255 + 0));
+        button->setColor(sf::Color::Yellow);
 
         //Change tiles on layer 0 to another type
         unsigned int tileCount = MapManager::getInstance()->getCurrentMap()->getTileCount(0); //Get the number of tiles on this layer
@@ -88,7 +88,7 @@ int main()
     GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 
     //Define the main render window
-    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha", sf::Style::Titlebar);
+    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha", sf::Style::Close);
     window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2,
                                     sf::VideoMode::getDesktopMode().height/4));
 
@@ -129,12 +129,6 @@ int main()
                 {
                     MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
                     std::cout<<"Mouse is being dragged over: "<<mouseMessage->getMousePosition().x<<", "<<mouseMessage->getMousePosition().y<<std::endl;
-                    break;
-                }
-                case MessageBase::Types::mouseEvent:
-                {
-                    MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
-                    std::cout<<"Clicked point: "<<mouseMessage->getMousePosition().x<<", "<<mouseMessage->getMousePosition().y<<std::endl;
                     break;
                 }
                 default:
