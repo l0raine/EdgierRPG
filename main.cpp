@@ -89,8 +89,15 @@ int main()
 
     //Define the main render window
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "EdgierRPG - Extremely Early Alpha", sf::Style::Titlebar);
+    window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2,
+                                    sf::VideoMode::getDesktopMode().height/4));
+
+
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
+
+    //Default view
+    sf::View defaultView(sf::Vector2f(windowSize.x/2, windowSize.y/2), sf::Vector2f(windowSize.x, windowSize.y));
 
     //Poll events
     while(window.isOpen())
@@ -157,6 +164,9 @@ int main()
 
         //Draw map overlay grid for the editor
         editor.drawMapOverlay(window);
+
+        //Set default view
+        window.setView(defaultView);
 
         //Draw gui elements
         window.draw(gui);

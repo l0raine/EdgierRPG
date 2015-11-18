@@ -157,10 +157,11 @@ void Editor::open()
     //Create an editor window if it's not already open
     if(!window.isOpen())
     {
-        window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::Close);
+        window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::None);
         window.setFramerateLimit(60);
         window.setKeyRepeatEnabled(false);
-        window.setPosition({50, 50});
+        window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2 - windowSize.x - 10,
+                                    sf::VideoMode::getDesktopMode().height/4));
     }
 }
 
