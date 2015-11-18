@@ -38,7 +38,7 @@ int main()
     test.save("OUT.txt");
 */
 
-    Editor editor;
+    Editor &editor = *Editor::getInstance().get();
 
     sf::Clock loadTime;
     Map *aMap = MapManager::getInstance()->loadMap("test_level.txt");
@@ -54,9 +54,9 @@ int main()
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
-    //Create a test entity to roam the map with
     std::unique_ptr<EntityBase> gamePlayer(new Player());
     EntityManager::getInstance()->registerEntity(gamePlayer);
+    editor.load();
 
     GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 
@@ -102,7 +102,6 @@ int main()
                 case MessageBase::Types::mouseDragEvent:
                 {
                     MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
-                    std::cout<<"Mouse is being dragged over: "<<mouseMessage->getMousePosition().x<<", "<<mouseMessage->getMousePosition().y<<std::endl;
                     break;
                 }
                 default:

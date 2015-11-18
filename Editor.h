@@ -15,31 +15,36 @@ class MessageBase;
 class Editor
 {
     public:
-        /** Default constructor */
-        Editor();
         /** Default destructor */
         virtual ~Editor();
         void open();
+        void load();
         void close();
         void update();
+        static std::shared_ptr<Editor> getInstance();
         void handleMessage(std::unique_ptr<MessageBase> &message);
         void drawMapOverlay(sf::RenderTarget &target); //Draw things like the placement grid over the main window
+        void setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos); //Sets the selected placement tiles
     protected:
 
     private:
+        /** Default constructor */
+        Editor();
+
         sf::RenderWindow window;
         frd::Theme theme;
         sf::VertexArray mapPlacementGrid;
+        static std::shared_ptr<Editor> instance;
 
         //Editor core variables
         unsigned int currentlySelectedLayer;
         std::shared_ptr<frd::EditorTilesheetView> tileSelect;
-        sf::IntRect selectedTileRect;
+        std::vector<sf::Vector2u> selectedTilePositions;
         bool gridEnabled;
 
         //Editor core functions
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
-        void setSelectedTile(sf::IntRect tileTexturePos); //Sets the selected placement tile
+        void placeSelected(unsigned int layer, unsigned int tileOffset); //Places the selected sprite selection on the map at given position
 
         //Editor map functions
         //Editor settings change

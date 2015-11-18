@@ -9,7 +9,28 @@
 #include "Map.h"
 #include "StaticTile.h"
 
+std::shared_ptr<Editor> Editor::instance;
+
 Editor::Editor()
+{
+
+}
+
+Editor::~Editor()
+{
+    //dtor
+}
+
+std::shared_ptr<Editor> Editor::getInstance()
+{
+    if(instance == nullptr)
+    {
+        instance = std::shared_ptr<Editor>(new Editor());
+    }
+    return instance;
+}
+
+void Editor::load()
 {
     //Setup UI
     frd::FRDGUI *gui = GUIManager::getInstance()->getEditorFRDGUIHandle().get();
@@ -142,15 +163,11 @@ Editor::Editor()
     mainMenu->addWidget(layerSelectContainer);
 
     //Now add the tile selection window
-    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView(std::bind(&Editor::setSelectedTile, this, std::placeholders::_1)));
+  //  tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView(std::bind(&Editor::setSelectedTile, this, std::placeholders::_1)));
+    tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
     tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
     tileSelect->setPosition({10, 60});
     mainMenu->addWidget(tileSelect);
-}
-
-Editor::~Editor()
-{
-    //dtor
 }
 
 void Editor::open()
@@ -158,7 +175,7 @@ void Editor::open()
     //Create an editor window if it's not already open
     if(!window.isOpen())
     {
-        window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::None);
+        window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::Close);
         window.setFramerateLimit(60);
         window.setKeyRepeatEnabled(false);
         window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2 - windowSize.x - 10,
@@ -227,17 +244,13 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     {
         case MessageBase::mouseEvent:
         {
-            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-            unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
-            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
-            tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+
         }
         case MessageBase::mouseDragEvent:
         {
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
-            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
-            tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+            placeSelected(currentlySelectedLayer, clickedTile);
         }
     default:
         break;
@@ -281,8 +294,17 @@ void Editor::fillLayer()
     //Iterate through each tile on this layer and set its textureRect to the selected one
     for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
     {
-        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileID); //Get said tile
-        tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
+        placeSelected(currentlySelectedLayer, tileID);
+    }
+}
+
+void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
+{
+    unsigned int tileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
+    for(unsigned int a = 0; a < selectedTilePositions.size(); a++)
+    {
+        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset++); //Get said tile
+        tile->setTextureRect(sf::IntRect(selectedTilePositions[a].x, selectedTilePositions[a].y, tileSize, tileSize)); //Modify the tile to the selected one
     }
 }
 
@@ -378,9 +400,10 @@ void Editor::selectLayer(unsigned int newLayerID)
     currentlySelectedLayer = newLayerID;
 }
 
-void Editor::setSelectedTile(sf::IntRect tileTexturePos)
+void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 {
-    selectedTileRect = tileTexturePos;
+    std::cout << "\nSet selected called!";
+    selectedTilePositions = tileTexturePos;
 }
 
 bool Editor::isGridEnabled()
