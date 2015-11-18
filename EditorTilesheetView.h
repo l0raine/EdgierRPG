@@ -3,6 +3,8 @@
 
 #include <WidgetBase.h>
 #include <functional>
+#include <Container.h>
+#include <Maker.h>
 
 namespace frd
 {
@@ -10,23 +12,30 @@ class EditorTilesheetView : public WidgetBase
 {
     public:
         /** Default constructor */
-        EditorTilesheetView(std::function<void(sf::IntRect)> tileSelectFunc);
+        EditorTilesheetView();
         /** Default destructor */
         virtual ~EditorTilesheetView();
-        virtual void setPosition(const sf::Vector2f& newPosition);
+        void setTilesheet(sf::Texture *texture);
+        virtual void setTexture(sf::Texture* texture);
         virtual void draw(sf::RenderTarget& target, sf::RenderStates states);
-
-        void setTexture(sf::Texture *texture);
-        void processEvent(const sf::Event &event);
+        virtual void setPosition(const sf::Vector2f& newPosition);
+        virtual void update();
         virtual bool handleEvent(const sf::Event& event);
-        virtual const sf::Vector2u getSize();
+        virtual void init(const sf::Font& defaultFont, unsigned int defaultCharacterSize, const sf::Color& defaultLabelColor, sf::Vector2i winSize);
     protected:
     private:
-        void updateRedGrid();
+        std::shared_ptr<frd::Container> tileContainer;
+        std::vector<std::shared_ptr<frd::Container>> tileRows;
 
-        sf::Sprite spritesheet;
-        sf::VertexArray redSelectionGrid;
-        std::function<void(sf::IntRect)> tileSelectFunction;
+        std::vector<sf::Vector2u> selectedTiles;
+        bool isDragSelecting;
+
+        //Tile selection functions
+        void selectTile(unsigned int x, unsigned int y); //Adds a tile to the selection list
+        void sendSelection(unsigned int x, unsigned int y); //Sends selection list to editor and clears local selection list
+        sf::Vector2u clickedTile;
+
+
 };
 
 }
