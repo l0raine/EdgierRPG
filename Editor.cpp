@@ -321,8 +321,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     Map *cMap = MapManager::getInstance()->getCurrentMap();
     unsigned int tileSize = cMap->getTileSize();
 
-    if(selectedTilePositions.size() > 1) //If multiple selections
-    {
+
         const sf::Vector2u &topLeft = selectedTilePositions[0];
         const sf::Vector2u &bottomRight = selectedTilePositions.back();
         const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
@@ -350,12 +349,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
                 tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
             }
         }
-    }
-    else //Single tile selection
-    {
-        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset); //Get said tile
-        tile->setTextureRect(sf::IntRect(selectedTilePositions[0].x, selectedTilePositions[0].y, tileSize, tileSize)); //Modify the tile to the selected one
-    }
+
 
 }
 
