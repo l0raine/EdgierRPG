@@ -57,14 +57,14 @@ void InputHandler::handleEvent(sf::Event event)
         pressedKeys[event.key.code] = true;
         MessageHandler::getInstance()->dispatch(KeyEvent::make(true, event.key.code));
     }
-    if(event.type == sf::Event::KeyReleased)
+    else if(event.type == sf::Event::KeyReleased)
     {
         pressedKeys[event.key.code] = false;
         MessageHandler::getInstance()->dispatch(KeyEvent::make(false, event.key.code));
     }
 
     //Process mouse events such as Left mouse click, right mouse click
-    if(event.type == sf::Event::MouseButtonPressed)
+    else if(event.type == sf::Event::MouseButtonPressed)
     {
         //std::cout<<"Clicked pos: "<<event.mouseButton.x<<", "<<event.mouseButton.y<<" \n";
         if(event.mouseButton.button == sf::Mouse::Left)
@@ -80,49 +80,51 @@ void InputHandler::handleEvent(sf::Event event)
     }
     else if(event.type == sf::Event::MouseButtonReleased)
     {
-        //std::cout<<"Released pos: "<<event.mouseButton.x<<", "<<event.mouseButton.y<<" \n";
-         sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
-        if(windowRect.contains(event.mouseButton.x, event.mouseButton.y))
+        if(event.mouseButton.button == sf::Mouse::Left)
         {
-            if(event.mouseButton.button == sf::Mouse::Left)
-            {
-                leftMouse = false;
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
-            }
-            if(event.mouseButton.button == sf::Mouse::Right)
-            {
-                rightMouse = false;
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
-            }
+            leftMouse = false;
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
+        }
+        if(event.mouseButton.button == sf::Mouse::Right)
+        {
+            rightMouse = false;
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
         }
     }
 
     //Process mouse click  + drag
-    if(event.type == sf::Event::MouseMoved)
+    else if(event.type == sf::Event::MouseMoved)
     {
-        // get the current mouse position in the window
-        sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
+        //Get the view origin
+        auto view = GameCamera::getInstance()->getCameraView();
+        sf::Vector2i viewOrigin(view.getCenter().x - view.getSize().x/2, view.getCenter().y - view.getSize().y/2);
 
-        // convert it to world coordinates
-        sf::Vector2i worldPos = static_cast<sf::Vector2i>(gameWindow->mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+        //Revert mouse positions to local view coordinates
+        const sf::View &cView = GameCamera::getInstance()->getCameraView();
+        sf::Vector2i newMousePos(event.mouseMove.x - (cView.getCenter().x-(windowSize.x/2)), event.mouseMove.y - (cView.getCenter().y-(windowSize.y/2)));
+
+        // get the current mouse position in the window
+        sf::Vector2i mousePos(event.mouseMove.x, event.mouseMove.y);
 
         //Get an int rect of the window size
         const sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
 
-        std::cout<<"Mouse pos: "<<worldPos.x<<", "<<worldPos.y<<" \n";
-
-        if(windowRect.contains(worldPos))
+        if(windowRect.contains(newMousePos))
         {
-            std::cout<<"Is within window.\n";
             if(leftMouse) //Left click and drag
             {
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left,  worldPos));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left,  mousePos));
             }
             else if(rightMouse) //Right click and drag
             {
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, worldPos));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, mousePos));
             }
         }
+    }
+
+    if(event.type == sf::Event::LostFocus)
+    {
+        rightMouse = leftMouse = false;
     }
 }
 

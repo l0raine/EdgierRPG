@@ -51,7 +51,7 @@ namespace frd
                 //Setup said button
                 button->setTexture(texture);
                 button->getShape().setTextureRect(sf::IntRect(x, y, tileSize, tileSize));
-                button->bindFunction(EventTypes::LeftClick_Down, std::bind([&, x, y](){clickedTile = sf::Vector2u(x, y), isDragSelecting = true;}));
+                button->bindFunction(EventTypes::LeftClick_Down, std::bind([&, x, y](){clickedTile = sf::Vector2u(x, y), isDragSelecting = true; selectTile(x, y);}));
                 button->bindFunction(EventTypes::LeftClick_Up, std::bind(&EditorTilesheetView::sendSelection, this, x, y));
                 button->bindFunction(EventTypes::MouseEntry, std::bind(&EditorTilesheetView::selectTile, this, x, y));
             }

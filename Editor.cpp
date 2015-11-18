@@ -152,14 +152,30 @@ void Editor::load()
     auto layerSelectContainer = frd::Maker::make(frd::Container());
     layerSelectContainer->setAllocation(Allocation::horizontal);
     layerSelectContainer->setSize({500, 50});
+
+    std::shared_ptr<frd::Button> cLayerButton[5];
     for(unsigned int a = 0; a < mapLayerCount; a++)
     {
-        auto cLayerButton = frd::Maker::make(frd::Button());
-        theme.applyTheme(cLayerButton);
-        cLayerButton->setLabel("Layer " + std::to_string(a));
-        cLayerButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::selectLayer, this, a));
-        layerSelectContainer->addWidget(cLayerButton);
+        cLayerButton[a] = frd::Maker::make(frd::Button());
     }
+
+    for(unsigned int a = 0; a < mapLayerCount; a++)
+    {
+        theme.applyTheme(cLayerButton[a]);
+        cLayerButton[a]->setLabel("Layer " + std::to_string(a));
+        cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::selectLayer, this, a));
+        cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind([=]()
+        {
+            for(unsigned int i=0;i<mapLayerCount; i++)
+            {
+                cLayerButton[i]->setColor(sf::Color(0, 102, 0));
+            }
+            cLayerButton[currentlySelectedLayer]->setColor(sf::Color::Green);
+            cLayerButton[a]->setColor(sf::Color::Red);
+        }));
+        layerSelectContainer->addWidget(cLayerButton[a]);
+    }
+
     mainMenu->addWidget(layerSelectContainer);
 
     //Now add the tile selection window
@@ -233,6 +249,8 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
                 //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
                 if(isGridEnabled())
                     updatePlacementGrid();
+            break;
+        default:
             break;
     }
 
