@@ -66,6 +66,7 @@ void InputHandler::handleEvent(sf::Event event)
     //Process mouse events such as Left mouse click, right mouse click
     if(event.type == sf::Event::MouseButtonPressed)
     {
+
         if(event.mouseButton.button == sf::Mouse::Left)
         {
             leftMouse = true;
@@ -79,29 +80,38 @@ void InputHandler::handleEvent(sf::Event event)
     }
     else if(event.type == sf::Event::MouseButtonReleased)
     {
-        if(event.mouseButton.button == sf::Mouse::Left)
+         sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
+        if(windowRect.contains(event.mouseButton.x, event.mouseButton.y))
         {
-            leftMouse = false;
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
-        }
-        if(event.mouseButton.button == sf::Mouse::Right)
-        {
-            rightMouse = false;
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+            std::cout<<"Is within window on release. \n";
+            if(event.mouseButton.button == sf::Mouse::Left)
+            {
+                leftMouse = false;
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+            }
+            if(event.mouseButton.button == sf::Mouse::Right)
+            {
+                rightMouse = false;
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+            }
         }
     }
 
     //Process mouse click  + drag
     if(event.type == sf::Event::MouseMoved)
     {
-        //Check for left click + drag
-        if(leftMouse) //Left click and drag
+        sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
+        if(windowRect.contains(event.mouseMove.x, event.mouseMove.y))
         {
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
-        }
-        else if(rightMouse) //Right click and drag
-        {
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+            std::cout<<"Is within window. \n";
+            if(leftMouse) //Left click and drag
+            {
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+            }
+            else if(rightMouse) //Right click and drag
+            {
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+            }
         }
     }
 }
