@@ -54,33 +54,6 @@ int main()
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
-    auto menu = frd::Maker::make(frd::Menu());
-    auto button = frd::Maker::make(frd::Button());
-    button->setWidgetInfo("Don't click me", sf::Vector2f(100, 50), sf::Vector2f(100, 100), sf::Color::Blue); //A blue, 100x50 button positioned at (100, 100) with the label "Hello World!". This function is a shortcut, instead of setting each of these button properties individually
-    button->setBezelEnabled(true); //Enable button bezel. Button bezel thickness and colour can be specified with additional function calls.
-    button->bindFunction(EventTypes::LeftClick_Up, std::bind([&]()
-    {
-        sf::Clock clock;
-        button->setColor(sf::Color::Yellow);
-
-        //Change tiles on layer 0 to another type
-        unsigned int tileCount = MapManager::getInstance()->getCurrentMap()->getTileCount(0); //Get the number of tiles on this layer
-        for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
-        {
-            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(0, tileID); //Get a pointer to the current tile
-            tile->setTextureRect(sf::IntRect(0, 0, 32, 32)); //Set a new texture
-        }
-        std::cout << "\nMap transformation took: " << clock.getElapsedTime().asMilliseconds() << "ms";
-
-
-    })); //Bind an event. On left click up, set the button colour to something random.
-
-    //Add the button to the menu, and the menu to the GUI
-    menu->addWidget(button);
-    gui.addMenu(menu);
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
-
     //Create a test entity to roam the map with
     std::unique_ptr<EntityBase> gamePlayer(new Player());
     EntityManager::getInstance()->registerEntity(gamePlayer);
@@ -95,6 +68,7 @@ int main()
 
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
+    gameWindow = &window;
 
     //Default view
     sf::View defaultView(sf::Vector2f(windowSize.x/2, windowSize.y/2), sf::Vector2f(windowSize.x, windowSize.y));

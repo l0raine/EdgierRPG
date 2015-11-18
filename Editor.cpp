@@ -232,7 +232,7 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
             tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
         }
-        case MessageBase::Types::mouseDragEvent:
+        case MessageBase::mouseDragEvent:
         {
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked

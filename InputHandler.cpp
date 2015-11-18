@@ -66,33 +66,33 @@ void InputHandler::handleEvent(sf::Event event)
     //Process mouse events such as Left mouse click, right mouse click
     if(event.type == sf::Event::MouseButtonPressed)
     {
-
+        //std::cout<<"Clicked pos: "<<event.mouseButton.x<<", "<<event.mouseButton.y<<" \n";
         if(event.mouseButton.button == sf::Mouse::Left)
         {
             leftMouse = true;
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, true, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, true, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
         }
         if(event.mouseButton.button == sf::Mouse::Right)
         {
             rightMouse = true;
-            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, true, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, true, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
         }
     }
     else if(event.type == sf::Event::MouseButtonReleased)
     {
+        //std::cout<<"Released pos: "<<event.mouseButton.x<<", "<<event.mouseButton.y<<" \n";
          sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
         if(windowRect.contains(event.mouseButton.x, event.mouseButton.y))
         {
-            std::cout<<"Is within window on release. \n";
             if(event.mouseButton.button == sf::Mouse::Left)
             {
                 leftMouse = false;
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
             }
             if(event.mouseButton.button == sf::Mouse::Right)
             {
                 rightMouse = false;
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, gameWindow->mapCoordsToPixel(sf::Vector2f(event.mouseButton.x, event.mouseButton.y))));
             }
         }
     }
@@ -100,17 +100,27 @@ void InputHandler::handleEvent(sf::Event event)
     //Process mouse click  + drag
     if(event.type == sf::Event::MouseMoved)
     {
-        sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
-        if(windowRect.contains(event.mouseMove.x, event.mouseMove.y))
+        // get the current mouse position in the window
+        sf::Vector2f mousePos(event.mouseMove.x, event.mouseMove.y);
+
+        // convert it to world coordinates
+        sf::Vector2i worldPos = static_cast<sf::Vector2i>(gameWindow->mapPixelToCoords(sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+
+        //Get an int rect of the window size
+        const sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
+
+        std::cout<<"Mouse pos: "<<worldPos.x<<", "<<worldPos.y<<" \n";
+
+        if(windowRect.contains(worldPos))
         {
-            std::cout<<"Is within window. \n";
+            std::cout<<"Is within window.\n";
             if(leftMouse) //Left click and drag
             {
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left,  worldPos));
             }
             else if(rightMouse) //Right click and drag
             {
-                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, sf::Vector2i(event.mouseMove.x, event.mouseMove.y)));
+                MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, worldPos));
             }
         }
     }
