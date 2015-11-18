@@ -29,14 +29,14 @@ int main()
 {
     //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
     //theme.save("myTheme.txt");
-/*
+
     Map test;
-    test.setMapSize({500, 500});
+    test.setMapSize({50, 50});
     test.setMapName("MyMap");
     test.setAggressiveMusicList({"music1.wav", "music2.wav"});
     test.setAmbientMusicList({"musicPassive1.wav", "musicPassive2.wav"});
     test.save("OUT.txt");
-*/
+
 
     Editor &editor = *Editor::getInstance().get();
 
@@ -104,6 +104,13 @@ int main()
                     MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
                     break;
                 }
+                case MessageBase::keyEvent:
+                    {
+                        KeyEvent *keyMessage = dynamic_cast<KeyEvent*>(message.get());
+                        if(keyMessage->getKey() == sf::Keyboard::Escape)
+                            window.close();
+                    }
+                    break;
                 default:
                     break;
             }

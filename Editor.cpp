@@ -318,12 +318,45 @@ void Editor::fillLayer()
 
 void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
 {
-    unsigned int tileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
-    for(unsigned int a = 0; a < selectedTilePositions.size(); a++)
+    Map *cMap = MapManager::getInstance()->getCurrentMap();
+    unsigned int tileSize = cMap->getTileSize();
+
+    if(selectedTilePositions.size() > 1) //If multiple selections
     {
-        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset++); //Get said tile
-        tile->setTextureRect(sf::IntRect(selectedTilePositions[a].x, selectedTilePositions[a].y, tileSize, tileSize)); //Modify the tile to the selected one
+        const sf::Vector2u &topLeft = selectedTilePositions[0];
+        const sf::Vector2u &bottomRight = selectedTilePositions.back();
+        const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+
+        sf::Vector2u selectionGrid[rectangleSize.x/32][rectangleSize.y/32];
+        for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+        {
+            for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+            {
+                for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
+                {
+                    if(selectedTilePositions[cTile] == sf::Vector2u((x*32) + topLeft.x, (y*32) + topLeft.y))
+                    {
+                        selectionGrid[x][y] = selectedTilePositions[cTile];
+                    }
+                }
+            }
+        }
+
+        for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+        {
+            for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+            {
+                TileBase *tile = cMap->getTile(currentlySelectedLayer, tileOffset+(x)+(y*cMap->getMapSizeTiles().x));
+                tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
+            }
+        }
     }
+    else //Single tile selection
+    {
+        TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset); //Get said tile
+        tile->setTextureRect(sf::IntRect(selectedTilePositions[0].x, selectedTilePositions[0].y, tileSize, tileSize)); //Modify the tile to the selected one
+    }
+
 }
 
 void Editor::createAnimatedTile()
@@ -420,11 +453,28 @@ void Editor::selectLayer(unsigned int newLayerID)
 
 void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 {
-    std::cout << "\nSet selected called!";
     selectedTilePositions = tileTexturePos;
+
+    for(auto &c : selectedTilePositions)
+    {
+
+    }
+
+    if(tileTexturePos.size() > 1)
+    {
+        //selectedTilePositions[0] -= sf::Vector2u(32,32);
+    }
+
 }
 
 bool Editor::isGridEnabled()
 {
     return gridEnabled;
 }
+
+
+
+
+
+
+

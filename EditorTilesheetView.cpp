@@ -26,6 +26,7 @@ namespace frd
 
         //Setup main container
         tileContainer = frd::Maker::make(frd::Container());
+        tileContainer->setSpacing({4.f, 4.f});
         tileContainer->setAllocation(Allocation::vertical);
         tileContainer->setSize({texture->getSize().x, texture->getSize().y});
 
@@ -38,6 +39,7 @@ namespace frd
 
             //Get pointer to the current row and setup the container
             frd::Container *cTileRow = tileRows.back().get();
+            cTileRow->setSpacing({4.f, 4.f});
             cTileRow->setAllocation(Allocation::horizontal);
             cTileRow->setSize({texture->getSize().x, texture->getSize().y/tileSize});
 
