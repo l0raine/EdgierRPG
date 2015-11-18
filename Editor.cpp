@@ -225,16 +225,19 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     //Process events which should only be processed if the editor is open
     switch(message->getMessageType())
     {
-    case MessageBase::mouseEvent:
+        case MessageBase::mouseEvent:
         {
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
             TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
             tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
         }
-    case MessageBase::mouseMoveEvent:
+        case MessageBase::Types::mouseDragEvent:
         {
-
+            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+            unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
+            TileBase *tile = MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, clickedTile); //Get said tile
+            tile->setTextureRect(selectedTileRect); //Modify the tile to the selected one
         }
     default:
         break;
