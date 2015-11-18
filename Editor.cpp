@@ -17,6 +17,7 @@ Editor::Editor()
 
     //Initialise some core editor variables
     currentlySelectedLayer = 0;
+    gridEnabled = true;
 
     //Setup menu to store the main page of the editor
     auto mainMenu = frd::Maker::make(frd::Menu());
@@ -191,7 +192,7 @@ void Editor::update()
 
         GUIManager::getInstance()->getEditorFRDGUIHandle()->update();
 
-        window.clear(sf::Color::White);
+        window.clear(sf::Color::Black);
         window.draw(*GUIManager::getInstance()->getEditorFRDGUIHandle().get());
         window.display();
     }
@@ -213,7 +214,8 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
         }
         case MessageBase::mapChangeEvent:
                 //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
-                updatePlacementGrid();
+                if(isGridEnabled())
+                    updatePlacementGrid();
             break;
     }
 
@@ -242,6 +244,9 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
 void Editor::drawMapOverlay(sf::RenderTarget& target)
 {
     if(!window.isOpen())
+        return;
+
+    if(!isGridEnabled())
         return;
 
     //Draw the red placement grid over the main window
@@ -295,7 +300,9 @@ void Editor::toggleSpecialTilesVisible()
 
 void Editor::togglePlacementGrid()
 {
-
+    if(isGridEnabled())
+        gridEnabled = false;
+    else gridEnabled = true;
 }
 
 void Editor::createSpecialTile()
@@ -373,4 +380,7 @@ void Editor::setSelectedTile(sf::IntRect tileTexturePos)
     selectedTileRect = tileTexturePos;
 }
 
-
+bool Editor::isGridEnabled()
+{
+    return gridEnabled;
+}

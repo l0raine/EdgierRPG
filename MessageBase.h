@@ -11,6 +11,7 @@ class MessageBase
             keyEvent,
             mouseEvent,
             mouseMoveEvent,
+            mouseDragEvent,
             entityMoveEvent,
             mapChangeEvent
         };

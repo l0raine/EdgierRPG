@@ -125,9 +125,16 @@ int main()
 
             switch(message->getMessageType())
             {
+                case MessageBase::Types::mouseDragEvent:
+                {
+                    MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
+                    std::cout<<"Mouse is being dragged over: "<<mouseMessage->getMousePosition().x<<", "<<mouseMessage->getMousePosition().y<<std::endl;
+                    break;
+                }
                 case MessageBase::Types::mouseEvent:
                 {
-
+                    MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
+                    std::cout<<"Clicked point: "<<mouseMessage->getMousePosition().x<<", "<<mouseMessage->getMousePosition().y<<std::endl;
                     break;
                 }
                 default:

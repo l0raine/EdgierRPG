@@ -35,6 +35,7 @@ class Editor
         unsigned int currentlySelectedLayer;
         std::shared_ptr<frd::EditorTilesheetView> tileSelect;
         sf::IntRect selectedTileRect;
+        bool gridEnabled;
 
         //Editor core functions
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
@@ -43,6 +44,7 @@ class Editor
         //Editor map functions
         //Editor settings change
         void selectLayer(unsigned int newLayerID);
+        bool isGridEnabled();
 
         //Direct modification
         void clearLayer();

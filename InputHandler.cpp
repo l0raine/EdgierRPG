@@ -90,6 +90,20 @@ void InputHandler::handleEvent(sf::Event event)
             MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, false, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
         }
     }
+
+    //Process mouse click  + drag
+    if(event.type == sf::Event::MouseMoved)
+    {
+        //Check for left click + drag
+        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)) //Left click and drag
+        {
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Left, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+        }
+        else if(sf::Mouse::isButtonPressed(sf::Mouse::Right)) //Right click and drag
+        {
+            MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, sf::Vector2i(event.mouseButton.x, event.mouseButton.y)));
+        }
+    }
 }
 
 bool InputHandler::isMousePressed(sf::Mouse::Button button)
