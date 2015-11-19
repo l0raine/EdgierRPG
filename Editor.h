@@ -30,26 +30,41 @@ class Editor
     private:
         /** Default constructor */
         Editor();
+        static std::shared_ptr<Editor> instance;
 
+        //GUI elements
+        std::shared_ptr<frd::Menu> mainMenu;
+
+        //Editor core variables
         sf::RenderWindow window;
         frd::Theme theme;
         sf::VertexArray mapPlacementGrid;
-        static std::shared_ptr<Editor> instance;
-
-        //Editor core variables
         unsigned int currentlySelectedLayer;
         std::shared_ptr<frd::EditorTilesheetView> tileSelect;
         std::vector<sf::Vector2u> selectedTilePositions;
+        unsigned int placementRotation;
         bool gridEnabled;
+        bool layerViewEnabled;
+        bool specialTilesVisible;
+        sf::RenderTexture specialTileTexture;
+        bool placingAnimatedTile;
+
+        //Current map related variables
+        unsigned int tileSize;
+        sf::Vector2i mapSizePixels;
+        unsigned int layerCount;
 
         //Editor core functions
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
         void placeSelected(unsigned int layer, unsigned int tileOffset); //Places the selected sprite selection on the map at given position
+        void removeTile(unsigned int layer, unsigned int tileOffset); //Removes tile from loaded map
+        void updateMap(); //Called if the map is changed, updates things like selection grid size and other things
 
         //Editor map functions
         //Editor settings change
         void selectLayer(unsigned int newLayerID);
         bool isGridEnabled();
+        std::shared_ptr<frd::Container> specialTileCreationMenu;
 
         //Direct modification
         void clearLayer();

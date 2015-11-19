@@ -26,14 +26,16 @@ class EditorTilesheetView : public WidgetBase
     private:
         std::shared_ptr<frd::Container> tileContainer;
         std::vector<std::shared_ptr<frd::Container>> tileRows;
+        std::vector<std::shared_ptr<frd::Button>> tileButtons;
 
         std::vector<sf::Vector2u> selectedTiles;
         bool isDragSelecting;
 
         //Tile selection functions
-        void selectTile(unsigned int x, unsigned int y); //Adds a tile to the selection list
+        void selectTile(unsigned int x, unsigned int y, frd::Button *caller); //Adds a tile to the selection list
         void sendSelection(unsigned int x, unsigned int y); //Sends selection list to editor and clears local selection list
         sf::Vector2u clickedTile;
+        void resetButtonOutlines(); //Resets the selection visual guide
 
 
 };

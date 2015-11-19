@@ -9,7 +9,8 @@ std::shared_ptr<SoundHandler> ResourceManager::soundHandlerInstance;
 
 ResourceManager::ResourceManager()
 {
-
+    defaultFont.loadFromFile(guiFontPath);
+    std::cout << "\nFont address: " << &defaultFont;
 }
 
 std::shared_ptr<ResourceManager> ResourceManager::getInstance()
@@ -88,4 +89,9 @@ bool ResourceManager::writeFile(const std::string &filepath_in, std::string &dat
     file.write(data_out.c_str(), data_out.length()); // Write the data
     file.close(); //Close the stream
     return true;
+}
+
+const sf::Font &ResourceManager::getDefaultFont()
+{
+    return defaultFont;
 }

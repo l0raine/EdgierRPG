@@ -8,6 +8,8 @@
 #include "EditorTilesheetView.h"
 #include "Map.h"
 #include "StaticTile.h"
+#include "SpecialTileContainer.h"
+#include "AnimatedTile.h"
 
 std::shared_ptr<Editor> Editor::instance;
 
@@ -39,9 +41,14 @@ void Editor::load()
     //Initialise some core editor variables
     currentlySelectedLayer = 0;
     gridEnabled = true;
+    placementRotation = 0;
+    layerViewEnabled = false;
+    specialTilesVisible = false;
+    selectedTilePositions = {{96,0}};
+    placingAnimatedTile = false;
 
     //Setup menu to store the main page of the editor
-    auto mainMenu = frd::Maker::make(frd::Menu());
+    mainMenu = frd::Maker::make(frd::Menu());
     gui->addMenu(mainMenu);
 
     //Setup the left-hand buttons to manipulate the map
@@ -245,10 +252,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             break;
         }
         case MessageBase::mapChangeEvent:
-                //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
-                if(isGridEnabled())
-                    updatePlacementGrid();
-            break;
+        {
+            updateMap();
+        break;
+        }
         default:
             break;
     }
@@ -266,8 +273,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
         case MessageBase::mouseDragEvent:
         {
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-            unsigned int clickedTile = event->getClickedTileID(); //Get the ID of the tile clicked
-            placeSelected(currentlySelectedLayer, clickedTile);
+            if(event->getType() == sf::Mouse::Left) //If left click, place tile
+                placeSelected(currentlySelectedLayer, event->getClickedTileID());
+            else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
+                removeTile(currentlySelectedLayer, event->getClickedTileID());
         }
     default:
         break;
@@ -276,12 +285,8 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
 
 void Editor::drawMapOverlay(sf::RenderTarget& target)
 {
-    if(!window.isOpen())
+    if(!window.isOpen()) //Don't draw if the editor is closed
         return;
-
-    //Draw the red placement grid over the main window
-    if(!isGridEnabled())
-        target.draw(mapPlacementGrid);
 
     //Get int rect of the window
     sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
@@ -291,10 +296,7 @@ void Editor::drawMapOverlay(sf::RenderTarget& target)
     {
         Map *cMap = MapManager::getInstance()->getCurrentMap();
 
-        unsigned int tileSize = cMap->getTileSize();
-
         unsigned int previewTileID = HelperClass::getTileIDFromPosition(sf::Vector2f(sf::Mouse::getPosition(*gameWindow).x, sf::Mouse::getPosition(*gameWindow).y));
-        std::cout<<"Preview Tile ID: "<<previewTileID<<std::endl;
 
         TileBase *cTile = cMap->getTile(0, previewTileID); //Doesnt matter which layer, since we aren't placing the tile
 
@@ -324,13 +326,18 @@ void Editor::drawMapOverlay(sf::RenderTarget& target)
         sf::Sprite tilePreviewSprite(tilePreviewTexture); //Generate sprite to draw
         tilePreviewSprite.setTextureRect(sf::IntRect(topLeft.x, topLeft.y, rectangleSize.x, rectangleSize.y));
         tilePreviewSprite.setPosition(tilePreviewPosition); //Set the position to draw at
-        std::cout<<"Preview tile position: "<<tilePreviewPosition.x <<", "<<tilePreviewPosition.y<<std::endl;
         tilePreviewSprite.setRotation(cTile->getRotation() * 90);
 
         tilePreviewSprite.setColor(sf::Color(tilePreviewSprite.getColor().r, tilePreviewSprite.getColor().g, tilePreviewSprite.getColor().b, 180));
 
         target.draw(tilePreviewSprite);
     }
+
+    if(isGridEnabled()) //Draw the red placement grid over the main window
+        target.draw(mapPlacementGrid);
+
+    if(specialTilesVisible)
+        target.draw(sf::Sprite(specialTileTexture.getTexture()));
 }
 
 void Editor::clearLayer()
@@ -343,7 +350,6 @@ void Editor::clearLayer()
     //Iterate through each tile on this layer and remove it
     for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
     {
-        TileBase *tile = tempMap->getTile(currentlySelectedLayer, tileID); //Get a pointer to the current tile
         tempMap->removeTile(currentlySelectedLayer, tileID);
     }
 }
@@ -390,37 +396,94 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     {
         for(unsigned int y = 0; y < rectangleSize.y/32; y++)
         {
-            TileBase *tile = cMap->getTile(currentlySelectedLayer, tileOffset+(x)+(y*cMap->getMapSizeTiles().x));
-            tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
+            for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+            {
+                TileBase *tile = cMap->getTile(currentlySelectedLayer, tileOffset+(x)+(y*cMap->getMapSizeTiles().x));
+                tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
+                tile->setRotation(placementRotation);
+            }
         }
     }
 }
 
+void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
+{
+    MapManager::getInstance()->getCurrentMap()->removeTile(layer, tileOffset);
+}
+
 void Editor::createAnimatedTile()
 {
-
+    placingAnimatedTile = true;
 }
 
 void Editor::rotateSelectionClockwise()
 {
-
+    placementRotation++;
 }
 
 void Editor::toggleSpecialTilesVisible()
 {
+    specialTilesVisible = !specialTilesVisible;
+    specialTileTexture.clear(sf::Color::Transparent);
+    if(specialTilesVisible) //If visible, generate a visual render texture from all of the tile types
+    {
+        //Collect some information that we'll need for generation
+        SpecialTileContainer *specialTileContainer = SpecialTileContainer::getInstance().get();
+        const unsigned int specialTileCount = specialTileContainer->getSpecialTileCount();
 
+        //Setup the text that will be used for the label and some generic values
+        sf::Text tileLabel;
+        tileLabel.setFont(ResourceManager::getInstance()->getDefaultFont());
+        tileLabel.setCharacterSize(tileSize/2);
+        tileLabel.setStyle(sf::Text::Bold);
+
+        //For each special tile, generate its tile
+        for(unsigned int a = 0; a < specialTileCount; a++)
+        {
+            //Choose the correct label for the tile
+            const SpecialTileContainer::SpecialTile &cTile = specialTileContainer->getSpecialTile(a);
+
+            //Set text properties
+            tileLabel.setString(cTile.getTileVisualID());
+            tileLabel.setColor(cTile.getTileVisualColour());
+
+            //Centre
+            auto tilePos = HelperClass::getPositionFromTileID(cTile.position, *MapManager::getInstance()->getCurrentMap());
+            auto textRect = tileLabel.getLocalBounds();
+            tileLabel.setPosition(static_cast<int>(tilePos.x+tileSize/2 - (textRect.left + textRect.width/2.0f)), static_cast<int>(tilePos.y+tileSize/2 - (textRect.top  + textRect.height/2.0f)));
+
+            specialTileTexture.draw(tileLabel);
+        }
+        specialTileTexture.display();
+    }
 }
 
 void Editor::togglePlacementGrid()
 {
     if(isGridEnabled())
         gridEnabled = false;
-    else gridEnabled = true;
+    else
+        gridEnabled = true;
 }
 
 void Editor::createSpecialTile()
 {
+    //Create a tile selection menu and assign binds
+    if(specialTileCreationMenu)
+        specialTileCreationMenu->clear();
+    else
+    {
+        std::cout << "\nCreated container!";
+        specialTileCreationMenu = frd::Maker::make(frd::Container());
+        specialTileCreationMenu->setSize({200, 200});
+        specialTileCreationMenu->setPosition({400, 400});
+        specialTileCreationMenu->setAllocation(Allocation::vertical);
+        specialTileCreationMenu->setColor(sf::Color::Red);
+        mainMenu->addWidget(specialTileCreationMenu);
+    }
 
+
+    specialTileCreationMenu->setVisible(true);
 }
 
 void Editor::paintTile()
@@ -433,9 +496,20 @@ void Editor::placeEntity()
 
 }
 
-void Editor::replaceTileType()
+void Editor::replaceTileType() //Use first and last selection from EditorTilesheetView
 {
+    Map *tempMap = MapManager::getInstance()->getCurrentMap();
 
+    //Get the number of tiles on the selected layer
+    unsigned int tileCount = tempMap->getTileCount(currentlySelectedLayer);
+
+    //Iterate through each tile on this layer and remove it
+    for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
+    {
+        TileBase *tile = tempMap->getTile(currentlySelectedLayer, tileID);
+        if(tile->getTextureRect().left == static_cast<int>(selectedTilePositions.front().x) && tile->getTextureRect().top == static_cast<int>(selectedTilePositions.front().y)) //If tile matches first selection, replace with second selection
+            tile->setTextureRect(sf::IntRect(selectedTilePositions.back().x, selectedTilePositions.back().y, tileSize, tileSize));
+    }
 }
 
 void Editor::setAggressiveMusic()
@@ -450,7 +524,15 @@ void Editor::setPassiveMusic()
 
 void Editor::toggleLayerView()
 {
-
+    layerViewEnabled = !layerViewEnabled;
+    if(layerViewEnabled)
+    {
+        MapManager::getInstance()->getCurrentMap()->setLayerDrawRange(currentlySelectedLayer, currentlySelectedLayer+1);
+    }
+    else
+    {
+        MapManager::getInstance()->getCurrentMap()->setLayerDrawRange(0, MapManager::getInstance()->getCurrentMap()->getLayerCount());
+    }
 }
 
 void Editor::updatePlacementGrid()
@@ -491,6 +573,8 @@ void Editor::selectLayer(unsigned int newLayerID)
 void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 {
     selectedTilePositions = tileTexturePos;
+
+    placingAnimatedTile = false;
 }
 
 bool Editor::isGridEnabled()
@@ -498,9 +582,23 @@ bool Editor::isGridEnabled()
     return gridEnabled;
 }
 
+void Editor::updateMap()
+{
+    //Generate placement helper grid if the map changes. Tile size *COULD* vary in the future.
+    updatePlacementGrid();
 
+    //Resize special tile render texture
+    mapSizePixels = MapManager::getInstance()->getCurrentMap()->getMapSizePixels();
+    specialTileTexture.create(mapSizePixels.x, mapSizePixels.y);
+    tileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
+    layerCount = MapManager::getInstance()->getCurrentMap()->getLayerCount();
 
+    //Update some map-specific data
+    if(layerViewEnabled)
+        toggleLayerView();
 
-
+    if(specialTilesVisible)
+        toggleSpecialTilesVisible();
+}
 
 

@@ -101,7 +101,7 @@ int main()
             {
                 case MessageBase::Types::mouseDragEvent:
                 {
-                    MouseEvent *mouseMessage = dynamic_cast<MouseEvent*>(message.get());
+
                     break;
                 }
                 case MessageBase::keyEvent:
