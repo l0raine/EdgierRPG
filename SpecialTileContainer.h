@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 class MessageBase;
 
@@ -25,6 +26,42 @@ class SpecialTileContainer
             unsigned int tileType; //ID of the special tile, 0 = block, etc
             std::vector<std::string> arguments;
             unsigned int position; //Tile position ID
+
+            const std::string getTileVisualID() const //Returns for example 'B' for block or 'W' for warp
+            {
+                switch(tileType)
+                {
+                case 0: //Block
+                    return "B";
+                    break;
+                case 1: //Warp
+                    return "W";
+                    break;
+                case 3: //Lua
+                    return "L";
+                    break;
+                default:
+                    return "U";
+                }
+            }
+
+            const sf::Color getTileVisualColour() const //Returns the colour that the ID should be
+            {
+                switch(tileType)
+                {
+                case 0: //Block
+                    return sf::Color::Red;
+                    break;
+                case 1: //Warp
+                    return sf::Color::Blue;
+                    break;
+                case 3: //Lua
+                    return sf::Color::Green;
+                    break;
+                default:
+                    return sf::Color::Black;
+                }
+            }
         };
 
 

@@ -9,8 +9,9 @@
 Map::Map()
 	: tileSize(32)
 {
-	tileTexture = nullptr;
 	tileTexture = ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png");
+	drawMin = 0;
+	drawMax = mapLayerCount;
 
 	//Resize tile storage layer count to correct number of layers
 	animatedTiles.resize(mapLayerCount);
@@ -275,7 +276,7 @@ bool Map::save(const std::string& filepath)
 void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states)
 {
 	//Iterate through each layer of tiles and draw each layer individually
-	for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+	for(unsigned int cLayer = drawMin; cLayer < drawMax; cLayer++)
 	{
 		for(auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
 			cTile->draw(target, states);
@@ -365,9 +366,9 @@ void Map::setMapSize(const sf::Vector2i &newSize)
 	staticTileMap.resize(mapLayerCount);
 
 	//Setup blank tiles on each layer
-    for(unsigned int y = 0; y < mapSize.y; y++)
+    for(int y = 0; y < mapSize.y; y++)
     {
-        for(unsigned int x = 0; x < mapSize.x; x++)
+        for(int x = 0; x < mapSize.x; x++)
         {
             for(unsigned int layer = 0; layer < mapLayerCount; layer++)
             {
@@ -409,3 +410,35 @@ const std::string &Map::getMapName()
 {
     return mapName;
 }
+
+void Map::setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd)
+{
+    drawMin = drawBegin;
+    drawMax = drawEnd;
+}
+
+void Map::setTileAnimated(unsigned int layer, unsigned int tileID)
+{
+	//Replace the tile with a template animated one
+	TileBase *oldTile = tileStorage[layer][tileID].get();
+
+	//Store old info
+	auto pos = oldTile->getPosition();
+	auto text = oldTile->getTexture();
+	auto rotation = oldTile->getRotation();
+
+	//If it's an animated tile, remove it from the AnimatedTile draw queue
+	if(oldTile->isAnimated())
+		animatedTiles[layer].erase(std::find(animatedTiles[layer].begin(), animatedTiles[layer].end(), dynamic_cast<AnimatedTile*>(oldTile)));
+
+	//Replace the tile
+	tileStorage[layer][tileID].reset(new AnimatedTile());
+	AnimatedTile *newTile = dynamic_cast<AnimatedTile*>(tileStorage[layer][tileID].get());
+	animatedTiles[layer].emplace_back(newTile);
+
+	//Update the new tile
+	newTile->setPosition(pos);
+	newTile->setTexture(text);
+	newTile->setRotation(rotation);
+}
+

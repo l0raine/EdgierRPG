@@ -33,6 +33,9 @@ class ResourceManager
         bool readFile(const std::string &filepath_in, std::string &data_in); //Read a file from memory
         //bool readFile(const std::string &filepath_in, std::vector<std::string> &data_out);
 
+        //Other resource functions
+        const sf::Font &getDefaultFont(); //Returns the default font
+
 
     protected:
     private:
@@ -44,6 +47,7 @@ class ResourceManager
 
         std::unordered_map<std::string, sf::Texture*> loadedTextures; //Stores loaded textures
         std::string defaultPath;
+        sf::Font defaultFont;
 
 
 };

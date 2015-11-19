@@ -41,8 +41,9 @@ class Map
 		unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
 		unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
 		void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
-		const std::string &getMapName();
-
+		const std::string &getMapName(); //Returns map name
+        void setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd); //Sets which layers are drawn. Default: 0, layerCounter
+        void setTileAnimated(unsigned int layer, unsigned int tileID); //Will cause old texture rect to be lost
 	protected:
 
 	private:
@@ -56,6 +57,10 @@ class Map
 		std::vector<std::vector<AnimatedTile*>> animatedTiles;
 		unsigned int tileSize;
 		sf::Vector2i mapSizePixels;
+
+		//Draw info
+		unsigned int drawMin;
+		unsigned int drawMax;
 
 		//Storage for pre-rendered static tile layers
 		std::vector<sf::VertexArray> staticTileMap;
