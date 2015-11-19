@@ -53,12 +53,12 @@ sf::Texture* ResourceManager::loadTexture(const std::string filepath) noexcept
 
 sf::Texture* ResourceManager::getLoadedTexture(const std::string &texture_in)
 {
-    std::string fullPath = texturePath + texture_in;
-    if(isTextureLoaded(fullPath))
+    if(isTextureLoaded(texture_in))
     {
-        return loadedTextures.find(fullPath)->second;
+        return loadedTextures.find(texturePath + texture_in)->second;
     }
-    std::cout << "\n<ResourceManager>: Get loaded texture failed for path: " + fullPath;
+    std::string fullpath = texturePath + texture_in;
+    std::cout << "\n<ResourceManager>: Get loaded texture failed for path: " + fullpath;
     return nullptr;
 }
 
@@ -67,9 +67,9 @@ bool ResourceManager::isTextureLoaded(const std::string &texture_in)
     std::string fullPath = texturePath + texture_in;
     if(!isTextureStorageEmpty() || loadedTextures.find(fullPath) == loadedTextures.end())
     {
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool ResourceManager::isTextureStorageEmpty()

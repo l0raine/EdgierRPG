@@ -11,6 +11,7 @@ namespace frd
     : WidgetBase()
     {
         isDragSelecting = false;
+        Editor::getInstance()->setSelectedTile({{0,0}});
     }
 
     EditorTilesheetView::~EditorTilesheetView()
