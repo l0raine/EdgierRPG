@@ -329,8 +329,6 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     Map *cMap = MapManager::getInstance()->getCurrentMap();
     unsigned int tileSize = cMap->getTileSize();
 
-    if(!placingAnimatedTile) //Not animated
-    {
         const sf::Vector2u &topLeft = selectedTilePositions[0];
         const sf::Vector2u &bottomRight = selectedTilePositions.back();
         const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
@@ -359,17 +357,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
                 tile->setRotation(placementRotation);
             }
         }
-    }
-    else //Single, animated tile
-    {
-        cMap->setTileAnimated(currentlySelectedLayer, tileOffset);
-        AnimatedTile *tile = dynamic_cast<AnimatedTile*>(cMap->getTile(currentlySelectedLayer, tileOffset));
-        tile->setSwitchInterval(250); //////////////////////////////////////////////////////////////////////////////////////////////////////////////////TEMPORARY
-        for(unsigned int a = 0; a < selectedTilePositions.size(); a++)
-        {
-            tile->addFrame(sf::IntRect(selectedTilePositions[a].x, selectedTilePositions[a].y, 32, 32));
-        }
-    }
+
 
 }
 
