@@ -10,3 +10,4 @@
     std::string themePath = "./Files/Themes/";
     unsigned int mapLayerCount = 5;
     sf::RenderWindow* gameWindow;
+    sf::Vector2u blankTilePosition = {96, 0};

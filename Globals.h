@@ -15,6 +15,7 @@ extern std::string mapPath;
 extern std::string themePath;
 extern unsigned int mapLayerCount;
 extern sf::RenderWindow* gameWindow;
+extern sf::Vector2u blankTilePosition;
 
 
 #endif // GLOBALS_H

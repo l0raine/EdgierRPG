@@ -44,7 +44,7 @@ void Editor::load()
     placementRotation = 0;
     layerViewEnabled = false;
     specialTilesVisible = false;
-    selectedTilePositions = {{96,0}};
+    selectedTilePositions = {{blankTilePosition.x,blankTilePosition.y}};
     placingAnimatedTile = false;
     defaultRotation = true;
 
