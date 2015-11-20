@@ -34,8 +34,8 @@ class EntityBase
         float getRemainingMana();
         void setRemainingMana(float mana);
 
-        std::string getDisplayName();
-        void setDisplayName(std::string newName);
+        const std::string &getDisplayName();
+        void setDisplayName(const std::string &newName);
 
         unsigned int getDirection();
         void setDirection(int newDirection);

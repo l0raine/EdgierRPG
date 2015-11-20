@@ -366,23 +366,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     const sf::Vector2u &bottomRight = selectedTilePositions.back();
     const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
 
-    //Move all of the tiles into said grid
-    sf::Vector2u selectionGrid[rectangleSize.x/tileSize][rectangleSize.y/tileSize];
-    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
-    {
-        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
-        {
-            for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
-            {
-                if(selectedTilePositions[cTile] == sf::Vector2u((x*tileSize) + topLeft.x, (y*tileSize) + topLeft.y))
-                {
-                    selectionGrid[x][y] = selectedTilePositions[cTile];
-                }
-            }
-        }
-    }
-
-    //Place each tile in the rectangle
+    //Place each tile in relation to the rectangle
     for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
     {
         for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
@@ -392,7 +376,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
             if(offsetAmount < cMap->getTileCount(currentlySelectedLayer))
             {
                 TileBase *tile = cMap->getTile(currentlySelectedLayer, offsetAmount);
-                tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
+                tile->setTextureRect(sf::IntRect(topLeft.x + x*tileSize, topLeft.y + y*tileSize, tileSize, tileSize));
                 tile->setRotation(placementRotation);
             }
         }
@@ -585,10 +569,29 @@ void Editor::selectLayer(unsigned int newLayerID)
 
 void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 {
+    //Update selection
     selectedTilePositions = tileTexturePos;
+    if(selectedTilePositions.size() > 1) //If multiple tiles selected
+    {
+        //If rectangle points are upside down (x or y), then flip them
+        sf::Vector2u &first = selectedTilePositions.front();
+        sf::Vector2u &last = selectedTilePositions.back();
+        if(first.x > last.x)
+        {
+            auto buffer = first.x;
+            first.x = last.x;
+            last.x = buffer;
+        }
+        if(first.y > last.y)
+        {
+            auto buffer = first.y;
+            first.y = last.y;
+            last.y = buffer;
+        }
+    }
 
+    //Update placement preview
     placingAnimatedTile = false;
-
     updatePlacementPreview();
 }
 
@@ -630,21 +633,6 @@ void Editor::updatePlacementPreview()
     const sf::Vector2u &topLeft = selectedTilePositions[0];
     const sf::Vector2u &bottomRight = selectedTilePositions.back();
     const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
-
-    sf::Vector2u selectionGrid[rectangleSize.x/tileSize][rectangleSize.y/tileSize];
-    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
-    {
-        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
-        {
-            for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
-            {
-                if(selectedTilePositions[cTile] == sf::Vector2u((x*tileSize) + topLeft.x, (y*tileSize) + topLeft.y))
-                {
-                    selectionGrid[x][y] = selectedTilePositions[cTile];
-                }
-            }
-        }
-    }
 
     sf::Texture* tilePreviewTexture = ResourceManager::getInstance()->getLoadedTexture("tilesheets/tiles.png"); //Load the texture from memory
     placementPreviewSprite.setTexture(*tilePreviewTexture); //Generate sprite to draw

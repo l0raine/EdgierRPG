@@ -122,12 +122,12 @@ void EntityBase::setRemainingMana(float mana)
     manaRemaining = mana;
 }
 
-std::string EntityBase::getDisplayName()
+const std::string &EntityBase::getDisplayName()
 {
     return displayName;
 }
 
-void EntityBase::setDisplayName(std::string newName)
+void EntityBase::setDisplayName(const std::string &newName)
 {
     displayName = newName;
 }
