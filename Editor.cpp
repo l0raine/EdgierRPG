@@ -264,6 +264,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     if(!window.isOpen()) //Don't process events if editor is closed
         return;
 
+    const sf::Vector2u &topLeft = selectedTilePositions[0];
+    const sf::Vector2u &bottomRight = selectedTilePositions.back();
+    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+
     //Process events which should only be processed if the editor is open
     switch(message->getMessageType())
     {
@@ -274,10 +278,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
 
             if(placementPreviewSprite.getRotation() > 0)
             {
-                placementPreviewSprite.move(16, 16);
+                placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
             }
             if(!defaultRotation && placementPreviewSprite.getRotation() == 0)
-                placementPreviewSprite.move(16, 16);
+                placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
             break;
         }
         case MessageBase::mouseDragEvent:
