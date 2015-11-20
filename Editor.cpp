@@ -250,6 +250,10 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             {
                 open();
             }
+            else if(event->isKeyPress() && event->getKey() == sf::Keyboard::F2) //Temporary save function
+            {
+                MapManager::getInstance()->getCurrentMap()->save("savedMap.txt");
+            }
             break;
         }
         case MessageBase::mapChangeEvent:

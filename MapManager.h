@@ -18,7 +18,8 @@ class MapManager
         void setCurrentMap(Map* cMap);
         Map* loadMap(const std::string &filepath);
         bool isMapLoaded(std::unique_ptr<Map> mapToCheck);
-
+        void unloadMap(Map *cMap);
+        void switchToMap(const std::string &filepath); //Unloads current map and loads the given filepath
     protected:
     private:
         //Instance of manager

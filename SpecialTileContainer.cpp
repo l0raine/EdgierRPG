@@ -65,11 +65,15 @@ void SpecialTileContainer::handleMessage(std::unique_ptr<MessageBase> &message)
                         {
                             EntityManager *eManager = EntityManager::getInstance().get();
                             EntityBase *objEntity = eManager->getEntity(eManager->getSelectedEntityID());
-                            objEntity->setPosition(
-                                                   HelperClass::getPositionFromTileID(
-                                                                                      stoi(specialTiles[a].arguments[0])
-                                                                                      , *MapManager::getInstance()->getCurrentMap())
-                                                   );
+                            if(specialTiles[a].arguments.size() == 1) //Warp to tile in this map, only one argument (tileID)
+                            {
+                                objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[0]), *MapManager::getInstance()->getCurrentMap()));
+                            }
+                            else //Warp to another map, 2 arguments (mapPath, tileID)
+                            {
+                                MapManager::getInstance()->switchToMap(specialTiles[a].arguments[0]);
+                                objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[1]), *MapManager::getInstance()->getCurrentMap()));
+                            }
                             break;
                         }
                         case 2: //Lua script

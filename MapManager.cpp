@@ -67,3 +67,31 @@ bool MapManager::isMapLoaded(std::unique_ptr<Map> mapToCheck)
     }
     return false;
 }
+
+void MapManager::switchToMap(const std::string& filepath)
+{
+    unloadMap(currentlyDisplayedMap);
+    loadMap(filepath);
+}
+
+void MapManager::unloadMap(Map* cMap)
+{
+    //Find specified map in internal list
+    for(unsigned int a = 0; a < loadedMaps.size(); a++)
+    {
+        if(loadedMaps[a].get() == cMap)
+        {
+            //Remove from list, nothing else to do just yet, WIP
+            loadedMaps.erase(loadedMaps.begin()+a);
+            return;
+        }
+    }
+}
+
+
+
+
+
+
+
+
