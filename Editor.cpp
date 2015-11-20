@@ -266,13 +266,14 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
 
     const sf::Vector2u &topLeft = selectedTilePositions[0];
     const sf::Vector2u &bottomRight = selectedTilePositions.back();
-    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
 
     //Process events which should only be processed if the editor is open
     switch(message->getMessageType())
     {
         case MessageBase::mouseMoveEvent:
         {
+            //Update tile placement preview
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             placementPreviewSprite.setPosition(MapManager::getInstance()->getCurrentMap()->getTile(0, HelperClass::getTileIDFromPosition(sf::Vector2f(event->getMousePosition().x, event->getMousePosition().y)))->getPosition()); //Set the position to draw at
 
@@ -286,6 +287,7 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
         }
         case MessageBase::mouseDragEvent:
         {
+            //Place tiles/remove tiles if dragging
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             if(event->getType() == sf::Mouse::Left) //If left click, place tile
                 placeSelected(currentlySelectedLayer, event->getClickedTileID());
@@ -295,6 +297,7 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
         }
         case MessageBase::mouseEvent:
         {
+            //Place tiles/remove tiles if click event
             MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
             if(event->getType() == sf::Mouse::Left) //If left click, place tile
                 placeSelected(currentlySelectedLayer, event->getClickedTileID());
@@ -351,21 +354,27 @@ void Editor::fillLayer()
 
 void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
 {
-    Map *cMap = MapManager::getInstance()->getCurrentMap();
-    unsigned int tileSize = cMap->getTileSize();
+    //Place the selection to the map
 
+    //Get the map
+    Map *cMap = MapManager::getInstance()->getCurrentMap();
+
+    //Calculate some information about the selected tiles for placement.
+    //Here we are calculating a rectangle from the first and last selected tiles and then finding which selected tile goes where in the rectangle
+    //Then converting this rectangle position into actual tile positions and placing
     const sf::Vector2u &topLeft = selectedTilePositions[0];
     const sf::Vector2u &bottomRight = selectedTilePositions.back();
-    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
 
-    sf::Vector2u selectionGrid[rectangleSize.x/32][rectangleSize.y/32];
-    for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+    //Move all of the tiles into said grid
+    sf::Vector2u selectionGrid[rectangleSize.x/tileSize][rectangleSize.y/tileSize];
+    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
     {
-        for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
         {
             for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
             {
-                if(selectedTilePositions[cTile] == sf::Vector2u((x*32) + topLeft.x, (y*32) + topLeft.y))
+                if(selectedTilePositions[cTile] == sf::Vector2u((x*tileSize) + topLeft.x, (y*tileSize) + topLeft.y))
                 {
                     selectionGrid[x][y] = selectedTilePositions[cTile];
                 }
@@ -373,13 +382,16 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
         }
     }
 
-    for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+    //Place each tile in the rectangle
+    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
     {
-        for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
         {
-            for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+            //Don't place tile outside of map
+            unsigned int offsetAmount = tileOffset+(x)+(y*cMap->getMapSizeTiles().x);
+            if(offsetAmount < cMap->getTileCount(currentlySelectedLayer))
             {
-                TileBase *tile = cMap->getTile(currentlySelectedLayer, tileOffset+(x)+(y*cMap->getMapSizeTiles().x));
+                TileBase *tile = cMap->getTile(currentlySelectedLayer, offsetAmount);
                 tile->setTextureRect(sf::IntRect(selectionGrid[x][y].x, selectionGrid[x][y].y, tileSize, tileSize));
                 tile->setRotation(placementRotation);
             }
@@ -617,16 +629,16 @@ void Editor::updatePlacementPreview()
     //Get texture to draw
     const sf::Vector2u &topLeft = selectedTilePositions[0];
     const sf::Vector2u &bottomRight = selectedTilePositions.back();
-    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
 
-    sf::Vector2u selectionGrid[rectangleSize.x/32][rectangleSize.y/32];
-    for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+    sf::Vector2u selectionGrid[rectangleSize.x/tileSize][rectangleSize.y/tileSize];
+    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
     {
-        for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
         {
             for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
             {
-                if(selectedTilePositions[cTile] == sf::Vector2u((x*32) + topLeft.x, (y*32) + topLeft.y))
+                if(selectedTilePositions[cTile] == sf::Vector2u((x*tileSize) + topLeft.x, (y*tileSize) + topLeft.y))
                 {
                     selectionGrid[x][y] = selectedTilePositions[cTile];
                 }
@@ -635,8 +647,6 @@ void Editor::updatePlacementPreview()
     }
 
     sf::Texture* tilePreviewTexture = ResourceManager::getInstance()->getLoadedTexture("tilesheets/tiles.png"); //Load the texture from memory
-    const sf::Vector2f tilePreviewPosition = cTile->getPosition(); //Get position to draw at
-
     placementPreviewSprite.setTexture(*tilePreviewTexture); //Generate sprite to draw
     placementPreviewSprite.setTextureRect(sf::IntRect(topLeft.x, topLeft.y, rectangleSize.x, rectangleSize.y));
     placementPreviewSprite.setOrigin(0,0);
