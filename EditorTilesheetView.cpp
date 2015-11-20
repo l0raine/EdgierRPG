@@ -11,7 +11,6 @@ namespace frd
     : WidgetBase()
     {
         isDragSelecting = false;
-        Editor::getInstance()->setSelectedTile({{0,0}});
     }
 
     EditorTilesheetView::~EditorTilesheetView()
@@ -99,6 +98,7 @@ namespace frd
             //Highlight the selected rectangle
             caller->setColor(sf::Color(220,20,60));
         }
+
     }
 
     void EditorTilesheetView::sendSelection(unsigned int x, unsigned int y)

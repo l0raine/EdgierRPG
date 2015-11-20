@@ -46,6 +46,7 @@ void Editor::load()
     specialTilesVisible = false;
     selectedTilePositions = {{96,0}};
     placingAnimatedTile = false;
+    defaultRotation = true;
 
     //Setup menu to store the main page of the editor
     mainMenu = frd::Maker::make(frd::Menu());
@@ -266,9 +267,18 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     //Process events which should only be processed if the editor is open
     switch(message->getMessageType())
     {
-        case MessageBase::mouseEvent:
+        case MessageBase::mouseMoveEvent:
         {
+            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+            placementPreviewSprite.setPosition(MapManager::getInstance()->getCurrentMap()->getTile(0, HelperClass::getTileIDFromPosition(sf::Vector2f(event->getMousePosition().x, event->getMousePosition().y)))->getPosition()); //Set the position to draw at
 
+            if(placementPreviewSprite.getRotation() > 0)
+            {
+                placementPreviewSprite.move(16, 16);
+            }
+            if(!defaultRotation && placementPreviewSprite.getRotation() == 0)
+                placementPreviewSprite.move(16, 16);
+            break;
         }
         case MessageBase::mouseDragEvent:
         {
@@ -277,6 +287,16 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
                 placeSelected(currentlySelectedLayer, event->getClickedTileID());
             else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
                 removeTile(currentlySelectedLayer, event->getClickedTileID());
+            break;
+        }
+        case MessageBase::mouseEvent:
+        {
+            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+            if(event->getType() == sf::Mouse::Left) //If left click, place tile
+                placeSelected(currentlySelectedLayer, event->getClickedTileID());
+            else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
+                removeTile(currentlySelectedLayer, event->getClickedTileID());
+            break;
         }
     default:
         break;
@@ -288,53 +308,10 @@ void Editor::drawMapOverlay(sf::RenderTarget& target)
     if(!window.isOpen()) //Don't draw if the editor is closed
         return;
 
-    //Get int rect of the window
-    sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
-
-    //Check if gameWindow is focused and mouse cursor is inside window
-    if(gameWindow->hasFocus() && windowRect.contains(sf::Mouse::getPosition(*gameWindow)))
-    {
-        Map *cMap = MapManager::getInstance()->getCurrentMap();
-
-        unsigned int previewTileID = HelperClass::getTileIDFromPosition(sf::Vector2f(sf::Mouse::getPosition(*gameWindow).x, sf::Mouse::getPosition(*gameWindow).y));
-
-        TileBase *cTile = cMap->getTile(0, previewTileID); //Doesnt matter which layer, since we aren't placing the tile
-
-        //Get texture to draw
-        const sf::Vector2u &topLeft = selectedTilePositions[0];
-        const sf::Vector2u &bottomRight = selectedTilePositions.back();
-        const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
-
-        sf::Vector2u selectionGrid[rectangleSize.x/32][rectangleSize.y/32];
-        for(unsigned int x = 0; x < rectangleSize.x/32; x++)
-        {
-            for(unsigned int y = 0; y < rectangleSize.y/32; y++)
-            {
-                for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
-                {
-                    if(selectedTilePositions[cTile] == sf::Vector2u((x*32) + topLeft.x, (y*32) + topLeft.y))
-                    {
-                        selectionGrid[x][y] = selectedTilePositions[cTile];
-                    }
-                }
-            }
-        }
-
-        sf::Texture tilePreviewTexture = *ResourceManager::getInstance()->getLoadedTexture("tilesheets/tiles.png"); //Load the texture from memory
-        const sf::Vector2f tilePreviewPosition = cTile->getPosition(); //Get position to draw at
-
-        sf::Sprite tilePreviewSprite(tilePreviewTexture); //Generate sprite to draw
-        tilePreviewSprite.setTextureRect(sf::IntRect(topLeft.x, topLeft.y, rectangleSize.x, rectangleSize.y));
-        tilePreviewSprite.setPosition(tilePreviewPosition); //Set the position to draw at
-        tilePreviewSprite.setRotation(cTile->getRotation() * 90);
-
-        tilePreviewSprite.setColor(sf::Color(tilePreviewSprite.getColor().r, tilePreviewSprite.getColor().g, tilePreviewSprite.getColor().b, 180));
-
-        target.draw(tilePreviewSprite);
-    }
-
     if(isGridEnabled()) //Draw the red placement grid over the main window
         target.draw(mapPlacementGrid);
+
+    target.draw(placementPreviewSprite);
 
     if(specialTilesVisible)
         target.draw(sf::Sprite(specialTileTexture.getTexture()));
@@ -418,7 +395,27 @@ void Editor::createAnimatedTile()
 
 void Editor::rotateSelectionClockwise()
 {
+    //Rotate the placed tile
     placementRotation++;
+    previewRotation++;
+
+    if(placementRotation > 3)
+    {
+        placementRotation = 0;
+    }
+
+    if(previewRotation > 3)
+    {
+        std::cout<<"prev rot > 3 \n";
+        previewRotation = 0;
+        defaultRotation = false;
+    }
+
+    std::cout<< previewRotation<<std::endl;
+
+    placementPreviewSprite.setOrigin(placementPreviewSprite.getTextureRect().width/2, placementPreviewSprite.getTextureRect().height/2);
+
+    placementPreviewSprite.setRotation(previewRotation * 90);
 }
 
 void Editor::toggleSpecialTilesVisible()
@@ -575,6 +572,8 @@ void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
     selectedTilePositions = tileTexturePos;
 
     placingAnimatedTile = false;
+
+    updatePlacementPreview();
 }
 
 bool Editor::isGridEnabled()
@@ -601,4 +600,42 @@ void Editor::updateMap()
         toggleSpecialTilesVisible();
 }
 
+void Editor::updatePlacementPreview()
+{
+    //Get int rect of the window
+    sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
+    Map *cMap = MapManager::getInstance()->getCurrentMap();
 
+    unsigned int previewTileID = HelperClass::getTileIDFromPosition(sf::Vector2f(sf::Mouse::getPosition(*gameWindow).x, sf::Mouse::getPosition(*gameWindow).y));
+
+    TileBase *cTile = cMap->getTile(0, previewTileID); //Doesnt matter which layer, since we aren't placing the tile
+
+    //Get texture to draw
+    const sf::Vector2u &topLeft = selectedTilePositions[0];
+    const sf::Vector2u &bottomRight = selectedTilePositions.back();
+    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + 32, bottomRight.y-topLeft.y + 32);
+
+    sf::Vector2u selectionGrid[rectangleSize.x/32][rectangleSize.y/32];
+    for(unsigned int x = 0; x < rectangleSize.x/32; x++)
+    {
+        for(unsigned int y = 0; y < rectangleSize.y/32; y++)
+        {
+            for(unsigned int cTile = 0; cTile < selectedTilePositions.size(); cTile++)
+            {
+                if(selectedTilePositions[cTile] == sf::Vector2u((x*32) + topLeft.x, (y*32) + topLeft.y))
+                {
+                    selectionGrid[x][y] = selectedTilePositions[cTile];
+                }
+            }
+        }
+    }
+
+    sf::Texture* tilePreviewTexture = ResourceManager::getInstance()->getLoadedTexture("tilesheets/tiles.png"); //Load the texture from memory
+    const sf::Vector2f tilePreviewPosition = cTile->getPosition(); //Get position to draw at
+
+    placementPreviewSprite.setTexture(*tilePreviewTexture); //Generate sprite to draw
+    placementPreviewSprite.setTextureRect(sf::IntRect(topLeft.x, topLeft.y, rectangleSize.x, rectangleSize.y));
+    placementPreviewSprite.setOrigin(0,0);
+    placementPreviewSprite.setRotation(placementRotation * 90);
+    placementPreviewSprite.setColor(sf::Color(placementPreviewSprite.getColor().r, placementPreviewSprite.getColor().g, placementPreviewSprite.getColor().b, 180));
+}

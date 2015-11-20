@@ -48,13 +48,17 @@ class Editor
         bool specialTilesVisible;
         sf::RenderTexture specialTileTexture;
         bool placingAnimatedTile;
+        sf::Sprite placementPreviewSprite;
 
         //Current map related variables
         unsigned int tileSize;
         sf::Vector2i mapSizePixels;
         unsigned int layerCount;
+        unsigned int previewRotation;
+        bool defaultRotation;
 
         //Editor core functions
+        void updatePlacementPreview();
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
         void placeSelected(unsigned int layer, unsigned int tileOffset); //Places the selected sprite selection on the map at given position
         void removeTile(unsigned int layer, unsigned int tileOffset); //Removes tile from loaded map

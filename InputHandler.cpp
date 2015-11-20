@@ -120,6 +120,7 @@ void InputHandler::handleEvent(sf::Event event)
                 MessageHandler::getInstance()->dispatch(MouseEvent::make(sf::Mouse::Right, mousePos));
             }
         }
+        MessageHandler::getInstance()->dispatch(MouseEvent::make(mousePos));
     }
 
     if(event.type == sf::Event::LostFocus)
