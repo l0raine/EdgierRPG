@@ -30,7 +30,8 @@ std::shared_ptr<SpecialTileContainer> SpecialTileContainer::getInstance()
 void SpecialTileContainer::registerSpecialTile(unsigned int tileType, unsigned int tileID, const std::vector<std::string>& args)
 {
     //Add the special tile to the list
-    specialTiles.emplace_back(SpecialTile(tileType, tileID, args));
+    if(getSpecialTileFromID(tileID) == specialTiles.end())
+        specialTiles.emplace_back(SpecialTile(tileType, tileID, args));
 }
 
 void SpecialTileContainer::clear()
@@ -101,4 +102,23 @@ unsigned int SpecialTileContainer::getSpecialTileCount()
 const SpecialTileContainer::SpecialTile &SpecialTileContainer::getSpecialTile(unsigned int id)
 {
     return specialTiles[id];
+}
+
+void SpecialTileContainer::removeSpecialTile(unsigned int tilePosID)
+{
+    auto iter = getSpecialTileFromID(tilePosID);
+    if(iter != specialTiles.end())
+        specialTiles.erase(iter);
+}
+
+std::vector<SpecialTileContainer::SpecialTile>::iterator SpecialTileContainer::getSpecialTileFromID(unsigned int tileOffset)
+{
+    for(auto iter = specialTiles.begin(); iter != specialTiles.end(); iter++)
+    {
+        if(iter->position == tileOffset)
+        {
+            return iter;
+        }
+    }
+    return specialTiles.end();
 }

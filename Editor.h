@@ -64,6 +64,7 @@ class Editor
         void placeSelected(unsigned int layer, unsigned int tileOffset); //Places the selected sprite selection on the map at given position
         void removeTile(unsigned int layer, unsigned int tileOffset); //Removes tile from loaded map
         void updateMap(); //Called if the map is changed, updates things like selection grid size and other things
+        void updateSpecialTileView(); //Re-render the special tiles
 
         //Editor map functions
         //Editor settings change
@@ -73,6 +74,7 @@ class Editor
 
         //Direct modification
         void clearLayer();
+
         void fillLayer();
         void createAnimatedTile();
         void rotateSelectionClockwise();
@@ -83,6 +85,10 @@ class Editor
 
         //Create a special tile
         void createSpecialTile();
+        std::vector<std::string> specialTileArgs;
+        unsigned int specialTileType;
+        bool placingSpecialTile;
+
         void paintTile();
         void placeEntity();
         void replaceTileType();

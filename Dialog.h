@@ -29,6 +29,8 @@ class Dialog
         //GUI functions for inputting data
         void addLabel(const std::string& label); //Add descriptive labels
         void addList(const std::vector<std::string>& buttonLabels, std::vector<std::function<void()>> callbacks); //Add options to select from
+        const std::string addEntry(const std::string& entryLabel);
+
         void setOkayButton(std::function<void()>); //Set function callback for the okay button
         void setCancelButton(std::function<void()>); //Set function callback for the cancel button
 
@@ -39,15 +41,20 @@ class Dialog
         std::string dialogTitle;
         frd::Theme dialogTheme; //Theme of the dialog box window
 
+
         frd::FRDGUI dialogGUI; //FRDGUI reference
 
         std::shared_ptr<frd::Menu> menu;
         sf::RectangleShape borders;
+        unsigned int labelWidgetHeight;
+        unsigned int labelWidgetSpacing;
+        unsigned int labelWidgetIncrement;
 
         //GUI elements for the dialog box window
         std::shared_ptr <frd::Menu> mainMenu;
-        std::shared_ptr <frd::Button> okayButton;
-        std::shared_ptr <frd::Button> cancelButton;
+
+        //Dialog manager functions
+        void updatePositions();
 };
 
 

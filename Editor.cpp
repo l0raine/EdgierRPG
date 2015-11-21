@@ -46,6 +46,7 @@ void Editor::load()
     specialTilesVisible = false;
     selectedTilePositions = {{blankTilePosition.x,blankTilePosition.y}};
     placingAnimatedTile = false;
+    placingSpecialTile = false;
     defaultRotation = true;
 
     //Setup menu to store the main page of the editor
@@ -363,33 +364,68 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     //Get the map
     Map *cMap = MapManager::getInstance()->getCurrentMap();
 
-    //Calculate some information about the selected tiles for placement.
-    //Here we are calculating a rectangle from the first and last selected tiles and then finding which selected tile goes where in the rectangle
-    //Then converting this rectangle position into actual tile positions and placing
-    const sf::Vector2u &topLeft = selectedTilePositions[0];
-    const sf::Vector2u &bottomRight = selectedTilePositions.back();
-    const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
-
-    //Place each tile in relation to the rectangle
-    for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
+    if(!placingSpecialTile) //Placing normal tile
     {
-        for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
+        //Calculate some information about the selected tiles for placement.
+        //Here we are calculating a rectangle from the first and last selected tiles and then finding which selected tile goes where in the rectangle
+        //Then converting this rectangle position into actual tile positions and placing
+        const sf::Vector2u &topLeft = selectedTilePositions[0];
+        const sf::Vector2u &bottomRight = selectedTilePositions.back();
+        const sf::Vector2u &rectangleSize = sf::Vector2u(bottomRight.x-topLeft.x + tileSize, bottomRight.y-topLeft.y + tileSize);
+
+        //Place each tile in relation to the rectangle
+        for(unsigned int x = 0; x < rectangleSize.x/tileSize; x++)
         {
-            //Don't place tile outside of map
-            unsigned int offsetAmount = tileOffset+(x)+(y*cMap->getMapSizeTiles().x);
-            if(offsetAmount < cMap->getTileCount(currentlySelectedLayer))
+            for(unsigned int y = 0; y < rectangleSize.y/tileSize; y++)
             {
-                TileBase *tile = cMap->getTile(currentlySelectedLayer, offsetAmount);
-                tile->setTextureRect(sf::IntRect(topLeft.x + x*tileSize, topLeft.y + y*tileSize, tileSize, tileSize));
-                tile->setRotation(placementRotation);
+                //Don't place tile outside of map
+                unsigned int offsetAmount = tileOffset+(x)+(y*cMap->getMapSizeTiles().x);
+                if(offsetAmount < cMap->getTileCount(currentlySelectedLayer))
+                {
+                    TileBase *tile = cMap->getTile(currentlySelectedLayer, offsetAmount);
+                    tile->setTextureRect(sf::IntRect(topLeft.x + x*tileSize, topLeft.y + y*tileSize, tileSize, tileSize));
+                    tile->setRotation(placementRotation);
+                }
             }
         }
+    }
+    else //Placing special tile
+    {
+        SpecialTileContainer::getInstance()->registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
+        if(specialTileType == 1)//Warp tile
+        {
+            Dialog warpDialog("Set warp destination");
+
+            //Set the warp destination via tile ID on the same map
+            auto setDestinationCurrentMap = [&]()
+            {
+                //Set the warp destination by tile ID (record the next click?)
+
+                warpDialog.close();
+            };
+
+            //Set the warp destination via tile ID to another map
+            auto setDestinationDifferentMap = [&]()
+            {
+                warpDialog.close();
+            };
+
+            warpDialog.addList({"Set Warp Destination (Current Map)"}, {setDestinationCurrentMap});
+            warpDialog.addList({"Set Warp Destination (Different Map)"}, {setDestinationDifferentMap});
+        }
+        updateSpecialTileView();
     }
 }
 
 void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
 {
-    MapManager::getInstance()->getCurrentMap()->removeTile(layer, tileOffset);
+    if(!specialTilesVisible) //If special tiles are toggled off, remove normal tiles
+        MapManager::getInstance()->getCurrentMap()->removeTile(layer, tileOffset);
+    else //if special tiles are toggled on (visible), remove special tiles
+    {
+        SpecialTileContainer::getInstance()->removeSpecialTile(tileOffset);
+        updateSpecialTileView();
+    }
 }
 
 void Editor::createAnimatedTile()
@@ -425,6 +461,12 @@ void Editor::rotateSelectionClockwise()
 void Editor::toggleSpecialTilesVisible()
 {
     specialTilesVisible = !specialTilesVisible;
+    if(specialTilesVisible)
+        updateSpecialTileView();
+}
+
+void Editor::updateSpecialTileView()
+{
     specialTileTexture.clear(sf::Color::Transparent);
     if(specialTilesVisible) //If visible, generate a visual render texture from all of the tile types
     {
@@ -472,31 +514,49 @@ void Editor::createSpecialTile()
     //Create a tile selection menu and assign binds
     Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
-    auto blockSpecialTile = []()
+    auto blockSpecialTile = [&]()
     {
         //Set selection to block tile
+        std::cout<<"Set selection to block tile. \n";
+        placingSpecialTile = true;
+        specialTileType = 0;
+        specialTileArgs.clear();
+        dialog.close();
     };
 
-    auto warpSpecialTile = []()
+    auto warpSpecialTile = [&]()
     {
         //Set selection to warp tile
+        std::cout<<"Set selection to warp tile. \n";
+        placingSpecialTile = true;
+        specialTileType = 1;
+
+        /*Dialog setWarpLocationBox("Set warp location"); //Bring up a dialog box asking for the tilePos
+
+        //Set the okay button
+        setWarpLocationBox.setOkayButton([&]()
+         {
+             setWarpLocationBox.close();
+         });
+        std::string entry = setWarpLocationBox.addEntry("X coordinate: ");
+
+        setWarpLocationBox.update();*/
+
+        specialTileArgs.emplace_back("20");
+
+        dialog.close();
     };
 
-    auto luaTrigger = []()
+    auto luaTrigger = [&]()
     {
         //Print a lua trigger
+        std::cout<<"Set selection to Lua trigger. \n";
+        placingSpecialTile = true;
+        specialTileType = 2;
+        dialog.close();
     };
 
     dialog.addList({"Block", "Warp", "Lua Trigger"}, {blockSpecialTile, warpSpecialTile, luaTrigger});
-    dialog.setOkayButton([]()
-     {
-        //Set function for okay button
-     });
-
-     dialog.setCancelButton([]()
-    {
-        //Set function for cancel button
-    });
 
     dialog.update(); //While the dialog box is open, update it i.e listen for events, update buttons, take inputs, etc
 }
@@ -615,6 +675,8 @@ void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 
     //Update placement preview
     placingAnimatedTile = false;
+    placingSpecialTile = false;
+
     updatePlacementPreview();
 }
 

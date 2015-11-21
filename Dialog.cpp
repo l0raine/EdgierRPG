@@ -14,6 +14,11 @@ void Dialog::load(const std::string &tempDialogTitle)
     dialogTitle = tempDialogTitle; //Set the title of the dialog box
     dialogWindowSize = sf::Vector2i(400, 200);
 
+    //Initialize variables
+    labelWidgetHeight = 0;
+    labelWidgetSpacing = 5;
+    labelWidgetIncrement = 5;
+
     //Main working area with borders
     borders = sf::RectangleShape(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y - 30));
     borders.setPosition(10,20);
@@ -21,20 +26,6 @@ void Dialog::load(const std::string &tempDialogTitle)
 
     //Setup the menu to store everything
     menu = frd::Maker::make(frd::Menu());
-
-    //Setup the okay button
-    okayButton = frd::Maker::make(frd::Button());
-    okayButton->setLabel("Okay");
-    dialogTheme.applyTheme(okayButton);
-    okayButton->setPosition({50, 150});
-    okayButton->setSize({100, 25});
-
-    //Setup the cancel button
-    cancelButton = frd::Maker::make(frd::Button());
-    cancelButton->setLabel("Cancel");
-    dialogTheme.applyTheme(cancelButton);
-    cancelButton->setPosition({250, 150});
-    cancelButton->setSize({100, 25});
 
     //Setup the title label
     auto titleLabel = frd::Maker::make(frd::Label());
@@ -44,8 +35,6 @@ void Dialog::load(const std::string &tempDialogTitle)
 
     //Add widgets to the menu
     menu->addWidget(titleLabel);
-    menu->addWidget(okayButton);
-    menu->addWidget(cancelButton);
 
     dialogGUI.addMenu(menu);
 }
@@ -136,18 +125,60 @@ void Dialog::addLabel(const std::string& label)
     frdLabel->setLabel(label);
     frdLabel->setColor(sf::Color::Black);
     frdLabel->setSize({20,20});
-    frdLabel->setPosition({10,10});
+    frdLabel->setPosition({10, labelWidgetHeight});
+    updatePositions();
 
     menu->addWidget(frdLabel);
 }
 
 void Dialog::setOkayButton(std::function<void()> callback)
 {
+    //Setup the okay button
+    auto okayButton = frd::Maker::make(frd::Button());
+    okayButton->setLabel("Okay");
+    dialogTheme.applyTheme(okayButton);
+    okayButton->setPosition({50, 150});
+    okayButton->setSize({100, 25});
+
     okayButton->bindFunction(EventTypes::LeftClick_Up, callback);
+
+    menu->addWidget(okayButton);
 }
 
 void Dialog::setCancelButton(std::function<void()> callback)
 {
+    //Setup the cancel button
+    auto cancelButton = frd::Maker::make(frd::Button());
+    cancelButton->setLabel("Cancel");
+    dialogTheme.applyTheme(cancelButton);
+    cancelButton->setPosition({250, 150});
+    cancelButton->setSize({100, 25});
+
     cancelButton->bindFunction(EventTypes::LeftClick_Up, callback);
+
+    menu->addWidget(cancelButton);
 }
 
+const std::string Dialog::addEntry(const std::string& defaultLabel)
+{
+    //Define the label for the user to know what kind of data they are inputting
+    auto entryLabel = frd::Maker::make(frd::Label());
+    entryLabel->setLabel(defaultLabel);
+
+    //Define the input system
+    auto entry = frd::Maker::make(frd::Entry());
+    entry->setSize({40, 10});
+    entry->setPosition({10, labelWidgetHeight});
+    updatePositions();
+
+    menu->addWidget(entryLabel);
+    menu->addWidget(entry);
+
+    return entry->getString();
+}
+
+void Dialog::updatePositions()
+{
+    labelWidgetHeight+=labelWidgetIncrement; //Incremement the positions to be lower than the previous widget
+    labelWidgetHeight+=labelWidgetSpacing; //Add spacing
+}

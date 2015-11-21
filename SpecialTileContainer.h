@@ -37,7 +37,7 @@ class SpecialTileContainer
                 case 1: //Warp
                     return "W";
                     break;
-                case 3: //Lua
+                case 2: //Lua
                     return "L";
                     break;
                 default:
@@ -55,7 +55,7 @@ class SpecialTileContainer
                 case 1: //Warp
                     return sf::Color::Blue;
                     break;
-                case 3: //Lua
+                case 2: //Lua
                     return sf::Color::Green;
                     break;
                 default:
@@ -68,12 +68,15 @@ class SpecialTileContainer
         void handleMessage(std::unique_ptr<MessageBase> &message); //Handle a message
         void registerSpecialTile(unsigned int tileType, unsigned int tilePosID, const std::vector<std::string> &args); //Registers a special tile
         void clear(); //Removes all special tiles, used when, for example, switching map
+        void removeSpecialTile(unsigned int tilePosID);
         unsigned int getSpecialTileCount(); //Returns numbers of special tiles in the map
         const SpecialTileContainer::SpecialTile &getSpecialTile(unsigned int id); //Returns a special tile at the given id
     protected:
     private:
         /** Default constructor */
         SpecialTileContainer();
+
+        std::vector<SpecialTileContainer::SpecialTile>::iterator getSpecialTileFromID(unsigned int tileOffset);
 
         static std::shared_ptr<SpecialTileContainer> instance;
 
