@@ -460,9 +460,14 @@ void Editor::rotateSelectionClockwise()
 
 void Editor::toggleSpecialTilesVisible()
 {
+    //Toggle special tiles visible
     specialTilesVisible = !specialTilesVisible;
-    if(specialTilesVisible)
+
+    if(specialTilesVisible) //If visible, update the special tile render texture
         updateSpecialTileView();
+    else //Else ensure that we're no longer placing special tiles
+        placingSpecialTile = false;
+
 }
 
 void Editor::updateSpecialTileView()
@@ -511,6 +516,10 @@ void Editor::togglePlacementGrid()
 
 void Editor::createSpecialTile()
 {
+    //Ensure that special tiles are visible
+    if(!specialTilesVisible)
+        toggleSpecialTilesVisible();
+
     //Create a tile selection menu and assign binds
     Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
