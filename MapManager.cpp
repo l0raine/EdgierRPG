@@ -4,6 +4,7 @@
 #include "MessageHandler.h"
 #include "EventTypes.h"
 #include "Globals.h"
+#include "SpecialTileContainer.h"
 
 std::shared_ptr<MapManager> MapManager::instance;
 
@@ -71,6 +72,7 @@ bool MapManager::isMapLoaded(std::unique_ptr<Map> mapToCheck)
 void MapManager::switchToMap(const std::string& filepath)
 {
     unloadMap(currentlyDisplayedMap);
+    SpecialTileContainer::getInstance()->clear();
     loadMap(filepath);
 }
 
