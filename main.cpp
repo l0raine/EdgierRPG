@@ -61,7 +61,6 @@ int main()
 
     //Load the editor;
     editor.load();
-    Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
     GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 

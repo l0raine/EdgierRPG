@@ -345,7 +345,7 @@ void Map::removeTile(unsigned int layer, unsigned int tileID)
 	TileBase *newTile = tileStorage[layer][tileID].get();
 
 	//Update the new tile
-	newTile->setTextureRect(sf::IntRect(96, 0, rect.width, rect.height));
+	newTile->setTextureRect(sf::IntRect(blankTilePosition.x, blankTilePosition.y, rect.width, rect.height));
 	newTile->setQuad(quad);
 	newTile->setPosition(pos);
 	newTile->setTexture(text);
@@ -385,7 +385,7 @@ void Map::setMapSize(const sf::Vector2i &newSize)
                 cTile->setRotation(0);
 
                 //Set the visible texture
-                cTile->setTextureRect(sf::IntRect(96, 0, tileSize, tileSize));
+                cTile->setTextureRect(sf::IntRect(blankTilePosition.x, blankTilePosition.y, tileSize, tileSize));
             }
         }
     }
