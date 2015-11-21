@@ -59,7 +59,7 @@ class SpecialTileContainer
                     return sf::Color::Green;
                     break;
                 default:
-                    return sf::Color::Black;
+                    return sf::Color::White;
                 }
             }
         };
