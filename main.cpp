@@ -28,14 +28,14 @@ using namespace std;
 int main()
 {
     //frd::Theme theme(sf::Vector2f(116, 34), sf::Color(0, 102, 0), 11, sf::Color::White, true, sf::Color(90,97,105), sf::Color::Black, 2, sf::Vector2f(900, 900), sf::Vector2f(0,0), "", "");
-    //theme.save("myTheme.txt");
+    //theme.save("dialogTheme.txt");
 
-    Map test;
+    /*Map test;
     test.setMapSize({50, 50});
     test.setMapName("MyMap");
     test.setAggressiveMusicList({"music1.wav", "music2.wav"});
     test.setAmbientMusicList({"musicPassive1.wav", "musicPassive2.wav"});
-    test.save("OUT.txt");
+    test.save("OUT.txt");*/
 
 
     Editor &editor = *Editor::getInstance().get();
@@ -54,9 +54,14 @@ int main()
     //Get instance of gui
     auto gui = *GUIManager::getInstance()->getFRDGUIHandle();
 
+    //Create a player entity
     std::unique_ptr<EntityBase> gamePlayer(new Player());
+    //Register the player
     EntityManager::getInstance()->registerEntity(gamePlayer);
+
+    //Load the editor;
     editor.load();
+    Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
     GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 
@@ -155,6 +160,6 @@ int main()
         //Display the window
         window.display();
     }
-  //  MapManager::getInstance()->getCurrentMap()->save("./Files/Maps/savedMap.txt");
+    MapManager::getInstance()->getCurrentMap()->save("./Files/Maps/test_level.txt");
     return 0;
 }

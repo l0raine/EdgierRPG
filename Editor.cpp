@@ -178,9 +178,9 @@ void Editor::load()
             {
                 cLayerButton[i]->setColor(sf::Color(0, 102, 0));
             }
-            cLayerButton[currentlySelectedLayer]->setColor(sf::Color::Green);
             cLayerButton[a]->setColor(sf::Color::Red);
         }));
+        cLayerButton[currentlySelectedLayer]->setColor(sf::Color::Red);
         layerSelectContainer->addWidget(cLayerButton[a]);
     }
 
@@ -470,21 +470,35 @@ void Editor::togglePlacementGrid()
 void Editor::createSpecialTile()
 {
     //Create a tile selection menu and assign binds
-    if(specialTileCreationMenu)
-        specialTileCreationMenu->clear();
-    else
+    Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
+
+    auto blockSpecialTile = []()
     {
-        std::cout << "\nCreated container!";
-        specialTileCreationMenu = frd::Maker::make(frd::Container());
-        specialTileCreationMenu->setSize({200, 200});
-        specialTileCreationMenu->setPosition({400, 400});
-        specialTileCreationMenu->setAllocation(Allocation::vertical);
-        specialTileCreationMenu->setColor(sf::Color::Red);
-        mainMenu->addWidget(specialTileCreationMenu);
-    }
+        //Set selection to block tile
+    };
 
+    auto warpSpecialTile = []()
+    {
+        //Set selection to warp tile
+    };
 
-    specialTileCreationMenu->setVisible(true);
+    auto luaTrigger = []()
+    {
+        //Print a lua trigger
+    };
+
+    dialog.addList({"Block", "Warp", "Lua Trigger"}, {blockSpecialTile, warpSpecialTile, luaTrigger});
+    dialog.setOkayButton([]()
+     {
+        //Set function for okay button
+     });
+
+     dialog.setCancelButton([]()
+    {
+        //Set function for cancel button
+    });
+
+    dialog.update(); //While the dialog box is open, update it i.e listen for events, update buttons, take inputs, etc
 }
 
 void Editor::paintTile()
@@ -573,6 +587,11 @@ void Editor::selectLayer(unsigned int newLayerID)
 
 void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
 {
+    //Reset rotational values
+    defaultRotation = true;
+    placementRotation = 0;
+    previewRotation = 0;
+
     selectedTilePositions = tileTexturePos;
 
     placingAnimatedTile = false;
@@ -608,11 +627,6 @@ void Editor::updatePlacementPreview()
 {
     //Get int rect of the window
     sf::IntRect windowRect(sf::Vector2i(0,0), windowSize);
-    Map *cMap = MapManager::getInstance()->getCurrentMap();
-
-    unsigned int previewTileID = HelperClass::getTileIDFromPosition(sf::Vector2f(sf::Mouse::getPosition(*gameWindow).x, sf::Mouse::getPosition(*gameWindow).y));
-
-    TileBase *cTile = cMap->getTile(0, previewTileID); //Doesnt matter which layer, since we aren't placing the tile
 
     //Get texture to draw
     const sf::Vector2u &topLeft = selectedTilePositions[0];
@@ -635,7 +649,6 @@ void Editor::updatePlacementPreview()
     }
 
     sf::Texture* tilePreviewTexture = ResourceManager::getInstance()->getLoadedTexture("tilesheets/tiles.png"); //Load the texture from memory
-    const sf::Vector2f tilePreviewPosition = cTile->getPosition(); //Get position to draw at
 
     placementPreviewSprite.setTexture(*tilePreviewTexture); //Generate sprite to draw
     placementPreviewSprite.setTextureRect(sf::IntRect(topLeft.x, topLeft.y, rectangleSize.x, rectangleSize.y));

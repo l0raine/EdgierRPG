@@ -6,6 +6,7 @@
 #include <functional>
 
 #include "EditorTilesheetView.h"
+#include "Dialog.h"
 
 class MessageBase;
 
@@ -79,6 +80,8 @@ class Editor
 
         //Toggles red placeable grids
         void togglePlacementGrid();
+
+        //Create a special tile
         void createSpecialTile();
         void paintTile();
         void placeEntity();
