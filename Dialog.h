@@ -8,6 +8,7 @@
 #include "FRDGUI.h"
 #include "GUI/GUIManager.h"
 #include <Theme.h>
+#include <Container.h>
 #include "Decoration.h"
 
 
@@ -29,10 +30,12 @@ class Dialog
         //GUI functions for inputting data
         void addLabel(const std::string& label); //Add descriptive labels
         void addList(const std::vector<std::string>& buttonLabels, std::vector<std::function<void()>> callbacks); //Add options to select from
-        const std::string addEntry(const std::string& entryLabel);
+        unsigned int addEntry(const std::string& entryLabel);
 
         void setOkayButton(std::function<void()>); //Set function callback for the okay button
         void setCancelButton(std::function<void()>); //Set function callback for the cancel button
+
+        const std::string getEntryStringByID(unsigned int entryID);
 
     protected:
     private:
@@ -44,11 +47,16 @@ class Dialog
 
         frd::FRDGUI dialogGUI; //FRDGUI reference
 
+        //Variables for keeping track of buttons and containers
         std::shared_ptr<frd::Menu> menu;
         sf::RectangleShape borders;
-        unsigned int labelWidgetHeight;
-        unsigned int labelWidgetSpacing;
-        unsigned int labelWidgetIncrement;
+        std::shared_ptr <frd::Container> mainContainer;
+        std::shared_ptr <frd::Container> confirmationButtons;
+
+        std::vector<std::pair<unsigned int, std::shared_ptr<frd::Entry>>> entries;
+
+        unsigned int confirmationButtonCount;
+        unsigned int entryID;
 
         //GUI elements for the dialog box window
         std::shared_ptr <frd::Menu> mainMenu;

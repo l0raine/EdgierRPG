@@ -23,6 +23,16 @@ unsigned int HelperClass::getTileIDFromPosition(const sf::Vector2f& position, Ma
     return (tileY*theMap.getMapSizeTiles().x)+tileX;
 }
 
+unsigned int getTileIDFromPosition(const sf::Vector2f &position, sf::Vector2f mapSize)
+{
+    unsigned int tileSize = 32; //TEMP - assign an actual var to this later
+
+    unsigned int tileX = std::floor(position.x/tileSize);
+    unsigned int tileY = std::floor(position.y/tileSize);
+
+    return (tileY*mapSize.x)+tileX;
+}
+
 unsigned int HelperClass::getTileIDFromPosition(const sf::Vector2f& position)
 {
     Map &theMap = *MapManager::getInstance()->getCurrentMap();

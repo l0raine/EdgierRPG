@@ -72,8 +72,10 @@ void SpecialTileContainer::handleMessage(std::unique_ptr<MessageBase> &message)
                             }
                             else //Warp to another map, 2 arguments (mapPath, tileID)
                             {
-                                MapManager::getInstance()->switchToMap(specialTiles[a].arguments[0]);
                                 objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[1]), *MapManager::getInstance()->getCurrentMap()));
+                                MapManager::getInstance()->switchToMap(specialTiles[a].arguments[0]);
+                                return;
+
                             }
                             break;
                         }

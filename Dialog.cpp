@@ -14,18 +14,35 @@ void Dialog::load(const std::string &tempDialogTitle)
     dialogTitle = tempDialogTitle; //Set the title of the dialog box
     dialogWindowSize = sf::Vector2i(400, 200);
 
-    //Initialize variables
-    labelWidgetHeight = 0;
-    labelWidgetSpacing = 5;
-    labelWidgetIncrement = 5;
+    //Setup the menu to store everything
+    menu = frd::Maker::make(frd::Menu());
+
+    //Initialize container variables
+    mainContainer = frd::Maker::make(frd::Container());
+    mainContainer->setSize({dialogWindowSize.x - 20, dialogWindowSize.y - 100 });
+    mainContainer->setPosition({10, 20});
+    mainContainer->setAllocation(Allocation::vertical);
+    mainContainer->setSpacing({5,5});
+
+    confirmationButtons = frd::Maker::make(frd::Container());
+    confirmationButtons->setSize({dialogWindowSize.x - 20, dialogWindowSize.y/6 });
+    confirmationButtons->setPosition({50, 140});
+    confirmationButtons->setAllocation(Allocation::horizontal);
+    confirmationButtons->setSpacing({5,5});
+    confirmationButtons->allowAutomaticResizing(false);
+
+    menu->addWidget(confirmationButtons);
+
+    menu->addWidget(mainContainer);
+
+    //Initialize confirmation button count to 0
+    confirmationButtonCount = 0;
+    entryID = 0;
 
     //Main working area with borders
     borders = sf::RectangleShape(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y - 30));
     borders.setPosition(10,20);
     borders.setFillColor(sf::Color(0, 102, 0));
-
-    //Setup the menu to store everything
-    menu = frd::Maker::make(frd::Menu());
 
     //Setup the title label
     auto titleLabel = frd::Maker::make(frd::Label());
@@ -125,10 +142,8 @@ void Dialog::addLabel(const std::string& label)
     frdLabel->setLabel(label);
     frdLabel->setColor(sf::Color::Black);
     frdLabel->setSize({20,20});
-    frdLabel->setPosition({10, labelWidgetHeight});
-    updatePositions();
 
-    menu->addWidget(frdLabel);
+    mainContainer->addWidget(frdLabel);
 }
 
 void Dialog::setOkayButton(std::function<void()> callback)
@@ -137,12 +152,14 @@ void Dialog::setOkayButton(std::function<void()> callback)
     auto okayButton = frd::Maker::make(frd::Button());
     okayButton->setLabel("Okay");
     dialogTheme.applyTheme(okayButton);
-    okayButton->setPosition({50, 150});
+    //okayButton->setPosition({50, 150});
     okayButton->setSize({100, 25});
 
     okayButton->bindFunction(EventTypes::LeftClick_Up, callback);
 
-    menu->addWidget(okayButton);
+    confirmationButtons->addWidget(okayButton);
+
+    confirmationButtonCount++;
 }
 
 void Dialog::setCancelButton(std::function<void()> callback)
@@ -151,34 +168,57 @@ void Dialog::setCancelButton(std::function<void()> callback)
     auto cancelButton = frd::Maker::make(frd::Button());
     cancelButton->setLabel("Cancel");
     dialogTheme.applyTheme(cancelButton);
-    cancelButton->setPosition({250, 150});
+    //cancelButton->setPosition({250, 150});
     cancelButton->setSize({100, 25});
 
     cancelButton->bindFunction(EventTypes::LeftClick_Up, callback);
 
     menu->addWidget(cancelButton);
+
+    confirmationButtonCount++;
 }
 
-const std::string Dialog::addEntry(const std::string& defaultLabel)
+unsigned int Dialog::addEntry(const std::string& defaultLabel)
 {
+    auto entryContainer = frd::Maker::make(frd::Container());
+    entryContainer->setSize({200, 20});
+    entryContainer->setAllocation(Allocation::horizontal);
+
+
     //Define the label for the user to know what kind of data they are inputting
-    auto entryLabel = frd::Maker::make(frd::Label());
+    auto entryLabel = frd::Maker::make(frd::Button());
+    entryLabel->setColor(sf::Color::Transparent);
+    entryLabel->setBezelEnabled(false);
     entryLabel->setLabel(defaultLabel);
+    entryLabel->setCharacterSize(13);
 
     //Define the input system
     auto entry = frd::Maker::make(frd::Entry());
-    entry->setSize({40, 10});
-    entry->setPosition({10, labelWidgetHeight});
-    updatePositions();
+    entry->getLabel().setColor(sf::Color::Black);
+    entry->setCursorColor(sf::Color::Black);
+    entry->setCursorEnabled(true);
+    entry->setCursorFlashInterval(sf::seconds(1));
+    entry->setCharacterSize(10);
+    entry->setCursorWidth(2);
 
-    menu->addWidget(entryLabel);
-    menu->addWidget(entry);
+    entryContainer->addWidget(entryLabel);
+    entryContainer->addWidget(entry);
 
-    return entry->getString();
+    mainContainer->addWidget(entryContainer);
+
+    entries.emplace_back(std::make_pair(++entryID, entry));
+    return entryID;
 }
 
-void Dialog::updatePositions()
+const std::string Dialog::getEntryStringByID(unsigned int entryID)
 {
-    labelWidgetHeight+=labelWidgetIncrement; //Incremement the positions to be lower than the previous widget
-    labelWidgetHeight+=labelWidgetSpacing; //Add spacing
+    for(auto iter = entries.begin(); iter != entries.end(); iter++)
+    {
+        if(iter->first == entryID)
+        {
+            return iter->second->getString();
+        }
+    }
+    return "1";
 }
+

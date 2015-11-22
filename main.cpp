@@ -72,7 +72,7 @@ int main()
 
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
-    gameWindow = &window;
+    gameWindow = &window; //Set the window reference to the main game window
 
     //Default view
     sf::View defaultView(sf::Vector2f(windowSize.x/2, windowSize.y/2), sf::Vector2f(windowSize.x, windowSize.y));

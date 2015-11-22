@@ -69,7 +69,7 @@ bool MapManager::isMapLoaded(std::unique_ptr<Map> mapToCheck)
     return false;
 }
 
-void MapManager::switchToMap(const std::string& filepath)
+void MapManager::switchToMap(const std::string filepath)
 {
     unloadMap(currentlyDisplayedMap);
     SpecialTileContainer::getInstance()->clear();
@@ -90,7 +90,25 @@ void MapManager::unloadMap(Map* cMap)
     }
 }
 
+sf::Vector2f MapManager::getMapSize(const std::string& filepath)
+{
+    std::string newfilepath = mapPath + filepath;
 
+    std::ifstream mapFile;
+    mapFile.open(newfilepath); //Open the file
+
+    if(!mapFile.is_open())
+        return {};
+
+    unsigned int mapSizeX, mapSizeY;
+    std::string mapName;
+    mapFile >> mapName >> mapSizeX >> mapSizeY;
+
+    mapFile.close(); //Close the file
+
+    return sf::Vector2f(mapSizeX, mapSizeY);
+
+}
 
 
 

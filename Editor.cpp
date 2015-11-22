@@ -364,7 +364,32 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     //Get the map
     Map *cMap = MapManager::getInstance()->getCurrentMap();
 
-    if(!placingSpecialTile) //Placing normal tile
+    if(placingSpecialTile) //Placing special tile
+    {
+        SpecialTileContainer::getInstance()->registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
+        updateSpecialTileView();
+    }
+    else if(placingAnimatedTile) //Placing animated tile
+    {
+        std::cout<<"placing animated tiles.\n";
+        Map* cMap = MapManager::getInstance()->getCurrentMap();
+        cMap->setTileAnimated(currentlySelectedLayer, tileOffset); //Ensure that the current frame is an animated tile
+
+        AnimatedTile* animTile = dynamic_cast<AnimatedTile*>(MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset));
+
+        //Set the switch interval
+        animTile->setSwitchInterval(switchInterval);
+
+        //Adding the frames to the animated tile
+        unsigned int a = 0;
+        for(auto &cFrame : selectedTilePositions)
+        {
+            std::cout<<"Adding frame no: "<<a++<<std::endl;
+            animTile->addFrame(sf::IntRect(cFrame.x, cFrame.y, tileSize, tileSize));
+
+        }
+    }
+    else //Placing normal tile
     {
         //Calculate some information about the selected tiles for placement.
         //Here we are calculating a rectangle from the first and last selected tiles and then finding which selected tile goes where in the rectangle
@@ -389,32 +414,6 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
             }
         }
     }
-    else //Placing special tile
-    {
-        SpecialTileContainer::getInstance()->registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
-        if(specialTileType == 1)//Warp tile
-        {
-            Dialog warpDialog("Set warp destination");
-
-            //Set the warp destination via tile ID on the same map
-            auto setDestinationCurrentMap = [&]()
-            {
-                //Set the warp destination by tile ID (record the next click?)
-
-                warpDialog.close();
-            };
-
-            //Set the warp destination via tile ID to another map
-            auto setDestinationDifferentMap = [&]()
-            {
-                warpDialog.close();
-            };
-
-            warpDialog.addList({"Set Warp Destination (Current Map)"}, {setDestinationCurrentMap});
-            warpDialog.addList({"Set Warp Destination (Different Map)"}, {setDestinationDifferentMap});
-        }
-        updateSpecialTileView();
-    }
 }
 
 void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
@@ -431,6 +430,27 @@ void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
 void Editor::createAnimatedTile()
 {
     placingAnimatedTile = true;
+
+    //Select tiles to animate
+    if(selectedTilePositions.size() > 1)
+    {
+
+        Dialog animatedTileDialog("Create Animated Tile");
+        unsigned int switchIntervalEntryID = animatedTileDialog.addEntry("Frame Switch Interval");
+
+        //Enter the switch interval and close the dialog
+        auto switchFrameCallback = [&]()
+        {
+            switchInterval = stoul(animatedTileDialog.getEntryStringByID(switchIntervalEntryID));
+            animatedTileDialog.close();
+        };
+
+        //Set the callback for the okay button
+        animatedTileDialog.setOkayButton(switchFrameCallback);
+
+        //Update the animated tile dialog box
+        animatedTileDialog.update();
+    }
 }
 
 void Editor::rotateSelectionClockwise()
@@ -502,6 +522,7 @@ void Editor::updateSpecialTileView()
 
             specialTileTexture.draw(tileLabel);
         }
+
         specialTileTexture.display();
     }
 }
@@ -539,19 +560,37 @@ void Editor::createSpecialTile()
         std::cout<<"Set selection to warp tile. \n";
         placingSpecialTile = true;
         specialTileType = 1;
+        specialTileArgs.clear();
 
-        /*Dialog setWarpLocationBox("Set warp location"); //Bring up a dialog box asking for the tilePos
+        Dialog setWarpLocationBox("Set warp location"); //Bring up a dialog box asking for the tilePos
+
+        unsigned int xCoordID = setWarpLocationBox.addEntry("X coordinate: ");
+        unsigned int yCoordID = setWarpLocationBox.addEntry("Y coordinate: ");
+        unsigned int mapNameID = setWarpLocationBox.addEntry("Map: ");
+        unsigned int currentTileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
+
+        //Define the function for accepting warp arguments
+        auto setWarpArgs = [&]()
+         {
+            const std::string& xCoord = setWarpLocationBox.getEntryStringByID(xCoordID);
+            const std::string& yCoord = setWarpLocationBox.getEntryStringByID(yCoordID);
+            const std::string& mapName = setWarpLocationBox.getEntryStringByID(mapNameID);
+
+
+            if(!mapName.empty())
+            {
+                specialTileArgs.emplace_back(mapName);
+                specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize))));
+            }
+            else
+                specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize), *MapManager::getInstance()->getCurrentMap())));
+            setWarpLocationBox.close();
+         };
 
         //Set the okay button
-        setWarpLocationBox.setOkayButton([&]()
-         {
-             setWarpLocationBox.close();
-         });
-        std::string entry = setWarpLocationBox.addEntry("X coordinate: ");
+        setWarpLocationBox.setOkayButton(setWarpArgs);
 
-        setWarpLocationBox.update();*/
-
-        specialTileArgs.emplace_back("20");
+        setWarpLocationBox.update();
 
         dialog.close();
     };

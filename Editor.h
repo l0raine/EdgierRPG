@@ -57,9 +57,10 @@ class Editor
         unsigned int layerCount;
         unsigned int previewRotation;
         bool defaultRotation;
+        unsigned int switchInterval;
 
         //Editor core functions
-        void updatePlacementPreview();
+        void updatePlacementPreview(); //Update the placement preview that appears when dragging
         void updatePlacementGrid(); //Update the size and position of the red placement grid over the main window
         void placeSelected(unsigned int layer, unsigned int tileOffset); //Places the selected sprite selection on the map at given position
         void removeTile(unsigned int layer, unsigned int tileOffset); //Removes tile from loaded map
@@ -70,7 +71,6 @@ class Editor
         //Editor settings change
         void selectLayer(unsigned int newLayerID);
         bool isGridEnabled();
-        std::shared_ptr<frd::Container> specialTileCreationMenu;
 
         //Direct modification
         void clearLayer();
