@@ -7,7 +7,6 @@
 #include "EntityManager.h"
 #include "EntityBase.h"
 
-std::shared_ptr<SpecialTileContainer> SpecialTileContainer::instance;
 SpecialTileContainer::SpecialTileContainer()
 {
     //ctor
@@ -16,15 +15,6 @@ SpecialTileContainer::SpecialTileContainer()
 SpecialTileContainer::~SpecialTileContainer()
 {
     //dtor
-}
-
-std::shared_ptr<SpecialTileContainer> SpecialTileContainer::getInstance()
-{
-    if(instance == nullptr)
-    {
-        instance = std::shared_ptr<SpecialTileContainer>(new SpecialTileContainer());
-    }
-    return instance;
 }
 
 void SpecialTileContainer::registerSpecialTile(unsigned int tileType, unsigned int tileID, const std::vector<std::string>& args)

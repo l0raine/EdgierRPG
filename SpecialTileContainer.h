@@ -6,13 +6,13 @@
 #include <SFML/Graphics.hpp>
 
 class MessageBase;
+class Map;
 
 class SpecialTileContainer
 {
     public:
-        /** Default destructor */
+        friend Map; //To allow Map to create instances of this class
         virtual ~SpecialTileContainer();
-        static std::shared_ptr<SpecialTileContainer> getInstance();
 
         struct SpecialTile
         {
@@ -72,13 +72,10 @@ class SpecialTileContainer
         unsigned int getSpecialTileCount(); //Returns numbers of special tiles in the map
         const SpecialTileContainer::SpecialTile &getSpecialTile(unsigned int id); //Returns a special tile at the given id
     protected:
+        SpecialTileContainer(); //Only allow maps to create instances of this class, as Map is a friend
     private:
-        /** Default constructor */
-        SpecialTileContainer();
 
         std::vector<SpecialTileContainer::SpecialTile>::iterator getSpecialTileFromID(unsigned int tileOffset);
-
-        static std::shared_ptr<SpecialTileContainer> instance;
 
         std::vector<SpecialTile> specialTiles;
 

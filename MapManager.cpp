@@ -72,7 +72,7 @@ bool MapManager::isMapLoaded(std::unique_ptr<Map> mapToCheck)
 void MapManager::switchToMap(const std::string filepath)
 {
     unloadMap(currentlyDisplayedMap);
-    SpecialTileContainer::getInstance()->clear();
+    MapManager::getCurrentMap()->specialTileContainer.clear();
     loadMap(filepath);
 }
 

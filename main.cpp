@@ -97,7 +97,7 @@ int main()
         {
             //Let game objects process the event
             EntityManager::getInstance()->handleMessage(message);
-            SpecialTileContainer::getInstance()->handleMessage(message);
+            MapManager::getInstance()->getCurrentMap()->specialTileContainer.handleMessage(message);
             editor.handleMessage(message);
 
 

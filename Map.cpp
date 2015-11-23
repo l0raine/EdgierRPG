@@ -87,7 +87,7 @@ bool Map::load(const std::string& filepath)
 			file >> tileArguments.back();
 		}
 		//Register the special tile
-		SpecialTileContainer::getInstance()->registerSpecialTile(tileType, stoi(tileID), tileArguments);
+		specialTileContainer.registerSpecialTile(tileType, stoi(tileID), tileArguments);
 		tileArguments.clear();
 		tileType = 0;
 		argumentCount = 0;
@@ -229,9 +229,9 @@ bool Map::save(const std::string& filepath)
 
 	//Now for the tiles
 	//Save the special tiles first
-	for(unsigned int a = 0; a < SpecialTileContainer::getInstance()->getSpecialTileCount(); a++)
+	for(unsigned int a = 0; a < specialTileContainer.getSpecialTileCount(); a++)
 	{
-		const SpecialTileContainer::SpecialTile &cTile = SpecialTileContainer::getInstance()->getSpecialTile(a);
+		const SpecialTileContainer::SpecialTile &cTile = specialTileContainer.getSpecialTile(a);
 		file << cTile.position << " " << cTile.tileType << " " << cTile.arguments.size();
 		for(const auto &argument : cTile.arguments)
 		{
@@ -451,5 +451,10 @@ void Map::setTileAnimated(unsigned int layer, unsigned int tileID)
 	newTile->setTextureRect(texRect);
 	newTile->setRotation(rotation);
 	newTile->setQuad(quad);
+}
+
+void Map::setTileStatic(unsigned int layer, unsigned int tileID)
+{
+    removeTile(layer, tileID); //Effectively just a more intuitive name for removeTile, as this is effectively what removeTile does
 }
 

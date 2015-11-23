@@ -411,8 +411,12 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
 
     if(currentPlacementState == PlacementState::StateSpecialTile) //Placing special tile
     {
-        SpecialTileContainer::getInstance()->registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
+        cMap->specialTileContainer.registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
         updateSpecialTileView();
+    }
+    else if(currentPlacementState == PlacementState::StateEyeDropper) //If picking tile
+    {
+
     }
     else if(currentPlacementState == PlacementState::StateAnimatedTile) //Placing animated tile
     {
@@ -469,7 +473,7 @@ void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
         MapManager::getInstance()->getCurrentMap()->removeTile(layer, tileOffset);
     else //if special tiles are toggled on (visible), remove special tiles
     {
-        SpecialTileContainer::getInstance()->removeSpecialTile(tileOffset);
+        MapManager::getInstance()->getCurrentMap()->specialTileContainer.removeSpecialTile(tileOffset);
         updateSpecialTileView();
     }
 }
@@ -567,7 +571,7 @@ void Editor::resetMap()
 
         //Clear the special tile container
         //TODO: after changing storage to per map, iterate through the map and clear
-        SpecialTileContainer::getInstance()->clear();
+        cMap->specialTileContainer.clear();
 
         updateSpecialTileView();
         confirmReset.close();
@@ -647,7 +651,7 @@ void Editor::updateSpecialTileView()
     if(currentPlacementState == PlacementState::StateSpecialTile) //If visible, generate a visual render texture from all of the tile types
     {
         //Collect some information that we'll need for generation
-        SpecialTileContainer *specialTileContainer = SpecialTileContainer::getInstance().get();
+        SpecialTileContainer *specialTileContainer = &MapManager::getInstance()->getCurrentMap()->specialTileContainer;
         const unsigned int specialTileCount = specialTileContainer->getSpecialTileCount();
 
         //Setup the text that will be used for the label and some generic values

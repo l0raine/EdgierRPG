@@ -10,6 +10,8 @@
 #include <iostream>
 #include <memory>
 
+#include "SpecialTileContainer.h"
+
 class TileBase;
 class AnimatedTile;
 
@@ -19,6 +21,9 @@ class Map
 		Map();
 		Map(const std::string &filepath);
 		virtual ~Map();
+
+		//Core map data
+		SpecialTileContainer specialTileContainer;
 
 		//Core map functions
 		bool load(const std::string &filepath);
@@ -44,7 +49,8 @@ class Map
 		const std::string &getMapName(); //Returns map name
 		const std::string &getMapFilepath();
         void setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd); //Sets which layers are drawn. Default: 0, layerCounter
-        void setTileAnimated(unsigned int layer, unsigned int tileID); //Will cause old texture rect to be lost
+        void setTileAnimated(unsigned int layer, unsigned int tileID); //Transforms a static tile into an animated one
+        void setTileStatic(unsigned int layer, unsigned int tileID); //Transforms an animated tile into a static one
 	protected:
 
 	private:

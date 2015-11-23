@@ -38,7 +38,7 @@ class Editor
 
         enum PlacementState //What tile type is currently being placed?
         {
-            StateSpecialTile, StateAnimatedTile, StateNormalTile
+            StateSpecialTile, StateAnimatedTile, StateNormalTile, StateEyeDropper
         };
 
         //Editor core variables
@@ -71,6 +71,7 @@ class Editor
         void removeTile(unsigned int layer, unsigned int tileOffset); //Removes tile from loaded map
         void updateMap(); //Called if the map is changed, updates things like selection grid size and other things
         void updateSpecialTileView(); //Re-render the special tiles
+        void pickTile(); //Eye-dropper or whatever it's called.
 
         //Editor map functions
         void selectLayer(unsigned int newLayerID);
