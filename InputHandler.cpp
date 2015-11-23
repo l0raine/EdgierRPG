@@ -66,7 +66,6 @@ void InputHandler::handleEvent(sf::Event event)
     //Process mouse events such as Left mouse click, right mouse click
     else if(event.type == sf::Event::MouseButtonPressed)
     {
-        //std::cout<<"Clicked pos: "<<event.mouseButton.x<<", "<<event.mouseButton.y<<" \n";
         if(event.mouseButton.button == sf::Mouse::Left)
         {
             leftMouse = true;

@@ -17,38 +17,43 @@ void Dialog::load(const std::string &tempDialogTitle)
     //Setup the menu to store everything
     menu = frd::Maker::make(frd::Menu());
 
-    //Initialize container variables
+    //Initialize the main container variables
     mainContainer = frd::Maker::make(frd::Container());
-    mainContainer->setSize({dialogWindowSize.x - 20, dialogWindowSize.y - 100 });
-    mainContainer->setPosition({10, 20});
-    mainContainer->setAllocation(Allocation::vertical);
-    mainContainer->setSpacing({5,5});
+    mainContainer->setSize({dialogWindowSize.x - 20, dialogWindowSize.y - 100 }); //Create the workable area
+    mainContainer->setPosition({50, dialogWindowSize.y/2 - 50}); //Set workable area's position to top left of the dialog box
+    mainContainer->setAllocation(Allocation::vertical); //Set its allocation to vertical
 
-    confirmationButtons = frd::Maker::make(frd::Container());
-    confirmationButtons->setSize({dialogWindowSize.x - 20, dialogWindowSize.y/6 });
-    confirmationButtons->setPosition({50, 140});
-    confirmationButtons->setAllocation(Allocation::horizontal);
-    confirmationButtons->setSpacing({5,5});
-    confirmationButtons->allowAutomaticResizing(false);
+    confirmationButtons = frd::Maker::make(frd::Container()); //Create the container for confirmation buttons i.e okay and cancel
+    confirmationButtons->setSize({dialogWindowSize.x - 20, dialogWindowSize.y/6 }); //Set the container's size to right under the mainContainer's area
+    confirmationButtons->setPosition({50, 140}); //Set its position to under the mainContainer's area
+    confirmationButtons->setAllocation(Allocation::horizontal); //Set allocation to horizontal
+    confirmationButtons->setSpacing({100,5}); // Set the spacing between the buttons to 5 on and X and Y axis
+    confirmationButtons->allowAutomaticResizing(false); //Disable automatic resizing
 
-    menu->addWidget(confirmationButtons);
+    menu->addWidget(confirmationButtons); //Add the confirmation buttons to the menu
 
-    menu->addWidget(mainContainer);
+    menu->addWidget(mainContainer); //Add the main container to the menu
 
     //Initialize confirmation button count to 0
     confirmationButtonCount = 0;
+
+    //Initialize the entry ID to 0 to keep track of the added entries
     entryID = 0;
 
     //Main working area with borders
     borders = sf::RectangleShape(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y - 30));
     borders.setPosition(10,20);
-    borders.setFillColor(sf::Color(0, 102, 0));
+    borders.setFillColor(sf::Color(0, 102, 0, 60));
 
     //Setup the title label
-    auto titleLabel = frd::Maker::make(frd::Label());
+    auto titleLabel = frd::Maker::make(frd::Button());
     titleLabel->setLabel(dialogTitle);
-    dialogTheme.applyTheme(titleLabel);
-    titleLabel->setPosition({dialogWindowSize.x/3, 50});
+    titleLabel->setBezelEnabled(false);
+    titleLabel->setEnabled(false);
+    titleLabel->setColor(sf::Color::Transparent);
+    titleLabel->setCharacterSize(13);
+    titleLabel->setSize({20, 10});
+    titleLabel->setPosition({dialogWindowSize.x/2 - titleLabel->getSize().x/2, 5});
 
     //Add widgets to the menu
     menu->addWidget(titleLabel);
@@ -99,10 +104,10 @@ void Dialog::update()
 
         dialogGUI.update();
 
-        dialogWindow.clear(sf::Color::Red);
-        dialogWindow.draw(borders);
-        dialogWindow.draw(dialogGUI);
-        dialogWindow.display();
+        dialogWindow.clear(sf::Color::Red); //Clear the window with a red colour
+        dialogWindow.draw(borders); //Draw the borders of the dialog box
+        dialogWindow.draw(dialogGUI); //Draw the FRDGUI instance of this dialog box
+        dialogWindow.display(); //Display the dialog box
     }
 
 }
@@ -117,9 +122,9 @@ void Dialog::addList(const std::vector<std::string>& buttonLabels , std::vector<
     buttonContainer->setSpacing({0, 5});
     buttonContainer->allowAutomaticResizing(false);
 
-    unsigned int currentBind = 0;
+    unsigned int currentBind = 0; //Index for assigning the bindings
 
-    //Get all the button labels and
+    //Get all the button labels and set them up
     for(auto &cLabel : buttonLabels)
     {
         auto button = frd::Maker::make(frd::Button());
@@ -138,10 +143,11 @@ void Dialog::addList(const std::vector<std::string>& buttonLabels , std::vector<
 
 void Dialog::addLabel(const std::string& label)
 {
-    auto frdLabel = frd::Maker::make(frd::Label());
+    auto frdLabel = frd::Maker::make(frd::Button());
+    frdLabel->setColor(sf::Color::Transparent);
+    frdLabel->setBezelEnabled(false);
     frdLabel->setLabel(label);
-    frdLabel->setColor(sf::Color::Black);
-    frdLabel->setSize({20,20});
+    frdLabel->setCharacterSize(13);
 
     mainContainer->addWidget(frdLabel);
 }
@@ -173,7 +179,7 @@ void Dialog::setCancelButton(std::function<void()> callback)
 
     cancelButton->bindFunction(EventTypes::LeftClick_Up, callback);
 
-    menu->addWidget(cancelButton);
+    confirmationButtons->addWidget(cancelButton);
 
     confirmationButtonCount++;
 }
@@ -200,6 +206,8 @@ unsigned int Dialog::addEntry(const std::string& defaultLabel)
     entry->setCursorFlashInterval(sf::seconds(1));
     entry->setCharacterSize(10);
     entry->setCursorWidth(2);
+
+    mainContainer->allowAutomaticResizing(false);
 
     entryContainer->addWidget(entryLabel);
     entryContainer->addWidget(entry);

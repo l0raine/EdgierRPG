@@ -46,7 +46,7 @@ Map* MapManager::loadMap(const std::string &filepath)
 
     //Update pointer to current map
     currentlyDisplayedMap = loadedMaps.back().get();
-    std::cout<<"<MapManager>: Loaded Map: '"<<newfilepath<<"'"<<std::endl;
+    std::cout<<"\n<MapManager>: Loaded Map: '"<<newfilepath<<"'"<<std::endl;
 
     //Dispatch map change event
     MessageHandler::getInstance()->dispatch(MapChangeEvent::make());

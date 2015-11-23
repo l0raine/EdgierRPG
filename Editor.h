@@ -68,16 +68,25 @@ class Editor
         void updateSpecialTileView(); //Re-render the special tiles
 
         //Editor map functions
-        //Editor settings change
         void selectLayer(unsigned int newLayerID);
+        void saveMap();
+        void saveMapAs();
+        void loadMap();
+        void resetMap();
         bool isGridEnabled();
 
         //Direct modification
         void clearLayer();
+        void clearLayerByIndex(unsigned int layerIndex);
 
+        //Fill the selected layer with a selected tile type
         void fillLayer();
         void createAnimatedTile();
+
+        //Rotate the selected tile clockwise
         void rotateSelectionClockwise();
+
+        //Toggle the visibility of special tiles, i.e Block, Warp, Lua Triggers, etc
         void toggleSpecialTilesVisible();
 
         //Toggles red placeable grids
@@ -94,6 +103,8 @@ class Editor
         void replaceTileType();
         void setAggressiveMusic();
         void setPassiveMusic();
+
+        //Toggles visibility of tiles on the selected layer
         void toggleLayerView();
 };
 

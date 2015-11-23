@@ -10,6 +10,7 @@
 #include <Theme.h>
 #include <Container.h>
 #include "Decoration.h"
+#include "MessageBase.h"
 
 
 class Dialog
@@ -22,20 +23,19 @@ class Dialog
 
         void setPosition(const sf::Vector2f& newPosition); // Set the position of the dialog box
         void update(); //Update the dialog box
-        bool handleEvent(const sf::Event& event); //Handle events
         void open(); //Open the dialog box
         void load(const std::string &dialogTitle); //Load the dialog box
         void close(); //Hide the dialog box
 
         //GUI functions for inputting data
         void addLabel(const std::string& label); //Add descriptive labels
-        void addList(const std::vector<std::string>& buttonLabels, std::vector<std::function<void()>> callbacks); //Add options to select from
-        unsigned int addEntry(const std::string& entryLabel);
+        void addList(const std::vector<std::string>& buttonLabels, std::vector<std::function<void()>> callbacks); //Add options to select from - these are FRDGUI buttons
+        unsigned int addEntry(const std::string& entryLabel); //Add FRDGUI entries to input data
 
         void setOkayButton(std::function<void()>); //Set function callback for the okay button
-        void setCancelButton(std::function<void()>); //Set function callback for the cancel button
+        void setCancelButton(std::function<void()>); //Set function callback for the cancel/close button
 
-        const std::string getEntryStringByID(unsigned int entryID);
+        const std::string getEntryStringByID(unsigned int entryID); //Get an entry's inputted data by passing in its ID
 
     protected:
     private:

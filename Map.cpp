@@ -39,6 +39,9 @@ bool Map::load(const std::string& filepath)
 	if(!file.is_open()) //Failed to open file
 		return false;
 
+    //Set the filepath to the map's file path
+    this->filepath = filepath;
+
 	//Read map name
 	std::getline(file, mapName);
 
@@ -167,7 +170,7 @@ void Map::updateStaticMap()
 	//Clear the VertexArrays and create them anew
 	for(unsigned int i = 0; i < mapLayerCount; i++)
 	{
-	    std::cout << "\nTile storage size: " << tileStorage[i].size();
+	    std::cout << "\nTile storage size: " << tileStorage[i].size()<<std::endl;
 		staticTileMap[i].clear();
 		staticTileMap[i] = sf::VertexArray(sf::Quads);
 		staticTileMap[i].resize(mapSize.x*mapSize.y*4);
@@ -200,6 +203,9 @@ bool Map::save(const std::string& filepath)
 		return false; //Failed to open
 
 	//Write map metadata
+
+	//Set the filepath to the map's file path
+    this->filepath = filepath;
 
 	//Write map name
 	file.write(mapName.c_str(), mapName.size());
@@ -409,6 +415,11 @@ void Map::setMapName(const std::string &newName)
 const std::string &Map::getMapName()
 {
     return mapName;
+}
+
+const std::string &Map::getMapFilepath()
+{
+    return filepath;
 }
 
 void Map::setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd)

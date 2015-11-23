@@ -161,6 +161,7 @@ void Editor::load()
     auto layerSelectContainer = frd::Maker::make(frd::Container());
     layerSelectContainer->setAllocation(Allocation::horizontal);
     layerSelectContainer->setSize({500, 50});
+    layerSelectContainer->setPosition({0,600 - layerSelectContainer->getSize().y});
 
     std::shared_ptr<frd::Button> cLayerButton[5];
     for(unsigned int a = 0; a < mapLayerCount; a++)
@@ -187,8 +188,44 @@ void Editor::load()
 
     mainMenu->addWidget(layerSelectContainer);
 
+    //Setup the save, load buttons container
+    auto editorUtilitiesContainer = frd::Maker::make(frd::Container());
+    editorUtilitiesContainer->setAllocation(Allocation::horizontal);
+    editorUtilitiesContainer->setSize({500,500});
+    editorUtilitiesContainer->allowAutomaticResizing(false);
+
+    //Save button
+    auto saveButton = frd::Maker::make(frd::Button());
+    theme.applyTheme(saveButton);
+    saveButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::saveMap, this));
+    saveButton->setLabel("Save");
+
+    //Save As button
+    auto saveAsButton = frd::Maker::make(frd::Button());
+    theme.applyTheme(saveAsButton);
+    saveAsButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::saveMapAs, this));
+    saveAsButton->setLabel("Save As");
+
+    //Load button
+    auto loadButton = frd::Maker::make(frd::Button());
+    theme.applyTheme(loadButton);
+    loadButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::loadMap, this));
+    loadButton->setLabel("Load");
+
+    //Reset button
+    auto resetButton = frd::Maker::make(frd::Button());
+    theme.applyTheme(resetButton);
+    resetButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::resetMap, this));
+    resetButton->setLabel("Reset");
+
+    editorUtilitiesContainer->addWidget(saveButton);
+    editorUtilitiesContainer->addWidget(saveAsButton);
+    editorUtilitiesContainer->addWidget(loadButton);
+    editorUtilitiesContainer->addWidget(resetButton);
+
+    mainMenu->addWidget(editorUtilitiesContainer);
+
     //Now add the tile selection window
-  //  tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView(std::bind(&Editor::setSelectedTile, this, std::placeholders::_1)));
     tileSelect = std::shared_ptr<frd::EditorTilesheetView>(new frd::EditorTilesheetView());
     tileSelect->setTexture(ResourceManager::getInstance()->loadTexture("tilesheets/tiles.png"));
     tileSelect->setPosition({10, 60});
@@ -250,10 +287,6 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
             if(event->isKeyPress() && event->getKey() == sf::Keyboard::F1) //If it's the key to open the editor
             {
                 open();
-            }
-            else if(event->isKeyPress() && event->getKey() == sf::Keyboard::F2) //Temporary save function
-            {
-                MapManager::getInstance()->getCurrentMap()->save("savedMap.txt");
             }
             break;
         }
@@ -343,6 +376,20 @@ void Editor::clearLayer()
     }
 }
 
+void Editor::clearLayerByIndex(unsigned int layerIndex)
+{
+    Map *tempMap = MapManager::getInstance()->getCurrentMap();
+
+    //Get the number of tiles on the selected layer
+    unsigned int tileCount = tempMap->getTileCount(layerIndex);
+
+    //Iterate through each tile on this layer and remove it
+    for(unsigned int tileID = 0; tileID < tileCount; tileID++) //Loop through each loaded tile
+    {
+        tempMap->removeTile(layerIndex, tileID);
+    }
+}
+
 void Editor::fillLayer()
 {
     Map *tempMap = MapManager::getInstance()->getCurrentMap();
@@ -426,6 +473,112 @@ void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
         updateSpecialTileView();
     }
 }
+void Editor::saveMap()
+{
+    const std::string& mapName = MapManager::getInstance()->getCurrentMap()->getMapFilepath(); //Get the map name of the currently loaded map without the filepath
+
+    if(mapName != "") //if the map name isnt blank
+    {
+        std::cout<<"Save Map, map name: "<<mapName<<std::endl;
+        MapManager::getInstance()->getCurrentMap()->save(mapName); //save the current map to the its path
+    }
+    std::cout<<"Map saved at :"<<mapPath + mapName<<std::endl;
+}
+
+void Editor::saveMapAs()
+{
+    Dialog saveMapDialog("Save Map As");
+
+    unsigned int saveMapEntryID = saveMapDialog.addEntry("Save as...");
+
+    saveMapDialog.setOkayButton([&]()
+    {
+        const std::string& mapName = saveMapDialog.getEntryStringByID(saveMapEntryID); //Get the inputted map name by entry ID
+        if(mapName != "") //if the map name isnt blank
+        {
+            std::cout<<"Save Map As, map name: "<<mapName<<std::endl;
+            MapManager::getInstance()->getCurrentMap()->setMapName(mapName);
+            MapManager::getInstance()->getCurrentMap()->save(mapName); //save the current map to the defined path
+        }
+
+        else
+        {
+            std::cout<<"Invalid map name entered! \n";
+        }
+
+        std::cout<<"Map saved at :"<<mapPath + mapName<<std::endl;
+        saveMapDialog.close();//Close the dialog when done
+    });
+
+    saveMapDialog.setCancelButton([&]()
+      {
+         saveMapDialog.close();
+      });
+
+    saveMapDialog.update();
+}
+
+void Editor::loadMap()
+{
+    Dialog loadMapDialog("Load Map");
+
+    unsigned int loadMapEntryID = loadMapDialog.addEntry("Load...");
+
+    loadMapDialog.setOkayButton([&]()
+    {
+        const std::string& mapName = loadMapDialog.getEntryStringByID(loadMapEntryID);
+        if(mapName != "") //If map name isn't blank
+        {
+            if(!MapManager::getInstance()->loadMap(mapName)) //Load the specified map
+                std::cout<<"Map not found! \n";
+            else
+                std::cout<<"Loaded map:"<<mapPath + mapName<<std::endl;
+        }
+        else
+        {
+            std::cout<<"Invalid map name entered! \n";
+        }
+       loadMapDialog.close();
+    });
+
+    loadMapDialog.setCancelButton([&]()
+    {
+        loadMapDialog.close();
+    });
+    loadMapDialog.update();
+}
+
+void Editor::resetMap()
+{
+    //Confirm map reset
+
+    Dialog confirmReset("Confirm Map Reset");
+
+    confirmReset.addLabel("Are you sure you want to reset the map?");
+
+    confirmReset.setOkayButton([&]()
+    {
+        //Loop through all the layers and clear them
+        Map *cMap = MapManager::getInstance()->getCurrentMap();
+        for(unsigned int cLayer=0; cLayer<cMap->getLayerCount(); cLayer++)
+        {
+            clearLayerByIndex(cLayer);
+        }
+
+        //Clear the special tile container
+        //TODO: after changing storage to per map, iterate through the map and clear
+        SpecialTileContainer::getInstance()->clear();
+
+        confirmReset.close();
+    });
+
+    confirmReset.setCancelButton([&]()
+    {
+        confirmReset.close();
+    });
+
+    confirmReset.update();
+}
 
 void Editor::createAnimatedTile()
 {
@@ -466,12 +619,9 @@ void Editor::rotateSelectionClockwise()
 
     if(previewRotation > 3)
     {
-        std::cout<<"prev rot > 3 \n";
         previewRotation = 0;
         defaultRotation = false;
     }
-
-    std::cout<< previewRotation<<std::endl;
 
     placementPreviewSprite.setOrigin(placementPreviewSprite.getTextureRect().width/2, placementPreviewSprite.getTextureRect().height/2);
 
@@ -544,6 +694,11 @@ void Editor::createSpecialTile()
     //Create a tile selection menu and assign binds
     Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
+    dialog.setCancelButton([&]()
+     {
+        dialog.close();
+     });
+
     auto blockSpecialTile = [&]()
     {
         //Set selection to block tile
@@ -564,31 +719,40 @@ void Editor::createSpecialTile()
 
         Dialog setWarpLocationBox("Set warp location"); //Bring up a dialog box asking for the tilePos
 
+        //Define the entries to be placed in the dialog box
         unsigned int xCoordID = setWarpLocationBox.addEntry("X coordinate: ");
         unsigned int yCoordID = setWarpLocationBox.addEntry("Y coordinate: ");
         unsigned int mapNameID = setWarpLocationBox.addEntry("Map: ");
+
         unsigned int currentTileSize = MapManager::getInstance()->getCurrentMap()->getTileSize();
 
         //Define the function for accepting warp arguments
         auto setWarpArgs = [&]()
          {
+             //Get the data in the entries by passing in the entryID
             const std::string& xCoord = setWarpLocationBox.getEntryStringByID(xCoordID);
             const std::string& yCoord = setWarpLocationBox.getEntryStringByID(yCoordID);
             const std::string& mapName = setWarpLocationBox.getEntryStringByID(mapNameID);
 
-
-            if(!mapName.empty())
+            if(xCoord != "" && yCoord !="" && mapName !="") // If the entries aren't just empty fields
             {
-                specialTileArgs.emplace_back(mapName);
-                specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize))));
+                if(!mapName.empty())
+                {
+                    specialTileArgs.emplace_back(mapName);
+                    specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize))));
+                }
+                else
+                    specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize), *MapManager::getInstance()->getCurrentMap())));
             }
-            else
-                specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize), *MapManager::getInstance()->getCurrentMap())));
             setWarpLocationBox.close();
          };
 
         //Set the okay button
         setWarpLocationBox.setOkayButton(setWarpArgs);
+        setWarpLocationBox.setCancelButton([&]()
+       {
+          setWarpLocationBox.close();
+       });
 
         setWarpLocationBox.update();
 

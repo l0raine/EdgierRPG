@@ -203,7 +203,6 @@ bool SoundHandler::loadSound(const std::string &filepath, bool shouldActivate)
 {
     cullSounds();
     std::string newfilepath = soundPath + filepath;
-    std::cout<<"load sound path: "<<newfilepath<<std::endl;
     if(keyExists(filepath))
         return true; //Don't want to load the same sound twice...
 

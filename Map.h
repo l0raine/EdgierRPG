@@ -42,6 +42,7 @@ class Map
 		unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
 		void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
 		const std::string &getMapName(); //Returns map name
+		const std::string &getMapFilepath();
         void setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd); //Sets which layers are drawn. Default: 0, layerCounter
         void setTileAnimated(unsigned int layer, unsigned int tileID); //Will cause old texture rect to be lost
 	protected:
