@@ -19,6 +19,7 @@ void Dialog::load(const std::string &tempDialogTitle)
 
     //Initialize the main container variables
     mainContainer = frd::Maker::make(frd::Container());
+
     mainContainer->setSize({dialogWindowSize.x - 20, dialogWindowSize.y - 100 }); //Create the workable area
     mainContainer->setPosition({50, dialogWindowSize.y/2 - 50}); //Set workable area's position to top left of the dialog box
     mainContainer->setAllocation(Allocation::vertical); //Set its allocation to vertical
@@ -41,7 +42,7 @@ void Dialog::load(const std::string &tempDialogTitle)
     entryID = 0;
 
     //Main working area with borders
-    borders = sf::RectangleShape(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y - 30));
+    borders = sf::RectangleShape(sf::Vector2f(dialogWindowSize.x - 20.f, dialogWindowSize.y - 30.f));
     borders.setPosition(10,20);
     borders.setFillColor(sf::Color(0, 102, 0, 60));
 
@@ -118,7 +119,7 @@ void Dialog::addList(const std::vector<std::string>& buttonLabels , std::vector<
     auto buttonContainer = frd::Maker::make(frd::Container());
     buttonContainer->setAllocation(Allocation::horizontal);
     buttonContainer->setSize({400, 200});
-    buttonContainer->setPosition({dialogWindowSize.x/8, dialogWindowSize.y/6});
+    buttonContainer->setPosition({dialogWindowSize.x / 8.f, dialogWindowSize.y / 6.f});
     buttonContainer->setSpacing({0, 5});
     buttonContainer->allowAutomaticResizing(false);
 

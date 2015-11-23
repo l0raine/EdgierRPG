@@ -27,7 +27,7 @@ class Script
 template<typename... Args>
 void Script::call(const std::string& function, Args&&... args)
 {
-	luaState[function](args...);
+	luaState[function](std::forward<Args...>(args...));
 	
 	// ignore any returns
 	luaState.clean();

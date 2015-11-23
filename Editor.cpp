@@ -174,14 +174,14 @@ void Editor::load()
         theme.applyTheme(cLayerButton[a]);
         cLayerButton[a]->setLabel("Layer " + std::to_string(a));
         cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::selectLayer, this, a));
-        cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind([=]()
+/*      cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind([=]()
         {
             for(unsigned int i=0;i<mapLayerCount; i++)
             {
                 cLayerButton[i]->setColor(sf::Color(0, 102, 0));
             }
             cLayerButton[a]->setColor(sf::Color::Red);
-        }));
+        }));*/
         cLayerButton[currentlySelectedLayer]->setColor(sf::Color::Red);
         layerSelectContainer->addWidget(cLayerButton[a]);
     }
