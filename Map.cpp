@@ -130,9 +130,6 @@ bool Map::load(const std::string& filepath)
 			//Get iterator to new tile, cast to animated tile
 			AnimatedTile *cTile = reinterpret_cast<AnimatedTile*>(tileStorage[layerNumber].back().get());
 
-			//Set the tile texture
-			cTile->setTexture(tileTexture);
-
 			//Set the tile position
 			if(tileNumber == 0) //To avoid division by 0
 				cTile->setPosition(0, 0);
@@ -156,6 +153,9 @@ bool Map::load(const std::string& filepath)
 
 			//Store a pointer to the animated tile for animated tile drawing
 			animatedTiles[layerNumber].emplace_back(cTile);
+
+			//Set default visible texture
+			cTile->setTextureRect(sf::IntRect(spriteOffsetX, spriteOffsetY, tileSize, tileSize));
 		}
 	}
 	//Update static map
@@ -170,7 +170,6 @@ void Map::updateStaticMap()
 	//Clear the VertexArrays and create them anew
 	for(unsigned int i = 0; i < mapLayerCount; i++)
 	{
-	    std::cout << "\nTile storage size: " << tileStorage[i].size()<<std::endl;
 		staticTileMap[i].clear();
 		staticTileMap[i] = sf::VertexArray(sf::Quads);
 		staticTileMap[i].resize(mapSize.x*mapSize.y*4);
@@ -284,21 +283,22 @@ void Map::draw(sf::RenderTarget& target, const sf::RenderStates &states)
 	//Iterate through each layer of tiles and draw each layer individually
 	for(unsigned int cLayer = drawMin; cLayer < drawMax; cLayer++)
 	{
-		for(auto &cTile : animatedTiles[cLayer]) //Draw animated tiles
-			cTile->draw(target, states);
-
 		target.draw(staticTileMap[cLayer], tileTexture);
 	}
 }
 
 void Map::update()
 {
-	//Update all animated tiles on each layer
-	for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
-	{
-		for(auto &cTile : animatedTiles[cLayer])
-			cTile->update();
-	}
+	//Update all animated tiles on each layer ONLY if they haven't been updated in a little while
+	if(animatedTileUpdateInterval.getElapsedTime().asMilliseconds() > 100)
+    {
+        for(unsigned int cLayer = 0; cLayer < mapLayerCount; cLayer++)
+        {
+            for(auto &cTile : animatedTiles[cLayer])
+                cTile->update();
+        }
+        animatedTileUpdateInterval.restart();
+    }
 }
 
 TileBase *Map::getTile(unsigned int layer, unsigned int tileID)
@@ -340,7 +340,6 @@ void Map::removeTile(unsigned int layer, unsigned int tileID)
 	auto pos = oldTile->getPosition();
 	auto quad = oldTile->getQuad();
 	auto rect = oldTile->getTextureRect();
-	auto text = oldTile->getTexture();
 
 	//If it's an animated tile, remove it from the AnimatedTile draw queue
 	if(oldTile->isAnimated())
@@ -354,7 +353,6 @@ void Map::removeTile(unsigned int layer, unsigned int tileID)
 	newTile->setTextureRect(sf::IntRect(blankTilePosition.x, blankTilePosition.y, rect.width, rect.height));
 	newTile->setQuad(quad);
 	newTile->setPosition(pos);
-	newTile->setTexture(text);
 }
 
 void Map::setMapSize(const sf::Vector2i &newSize)
@@ -435,21 +433,23 @@ void Map::setTileAnimated(unsigned int layer, unsigned int tileID)
 
 	//Store old info
 	auto pos = oldTile->getPosition();
-	auto text = oldTile->getTexture();
 	auto rotation = oldTile->getRotation();
+	auto texRect = oldTile->getTextureRect();
+	auto quad = oldTile->getQuad();
 
 	//If it's an animated tile, remove it from the AnimatedTile draw queue
 	if(oldTile->isAnimated())
 		animatedTiles[layer].erase(std::find(animatedTiles[layer].begin(), animatedTiles[layer].end(), dynamic_cast<AnimatedTile*>(oldTile)));
 
 	//Replace the tile
-	tileStorage[layer][tileID].reset(new AnimatedTile());
-	AnimatedTile *newTile = dynamic_cast<AnimatedTile*>(tileStorage[layer][tileID].get());
+	AnimatedTile *newTile = new AnimatedTile();
+	tileStorage[layer][tileID].reset(newTile);
 	animatedTiles[layer].emplace_back(newTile);
 
 	//Update the new tile
 	newTile->setPosition(pos);
-	newTile->setTexture(text);
+	newTile->setTextureRect(texRect);
 	newTile->setRotation(rotation);
+	newTile->setQuad(quad);
 }
 

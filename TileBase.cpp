@@ -40,11 +40,6 @@ void TileBase::setRotation(int newRotation)
     updateProjectedTexture();
 }
 
-void TileBase::setTexture(sf::Texture* newTexture)
-{
-    texture = newTexture;
-}
-
 void TileBase::updateProjectedTexture()
 {
     //Get the tile's quad
@@ -124,9 +119,4 @@ bool TileBase::isAnimated()
 const sf::Vector2f &TileBase::getPosition()
 {
     return position;
-}
-
-sf::Texture *TileBase::getTexture()
-{
-    return texture;
 }

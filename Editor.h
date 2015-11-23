@@ -36,6 +36,11 @@ class Editor
         //GUI elements
         std::shared_ptr<frd::Menu> mainMenu;
 
+        enum PlacementState //What tile type is currently being placed?
+        {
+            StateSpecialTile, StateAnimatedTile, StateNormalTile
+        };
+
         //Editor core variables
         sf::RenderWindow window;
         frd::Theme theme;
@@ -46,10 +51,10 @@ class Editor
         unsigned int placementRotation;
         bool gridEnabled;
         bool layerViewEnabled;
-        bool specialTilesVisible;
         sf::RenderTexture specialTileTexture;
-        bool placingAnimatedTile;
         sf::Sprite placementPreviewSprite;
+        PlacementState currentPlacementState;
+
 
         //Current map related variables
         unsigned int tileSize;
@@ -96,7 +101,6 @@ class Editor
         void createSpecialTile();
         std::vector<std::string> specialTileArgs;
         unsigned int specialTileType;
-        bool placingSpecialTile;
 
         void paintTile();
         void placeEntity();

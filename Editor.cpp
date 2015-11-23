@@ -43,10 +43,8 @@ void Editor::load()
     gridEnabled = true;
     placementRotation = 0;
     layerViewEnabled = false;
-    specialTilesVisible = false;
     selectedTilePositions = {{blankTilePosition.x,blankTilePosition.y}};
-    placingAnimatedTile = false;
-    placingSpecialTile = false;
+    currentPlacementState = PlacementState::StateNormalTile;
     defaultRotation = true;
 
     //Setup menu to store the main page of the editor
@@ -358,7 +356,7 @@ void Editor::drawMapOverlay(sf::RenderTarget& target)
 
     target.draw(placementPreviewSprite);
 
-    if(specialTilesVisible)
+    if(currentPlacementState == PlacementState::StateSpecialTile)
         target.draw(sf::Sprite(specialTileTexture.getTexture()));
 }
 
@@ -411,29 +409,25 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     //Get the map
     Map *cMap = MapManager::getInstance()->getCurrentMap();
 
-    if(placingSpecialTile) //Placing special tile
+    if(currentPlacementState == PlacementState::StateSpecialTile) //Placing special tile
     {
         SpecialTileContainer::getInstance()->registerSpecialTile(specialTileType, tileOffset, specialTileArgs);
         updateSpecialTileView();
     }
-    else if(placingAnimatedTile) //Placing animated tile
+    else if(currentPlacementState == PlacementState::StateAnimatedTile) //Placing animated tile
     {
-        std::cout<<"placing animated tiles.\n";
         Map* cMap = MapManager::getInstance()->getCurrentMap();
         cMap->setTileAnimated(currentlySelectedLayer, tileOffset); //Ensure that the current frame is an animated tile
 
-        AnimatedTile* animTile = dynamic_cast<AnimatedTile*>(MapManager::getInstance()->getCurrentMap()->getTile(currentlySelectedLayer, tileOffset));
+        AnimatedTile* animTile = dynamic_cast<AnimatedTile*>(cMap->getTile(currentlySelectedLayer, tileOffset));
 
         //Set the switch interval
         animTile->setSwitchInterval(switchInterval);
 
         //Adding the frames to the animated tile
-        unsigned int a = 0;
         for(auto &cFrame : selectedTilePositions)
         {
-            std::cout<<"Adding frame no: "<<a++<<std::endl;
             animTile->addFrame(sf::IntRect(cFrame.x, cFrame.y, tileSize, tileSize));
-
         }
     }
     else //Placing normal tile
@@ -454,7 +448,13 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
                 unsigned int offsetAmount = tileOffset+(x)+(y*cMap->getMapSizeTiles().x);
                 if(offsetAmount < cMap->getTileCount(currentlySelectedLayer))
                 {
+                    //Clear old tile info
+                    cMap->removeTile(currentlySelectedLayer, offsetAmount);
+
+                    //Get tile
                     TileBase *tile = cMap->getTile(currentlySelectedLayer, offsetAmount);
+
+                    //Set new tile info
                     tile->setTextureRect(sf::IntRect(topLeft.x + x*tileSize, topLeft.y + y*tileSize, tileSize, tileSize));
                     tile->setRotation(placementRotation);
                 }
@@ -465,7 +465,7 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
 
 void Editor::removeTile(unsigned int layer, unsigned int tileOffset)
 {
-    if(!specialTilesVisible) //If special tiles are toggled off, remove normal tiles
+    if(currentPlacementState != PlacementState::StateSpecialTile) //If special tiles are toggled off, remove normal tiles
         MapManager::getInstance()->getCurrentMap()->removeTile(layer, tileOffset);
     else //if special tiles are toggled on (visible), remove special tiles
     {
@@ -569,6 +569,7 @@ void Editor::resetMap()
         //TODO: after changing storage to per map, iterate through the map and clear
         SpecialTileContainer::getInstance()->clear();
 
+        updateSpecialTileView();
         confirmReset.close();
     });
 
@@ -582,7 +583,7 @@ void Editor::resetMap()
 
 void Editor::createAnimatedTile()
 {
-    placingAnimatedTile = true;
+    currentPlacementState = PlacementState::StateAnimatedTile;
 
     //Select tiles to animate
     if(selectedTilePositions.size() > 1)
@@ -631,19 +632,19 @@ void Editor::rotateSelectionClockwise()
 void Editor::toggleSpecialTilesVisible()
 {
     //Toggle special tiles visible
-    specialTilesVisible = !specialTilesVisible;
-
-    if(specialTilesVisible) //If visible, update the special tile render texture
-        updateSpecialTileView();
+    if(currentPlacementState == PlacementState::StateSpecialTile)
+        currentPlacementState = PlacementState::StateNormalTile;
     else //Else ensure that we're no longer placing special tiles
-        placingSpecialTile = false;
-
+    {
+        currentPlacementState = PlacementState::StateSpecialTile;
+        updateSpecialTileView();
+    }
 }
 
 void Editor::updateSpecialTileView()
 {
     specialTileTexture.clear(sf::Color::Transparent);
-    if(specialTilesVisible) //If visible, generate a visual render texture from all of the tile types
+    if(currentPlacementState == PlacementState::StateSpecialTile) //If visible, generate a visual render texture from all of the tile types
     {
         //Collect some information that we'll need for generation
         SpecialTileContainer *specialTileContainer = SpecialTileContainer::getInstance().get();
@@ -688,8 +689,7 @@ void Editor::togglePlacementGrid()
 void Editor::createSpecialTile()
 {
     //Ensure that special tiles are visible
-    if(!specialTilesVisible)
-        toggleSpecialTilesVisible();
+    currentPlacementState = PlacementState::StateSpecialTile;
 
     //Create a tile selection menu and assign binds
     Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
@@ -702,8 +702,7 @@ void Editor::createSpecialTile()
     auto blockSpecialTile = [&]()
     {
         //Set selection to block tile
-        std::cout<<"Set selection to block tile. \n";
-        placingSpecialTile = true;
+        currentPlacementState = PlacementState::StateSpecialTile;
         specialTileType = 0;
         specialTileArgs.clear();
         dialog.close();
@@ -712,8 +711,7 @@ void Editor::createSpecialTile()
     auto warpSpecialTile = [&]()
     {
         //Set selection to warp tile
-        std::cout<<"Set selection to warp tile. \n";
-        placingSpecialTile = true;
+        currentPlacementState = PlacementState::StateSpecialTile;
         specialTileType = 1;
         specialTileArgs.clear();
 
@@ -763,7 +761,7 @@ void Editor::createSpecialTile()
     {
         //Print a lua trigger
         std::cout<<"Set selection to Lua trigger. \n";
-        placingSpecialTile = true;
+        currentPlacementState = PlacementState::StateSpecialTile;
         specialTileType = 2;
         dialog.close();
     };
@@ -886,8 +884,7 @@ void Editor::setSelectedTile(const std::vector<sf::Vector2u> &tileTexturePos)
     }
 
     //Update placement preview
-    placingAnimatedTile = false;
-    placingSpecialTile = false;
+    currentPlacementState = PlacementState::StateNormalTile;
 
     updatePlacementPreview();
 }
@@ -912,7 +909,7 @@ void Editor::updateMap()
     if(layerViewEnabled)
         toggleLayerView();
 
-    if(specialTilesVisible)
+    if(currentPlacementState == PlacementState::StateSpecialTile)
         toggleSpecialTilesVisible();
 }
 

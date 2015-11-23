@@ -8,9 +8,8 @@
 AnimatedTile::AnimatedTile()
 {
 	//Setup sprite vertex array
-	frameVertexArray = sf::VertexArray(sf::Quads, 4);
+	frameVertexArray = nullptr;
 	isTileAnimated = true;
-	frameCount = 0;
 }
 
 AnimatedTile::~AnimatedTile()
@@ -26,7 +25,6 @@ void AnimatedTile::setSwitchInterval(int switchIntervalNew)
 void AnimatedTile::addFrame(const sf::IntRect &frameRect)
 {
 	frames.emplace_back(frameRect);
-	frameCount++;
 }
 
 void AnimatedTile::update()
@@ -43,14 +41,9 @@ void AnimatedTile::update()
 	}
 }
 
-void AnimatedTile::draw(sf::RenderTarget &target, const sf::RenderStates &states)
-{
-	target.draw(frameVertexArray, texture);
-}
-
 sf::Vertex *AnimatedTile::getQuad()
 {
-	return &frameVertexArray[0];
+	return frameVertexArray;
 }
 
 sf::IntRect AnimatedTile::getFrame(unsigned int frameIndex)
@@ -60,10 +53,17 @@ sf::IntRect AnimatedTile::getFrame(unsigned int frameIndex)
 
 unsigned int AnimatedTile::getFrameCount()
 {
-	return frameCount;
+	return frames.size();
 }
 
 unsigned int AnimatedTile::getSwitchInterval()
 {
 	return switchInterval;
+}
+
+void AnimatedTile::setQuad(sf::Vertex* quad)
+{
+    frameVertexArray = quad;
+    updateQuadPosition();
+    updateProjectedTexture();
 }

@@ -59,6 +59,9 @@ class Map
 		unsigned int tileSize;
 		sf::Vector2i mapSizePixels;
 
+		//Other stuff
+		sf::Clock animatedTileUpdateInterval; //How often should the update call be given to animated tiles?
+
 		//Draw info
 		unsigned int drawMin;
 		unsigned int drawMax;
