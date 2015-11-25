@@ -20,12 +20,12 @@ void Dialog::load(const std::string &tempDialogTitle)
     //Initialize the main container variables
     mainContainer = frd::Maker::make(frd::Container());
 
-    mainContainer->setSize({dialogWindowSize.x - 20, dialogWindowSize.y - 100 }); //Create the workable area
-    mainContainer->setPosition({50, dialogWindowSize.y/2 - 50}); //Set workable area's position to top left of the dialog box
+    mainContainer->setSize(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y - 100 )); //Create the workable area
+    mainContainer->setPosition(sf::Vector2f(50, dialogWindowSize.y/2 - 50)); //Set workable area's position to top left of the dialog box
     mainContainer->setAllocation(Allocation::vertical); //Set its allocation to vertical
 
     confirmationButtons = frd::Maker::make(frd::Container()); //Create the container for confirmation buttons i.e okay and cancel
-    confirmationButtons->setSize({dialogWindowSize.x - 20, dialogWindowSize.y/6 }); //Set the container's size to right under the mainContainer's area
+    confirmationButtons->setSize(sf::Vector2f(dialogWindowSize.x - 20, dialogWindowSize.y/6 )); //Set the container's size to right under the mainContainer's area
     confirmationButtons->setPosition({50, 140}); //Set its position to under the mainContainer's area
     confirmationButtons->setAllocation(Allocation::horizontal); //Set allocation to horizontal
     confirmationButtons->setSpacing({100,5}); // Set the spacing between the buttons to 5 on and X and Y axis

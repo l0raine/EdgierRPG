@@ -136,6 +136,12 @@ void Editor::load()
     toggleLayerViewButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::toggleLayerView, this));
     theme.applyTheme(toggleLayerViewButton);
 
+    //Eye-dropper button
+    auto eyeDropperButton = frd::Maker::make(frd::Button());
+    eyeDropperButton->setLabel("Eye dropper");
+    eyeDropperButton->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::eyeDropper, this));
+    theme.applyTheme(eyeDropperButton);
+
     //Add buttons to the editing buttons container
     editButtonsContainer->addWidget(clearLayerButton);
     editButtonsContainer->addWidget(fillLayerButton);
@@ -150,6 +156,7 @@ void Editor::load()
     editButtonsContainer->addWidget(setAggressiveMusicButton);
     editButtonsContainer->addWidget(setPassiveMusicButton);
     editButtonsContainer->addWidget(toggleLayerViewButton);
+    editButtonsContainer->addWidget(eyeDropperButton);
 
     //Add container to main menu
     mainMenu->addWidget(editButtonsContainer);
@@ -416,7 +423,35 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
     }
     else if(currentPlacementState == PlacementState::StateEyeDropper) //If picking tile
     {
+        //Get clicked tile
+        TileBase *cTile = cMap->getTile(layer, tileOffset);
 
+        //Change placement state depending on tile type
+        if(cTile->isAnimated())
+            currentPlacementState = PlacementState::StateAnimatedTile;
+        else
+            currentPlacementState = PlacementState::StateNormalTile;
+
+        //Set selected bounds to the clicked tiles
+        if(cTile->isAnimated()) //Multiple frames, grab them all
+        {
+            selectedTilePositions.clear();
+            AnimatedTile *animTile = dynamic_cast<AnimatedTile*>(cTile);
+            switchInterval = animTile->getSwitchInterval();
+            placementRotation = animTile->getRotation();
+            for(unsigned int a = 0; a < animTile->getFrameCount(); a++)
+            {
+                selectedTilePositions.emplace_back(animTile->getFrame(a).left, animTile->getFrame(a).top);
+            }
+        }
+        else //Only one frame, grab it
+        {
+            selectedTilePositions = {sf::Vector2u(cTile->getTextureRect().left, cTile->getTextureRect().top)};
+            placementRotation = cTile->getRotation();
+        }
+
+        //Make sure that placement preview has updated
+        updatePlacementPreview();
     }
     else if(currentPlacementState == PlacementState::StateAnimatedTile) //Placing animated tile
     {
@@ -425,8 +460,9 @@ void Editor::placeSelected(unsigned int layer, unsigned int tileOffset)
 
         AnimatedTile* animTile = dynamic_cast<AnimatedTile*>(cMap->getTile(currentlySelectedLayer, tileOffset));
 
-        //Set the switch interval
+        //Set the switch interval and rotation
         animTile->setSwitchInterval(switchInterval);
+        animTile->setRotation(placementRotation);
 
         //Adding the frames to the animated tile
         for(auto &cFrame : selectedTilePositions)
@@ -497,7 +533,7 @@ void Editor::saveMapAs()
 
     saveMapDialog.setOkayButton([&]()
     {
-        const std::string& mapName = saveMapDialog.getEntryStringByID(saveMapEntryID); //Get the inputted map name by entry ID
+        const std::string& mapName = saveMapDialog.getEntryStringByID(saveMapEntryID); //Get the imputed map name by entry ID
         if(mapName != "") //if the map name isnt blank
         {
             std::cout<<"Save Map As, map name: "<<mapName<<std::endl;
@@ -934,4 +970,10 @@ void Editor::updatePlacementPreview()
     placementPreviewSprite.setOrigin(0,0);
     placementPreviewSprite.setRotation(placementRotation * 90);
     placementPreviewSprite.setColor(sf::Color(placementPreviewSprite.getColor().r, placementPreviewSprite.getColor().g, placementPreviewSprite.getColor().b, 180));
+}
+
+void Editor::eyeDropper()
+{
+    //Change placement mode to eye-dropper
+    currentPlacementState = PlacementState::StateEyeDropper;
 }

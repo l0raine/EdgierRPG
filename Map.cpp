@@ -422,6 +422,7 @@ const std::string &Map::getMapFilepath()
 
 void Map::setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd)
 {
+    //To only draw specific layers
     drawMin = drawBegin;
     drawMax = drawEnd;
 }
