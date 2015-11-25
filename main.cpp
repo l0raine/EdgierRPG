@@ -82,6 +82,8 @@ int main()
     double previousFrame = gameTime.getElapsedTime().asMilliseconds();
     double frameLag = 0.0;
 
+    window.setFramerateLimit(144); //To prevent the game from eating CPU cycles. Game will update at same speed regardless of this variable though.
+
     //Main window loop
     while(window.isOpen())
     {
