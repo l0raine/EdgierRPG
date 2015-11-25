@@ -8,7 +8,7 @@
 EntityBase::EntityBase()
 {
     direction = 1;
-    baseMovementSpeed = 0.2;
+    baseMovementSpeed = 3;
     position = sf::Vector2f(0,0);
     //ctor
 }
@@ -25,7 +25,7 @@ void EntityBase::draw(sf::RenderTarget& target)
 
 void EntityBase::update()
 {
-    float movementOffset = movementClock.restart().asMilliseconds() * baseMovementSpeed;
+    float movementOffset = baseMovementSpeed;
     sf::Vector2f positionOld = position;
     switch(direction)
     {

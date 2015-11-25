@@ -71,15 +71,27 @@ int main()
 
 
     window.setKeyRepeatEnabled(false);
-    window.setFramerateLimit(60);
     gameWindow = &window; //Set the window reference to the main game window
 
     //Default view
     sf::View defaultView(sf::Vector2f(windowSize.x/2, windowSize.y/2), sf::Vector2f(windowSize.x, windowSize.y));
 
-    //Poll events
+    //Setup game loop variables
+    sf::Clock gameTime;
+    const unsigned int frameTime = 1000/60; //60FPS
+    double previousFrame = gameTime.getElapsedTime().asMilliseconds();
+    double frameLag = 0.0;
+
+    //Main window loop
     while(window.isOpen())
     {
+        //Game loop upkeep
+        double currentFrame = gameTime.getElapsedTime().asMilliseconds();
+        double elapsedFrame = currentFrame - previousFrame;
+        previousFrame = currentFrame;
+        frameLag += elapsedFrame;
+
+        //Poll events
         sf::Event event;
         while(window.pollEvent(event))
         {
@@ -99,64 +111,35 @@ int main()
             EntityManager::getInstance()->handleMessage(message);
             MapManager::getInstance()->getCurrentMap()->specialTileContainer.handleMessage(message);
             editor.handleMessage(message);
-
-
-            switch(message->getMessageType())
-            {
-                case MessageBase::Types::mouseDragEvent:
-                {
-
-                    break;
-                }
-                case MessageBase::keyEvent:
-                    {
-                        KeyEvent *keyMessage = dynamic_cast<KeyEvent*>(message.get());
-                        if(keyMessage->getKey() == sf::Keyboard::Escape)
-                            window.close();
-                    }
-                    break;
-                default:
-                    break;
-            }
         }
 
-        //Update FRDGUI for things like animation
-        gui.update();
+        while(frameLag >= frameTime)
+        {
+            //Update aspects of the game
+            gui.update();
+            MapManager::getInstance()->getCurrentMap()->update();
+            EntityManager::getInstance()->update();
+            editor.update();
+            GameCamera::getInstance()->update();
 
-        //Update currently loaded map
-        MapManager::getInstance()->getCurrentMap()->update();
+            //Game loop upkeep
+            frameLag -= frameTime;
+        }
 
-        //Update all entities
-        EntityManager::getInstance()->update();
-
-        //Update the map editor
-        editor.update();
-
-        //Update the game camera
-        GameCamera::getInstance()->update();
-
-        //Clear game window to black
+        //Draw current frame
         window.clear(sf::Color::Black);
 
-        //Set the window's view to the game camera
+        //Draw things which belong to game camera
         window.setView(GameCamera::getInstance()->getCameraView());
-
-        //Draw the currently Loaded Map
         MapManager::getInstance()->getCurrentMap()->draw(window, sf::RenderStates::Default);
-
-        //Draw all entities
         EntityManager::getInstance()->draw(window, sf::RenderStates::Default);
-
-        //Draw map overlay grid for the editor
         editor.drawMapOverlay(window);
 
-        //Set default view
+        //Draw things which belong to window camera
         window.setView(defaultView);
-
-        //Draw gui elements
         window.draw(gui);
 
-        //Display the window
+        //Display the frame
         window.display();
     }
     MapManager::getInstance()->getCurrentMap()->save("./Files/Maps/test_level.txt");

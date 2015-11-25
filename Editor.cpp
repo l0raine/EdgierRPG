@@ -168,7 +168,7 @@ void Editor::load()
     layerSelectContainer->setSize({500, 50});
     layerSelectContainer->setPosition({0,600 - layerSelectContainer->getSize().y});
 
-    std::shared_ptr<frd::Button> cLayerButton[5];
+    std::shared_ptr<frd::Button> cLayerButton[mapLayerCount];
     for(unsigned int a = 0; a < mapLayerCount; a++)
     {
         cLayerButton[a] = frd::Maker::make(frd::Button());
