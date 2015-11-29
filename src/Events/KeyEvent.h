@@ -3,7 +3,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
-#include "../MessageBase.h"
+#include "Messaging/MessageBase.h"
 
 class KeyEvent : public MessageBase
 {

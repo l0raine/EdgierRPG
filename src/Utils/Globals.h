@@ -2,7 +2,6 @@
 #define GLOBALS_H
 
 #include<SFML/Graphics.hpp>
-#include "ResourceManager.h"
 
 //Forward global variable declarations
 extern sf::Vector2i windowSize;

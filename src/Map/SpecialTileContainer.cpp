@@ -1,11 +1,11 @@
 #include "SpecialTileContainer.h"
 
-#include "MessageBase.h"
-#include "EventTypes.h"
+#include "Messaging/MessageBase.h"
+#include "Events/EventTypes.h"
 #include "MapManager.h"
-#include "HelperClass.h"
-#include "EntityManager.h"
-#include "EntityBase.h"
+#include "Utils/HelperClass.h"
+#include "Entity/EntityManager.h"
+#include "Entity/EntityBase.h"
 
 SpecialTileContainer::SpecialTileContainer()
 {

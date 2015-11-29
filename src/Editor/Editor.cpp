@@ -1,15 +1,16 @@
 #include "Editor.h"
 
 #include "GUI/GUIManager.h"
-#include "MessageBase.h"
-#include "MessageHandler.h"
-#include "EventTypes.h"
-#include "MapManager.h"
+#include "Messaging/MessageBase.h"
+#include "Messaging/MessageHandler.h"
+#include "Events/EventTypes.h"
+#include "Map/MapManager.h"
 #include "EditorTilesheetView.h"
-#include "Map.h"
-#include "StaticTile.h"
-#include "SpecialTileContainer.h"
-#include "AnimatedTile.h"
+#include "Map/Map.h"
+#include "Map/StaticTile.h"
+#include "Map/SpecialTileContainer.h"
+#include "Map/AnimatedTile.h"
+#include "Resources/ResourceManager.h"
 
 std::shared_ptr<Editor> Editor::instance;
 

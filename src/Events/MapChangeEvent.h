@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "../MessageBase.h"
+#include "Messaging/MessageBase.h"
 
 
 class MapChangeEvent : public MessageBase

@@ -1,9 +1,8 @@
 #include "AnimatedTile.h"
 
-#include "AnimatedTile.h"
-#include "StaticTile.h"
-#include "ResourceManager.h"
-#include "Globals.h"
+#include "Map/StaticTile.h"
+#include "Resources/ResourceManager.h"
+#include "Utils/Globals.h"
 
 AnimatedTile::AnimatedTile()
 {

@@ -4,7 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include <memory>
 
-#include "../MessageBase.h"
+#include "Messaging/MessageBase.h"
 
 class EntityMoveEvent : public MessageBase
 {

@@ -1,10 +1,10 @@
 #include "MapManager.h"
 
 #include "Map.h"
-#include "MessageHandler.h"
-#include "EventTypes.h"
-#include "Globals.h"
-#include "SpecialTileContainer.h"
+#include "Messaging/MessageHandler.h"
+#include "Events/EventTypes.h"
+#include "Utils/Globals.h"
+#include "Map/SpecialTileContainer.h"
 
 std::shared_ptr<MapManager> MapManager::instance;
 

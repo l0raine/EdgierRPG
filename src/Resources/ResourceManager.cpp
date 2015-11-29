@@ -1,6 +1,6 @@
 #include "ResourceManager.h"
 
-#include "Globals.h"
+#include "Utils/Globals.h"
 
 //Define static instance variable once
 std::shared_ptr<ResourceManager> ResourceManager::instance;

@@ -1,9 +1,11 @@
 #include "GameCamera.h"
-#include "EntityManager.h"
-#include "Globals.h"
-#include "EntityBase.h"
-#include "MapManager.h"
-#include "Map.h"
+
+#include "Entity/EntityAnimation.h"
+#include "Utils/Globals.h"
+#include "Entity/EntityBase.h"
+#include "Map/MapManager.h"
+#include "Map/Map.h"
+#include "Entity/EntityManager.h"
 
 std::shared_ptr<GameCamera> GameCamera::instance;
 

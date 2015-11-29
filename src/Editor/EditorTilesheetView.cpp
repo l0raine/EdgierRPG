@@ -1,8 +1,8 @@
 #include "EditorTilesheetView.h"
 
-#include "MapManager.h"
-#include "Map.h"
-#include "InputHandler.h"
+#include "Map/MapManager.h"
+#include "Map/Map.h"
+#include "Input/InputHandler.h"
 #include "Editor.h"
 
 namespace frd

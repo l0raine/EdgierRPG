@@ -1,9 +1,9 @@
 #include "EntityBase.h"
 
-#include "HelperClass.h"
-#include "MapManager.h"
-#include "MessageHandler.h"
-#include "EventTypes.h"
+#include "Utils/HelperClass.h"
+#include "Map/MapManager.h"
+#include "Messaging/MessageHandler.h"
+#include "Events/EventTypes.h"
 
 EntityBase::EntityBase()
 {

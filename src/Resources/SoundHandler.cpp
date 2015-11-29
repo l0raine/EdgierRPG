@@ -1,5 +1,6 @@
 #include "SoundHandler.h"
-#include "Globals.h"
+
+#include "Utils/Globals.h"
 
 SoundHandler::SoundHandler()
 {

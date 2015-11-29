@@ -3,8 +3,8 @@
 
 #include <SFML/Window/Mouse.hpp>
 
-#include "../MessageBase.h"
-#include "../HelperClass.h"
+#include "Messaging/MessageBase.h"
+#include "Utils/HelperClass.h"
 
 
 class MouseEvent : public MessageBase

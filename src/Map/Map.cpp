@@ -3,8 +3,8 @@
 #include "SpecialTileContainer.h"
 #include "AnimatedTile.h"
 #include "StaticTile.h"
-#include "ResourceManager.h"
-#include "Globals.h"
+#include "Resources/ResourceManager.h"
+#include "Utils/Globals.h"
 
 Map::Map()
 	: tileSize(32)

@@ -6,7 +6,7 @@
 #include <functional>
 
 #include "EditorTilesheetView.h"
-#include "Dialog.h"
+#include "GUI/Dialog.h"
 
 class MessageBase;
 

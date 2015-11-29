@@ -1,7 +1,7 @@
 #ifndef GUIMANAGER_H
 #define GUIMANAGER_H
 #include "FRDGUI.h"
-#include "../Globals.h"
+#include "Utils/Globals.h"
 
 
 class GUIManager

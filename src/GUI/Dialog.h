@@ -10,7 +10,7 @@
 #include <Theme.h>
 #include <Container.h>
 #include "Decoration.h"
-#include "MessageBase.h"
+#include "Messaging/MessageBase.h"
 
 
 class Dialog

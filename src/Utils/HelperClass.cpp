@@ -1,6 +1,6 @@
 #include "HelperClass.h"
 
-#include "Map.h"
+#include "Map/Map.h"
 
 HelperClass::HelperClass()
 {
