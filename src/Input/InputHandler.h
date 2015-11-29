@@ -13,34 +13,34 @@
 
 class InputHandler
 {
-    public:
+public:
 
-        //Virtual destructor
-        virtual ~InputHandler();
+    //Virtual destructor
+    virtual ~InputHandler();
 
-        //Get instance for singleton
-        static std::shared_ptr<InputHandler> getInstance();
+    //Get instance for singleton
+    static std::shared_ptr<InputHandler> getInstance();
 
-        bool isKeyPressed(sf::Keyboard::Key key); //Check if key is currently pressed
-        bool isMousePressed(sf::Mouse::Button button); //Check if key is currently pressed
+    bool isKeyPressed(sf::Keyboard::Key key); //Check if key is currently pressed
+    bool isMousePressed(sf::Mouse::Button button); //Check if key is currently pressed
 
-        void handleEvent(sf::Event event);
+    void handleEvent(sf::Event event);
 
-    protected:
-    private:
+protected:
+private:
 
-        //Store states of keys; false = released; true = pressed; nullptr = no interaction
-        std::map<sf::Keyboard::Key, bool> pressedKeys; //Stores the state of keyboard keys
+    //Store states of keys; false = released; true = pressed; nullptr = no interaction
+    std::map<sf::Keyboard::Key, bool> pressedKeys; //Stores the state of keyboard keys
 
-        //Mouse button states
-        bool leftMouse, rightMouse;
+    //Mouse button states
+    bool leftMouse, rightMouse;
 
-        InputHandler();
+    InputHandler();
 
-        //Constructor is private per singleton design
-        static std::shared_ptr<InputHandler> instance;
+    //Constructor is private per singleton design
+    static std::shared_ptr<InputHandler> instance;
 
-        sf::Event event;
+    sf::Event event;
 
 
 };

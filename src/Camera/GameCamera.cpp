@@ -51,10 +51,10 @@ void GameCamera::update()
         posY = windowSize.y / 2;
 
     if (posX + windowSize.x / 2 > mapSize.x)
-    	posX = float(mapSize.x - windowSize.x / 2);
+        posX = float(mapSize.x - windowSize.x / 2);
 
     if (posY + windowSize.y / 2 > mapSize.y )
-    	posY = float(mapSize.y - windowSize.y / 2);
+        posY = float(mapSize.y - windowSize.y / 2);
 
     cameraView.setCenter(posX, posY);
 }

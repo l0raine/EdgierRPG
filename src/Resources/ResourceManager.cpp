@@ -47,10 +47,10 @@ sf::Texture* ResourceManager::loadTexture(const std::string filepath) noexcept
     return texture;
 }
 
- void ResourceManager::clearTextures()
- {
-     loadedTextures.clear();
- }
+void ResourceManager::clearTextures()
+{
+    loadedTextures.clear();
+}
 
 sf::Texture* ResourceManager::getLoadedTexture(const std::string &texture_in)
 {

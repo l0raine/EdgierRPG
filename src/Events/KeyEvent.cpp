@@ -2,7 +2,7 @@
 #include <iostream>
 
 KeyEvent::KeyEvent(bool isKeyPress, sf::Keyboard::Key keyType)
-: MessageBase(Types::keyEvent)
+    : MessageBase(Types::keyEvent)
 {
     //ctor
     isPress = isKeyPress;

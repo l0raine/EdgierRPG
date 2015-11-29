@@ -1,7 +1,7 @@
 #include "Dialog.h"
 
 Dialog::Dialog(const std::string &windowTitle)
-: dialogGUI(sf::Vector2i(400,200), fontPath + "arial.ttf", sf::Color::White, 7)
+    : dialogGUI(sf::Vector2i(400,200), fontPath + "arial.ttf", sf::Color::White, 7)
 {
     load(windowTitle);
 }

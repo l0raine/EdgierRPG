@@ -6,22 +6,22 @@
 
 class GUIManager
 {
-    public:
-        virtual ~GUIManager();//Destructor
+public:
+    virtual ~GUIManager();//Destructor
 
-        static std::shared_ptr<GUIManager> getInstance();
+    static std::shared_ptr<GUIManager> getInstance();
 
-        std::shared_ptr<frd::FRDGUI> getFRDGUIHandle();
-        std::shared_ptr<frd::FRDGUI> getEditorFRDGUIHandle();
-    protected:
-    private:
-        static std::shared_ptr<GUIManager> instance;//Single instance of GUIManager
+    std::shared_ptr<frd::FRDGUI> getFRDGUIHandle();
+    std::shared_ptr<frd::FRDGUI> getEditorFRDGUIHandle();
+protected:
+private:
+    static std::shared_ptr<GUIManager> instance;//Single instance of GUIManager
 
-        GUIManager(sf::Vector2i &windowSize, const std::string &fontFilePath, const sf::Color &defaultFontColour, unsigned int defaultFontSize);//Private constructor for Singleton
-        std::shared_ptr<frd::FRDGUI> gameGui;
-        std::shared_ptr<frd::FRDGUI> editorGui;
+    GUIManager(sf::Vector2i &windowSize, const std::string &fontFilePath, const sf::Color &defaultFontColour, unsigned int defaultFontSize);//Private constructor for Singleton
+    std::shared_ptr<frd::FRDGUI> gameGui;
+    std::shared_ptr<frd::FRDGUI> editorGui;
 
-        std::vector<frd::Menu> menuList;
+    std::vector<frd::Menu> menuList;
 };
 
 #endif // GUIMANAGER_H

@@ -2,7 +2,7 @@
 #include <iostream>
 
 EntityMoveEvent::EntityMoveEvent(unsigned int unitID, unsigned int newTileID, unsigned int lastTileID, const sf::Vector2f &oldPosition, const sf::Vector2f &newPosition)
-: MessageBase(Types::entityMoveEvent)
+    : MessageBase(Types::entityMoveEvent)
 {
     //ctor
     this->unitID = unitID;

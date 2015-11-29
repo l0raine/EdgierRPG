@@ -8,13 +8,13 @@
 
 class MapChangeEvent : public MessageBase
 {
-    public:
-        MapChangeEvent();
-        virtual ~MapChangeEvent();
+public:
+    MapChangeEvent();
+    virtual ~MapChangeEvent();
 
-        static std::unique_ptr<MapChangeEvent> make();
-    protected:
-    private:
+    static std::unique_ptr<MapChangeEvent> make();
+protected:
+private:
 };
 
 #endif // MAPCHANGEEVENT_H

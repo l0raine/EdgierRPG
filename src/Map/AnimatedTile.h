@@ -9,31 +9,31 @@
 
 class AnimatedTile : public TileBase
 {
-	public:
-		/** Default constructor */
-		AnimatedTile();
-		/** Default destructor */
-		virtual ~AnimatedTile();
+public:
+    /** Default constructor */
+    AnimatedTile();
+    /** Default destructor */
+    virtual ~AnimatedTile();
 
-		virtual sf::Vertex *getQuad();
-		virtual void setQuad(sf::Vertex *quad);
-		virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states){};
+    virtual sf::Vertex *getQuad();
+    virtual void setQuad(sf::Vertex *quad);
+    virtual void draw(sf::RenderTarget &target, const sf::RenderStates &states) {};
 
-		void setSwitchInterval(int switchIntervalNew);
-		void addFrame(const sf::IntRect &frameRect);
-		sf::IntRect getFrame(unsigned int frameIndex);
-		unsigned int getFrameCount();
-		void update();
-		unsigned int getSwitchInterval();
+    void setSwitchInterval(int switchIntervalNew);
+    void addFrame(const sf::IntRect &frameRect);
+    sf::IntRect getFrame(unsigned int frameIndex);
+    unsigned int getFrameCount();
+    void update();
+    unsigned int getSwitchInterval();
 
-	protected:
+protected:
 
-	private:
-		sf::Vertex *frameVertexArray;
-		unsigned int currentFrame;
-		int switchInterval;
-		std::vector<sf::IntRect> frames;
-		sf::Clock updateClock;
+private:
+    sf::Vertex *frameVertexArray;
+    unsigned int currentFrame;
+    int switchInterval;
+    std::vector<sf::IntRect> frames;
+    sf::Clock updateClock;
 };
 
 #endif // ANIMATEDTILE_H

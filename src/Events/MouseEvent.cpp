@@ -1,7 +1,7 @@
 #include "MouseEvent.h"
 
 MouseEvent::MouseEvent(sf::Mouse::Button buttonType, bool isKeyPress, const sf::Vector2i &mousePos)
-: MessageBase(Types::mouseEvent)
+    : MessageBase(Types::mouseEvent)
 {
     isPress = isKeyPress;
     this->buttonType = buttonType;
@@ -9,13 +9,13 @@ MouseEvent::MouseEvent(sf::Mouse::Button buttonType, bool isKeyPress, const sf::
 }
 
 MouseEvent::MouseEvent(const sf::Vector2i &mousePos)
- : MessageBase (Types::mouseMoveEvent)
+    : MessageBase (Types::mouseMoveEvent)
 {
     mousePosition = mousePos;
 }
 
 MouseEvent::MouseEvent(sf::Mouse::Button button, const sf::Vector2i &mousePos)
- : MessageBase (Types::mouseDragEvent)
+    : MessageBase (Types::mouseDragEvent)
 {
     mousePosition = mousePos;
     buttonType = button;

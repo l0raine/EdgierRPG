@@ -180,14 +180,14 @@ void Editor::load()
         theme.applyTheme(cLayerButton[a]);
         cLayerButton[a]->setLabel("Layer " + std::to_string(a));
         cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind(&Editor::selectLayer, this, a));
-/*      cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind([=]()
-        {
-            for(unsigned int i=0;i<mapLayerCount; i++)
-            {
-                cLayerButton[i]->setColor(sf::Color(0, 102, 0));
-            }
-            cLayerButton[a]->setColor(sf::Color::Red);
-        }));*/
+        /*      cLayerButton[a]->bindFunction(EventTypes::LeftClick_Up, std::bind([=]()
+                {
+                    for(unsigned int i=0;i<mapLayerCount; i++)
+                    {
+                        cLayerButton[i]->setColor(sf::Color(0, 102, 0));
+                    }
+                    cLayerButton[a]->setColor(sf::Color::Red);
+                }));*/
         cLayerButton[currentlySelectedLayer]->setColor(sf::Color::Red);
         layerSelectContainer->addWidget(cLayerButton[a]);
     }
@@ -287,22 +287,22 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     //Process events that may be processed even if the editor is closed here
     switch(message->getMessageType())
     {
-        case MessageBase::keyEvent: //Check to see if we should open the editor
+    case MessageBase::keyEvent: //Check to see if we should open the editor
+    {
+        KeyEvent *event = dynamic_cast<KeyEvent*>(message.get());
+        if(event->isKeyPress() && event->getKey() == sf::Keyboard::F1) //If it's the key to open the editor
         {
-            KeyEvent *event = dynamic_cast<KeyEvent*>(message.get());
-            if(event->isKeyPress() && event->getKey() == sf::Keyboard::F1) //If it's the key to open the editor
-            {
-                open();
-            }
-            break;
+            open();
         }
-        case MessageBase::mapChangeEvent:
-        {
-            updateMap();
         break;
-        }
-        default:
-            break;
+    }
+    case MessageBase::mapChangeEvent:
+    {
+        updateMap();
+        break;
+    }
+    default:
+        break;
     }
 
     if(!window.isOpen()) //Don't process events if editor is closed
@@ -315,40 +315,40 @@ void Editor::handleMessage(std::unique_ptr<MessageBase>& message)
     //Process events which should only be processed if the editor is open
     switch(message->getMessageType())
     {
-        case MessageBase::mouseMoveEvent:
-        {
-            //Update tile placement preview
-            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-            placementPreviewSprite.setPosition(MapManager::getInstance()->getCurrentMap()->getTile(0, HelperClass::getTileIDFromPosition(sf::Vector2f(event->getMousePosition().x, event->getMousePosition().y)))->getPosition()); //Set the position to draw at
+    case MessageBase::mouseMoveEvent:
+    {
+        //Update tile placement preview
+        MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+        placementPreviewSprite.setPosition(MapManager::getInstance()->getCurrentMap()->getTile(0, HelperClass::getTileIDFromPosition(sf::Vector2f(event->getMousePosition().x, event->getMousePosition().y)))->getPosition()); //Set the position to draw at
 
-            if(placementPreviewSprite.getRotation() > 0)
-            {
-                placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
-            }
-            if(!defaultRotation && placementPreviewSprite.getRotation() == 0)
-                placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
-            break;
-        }
-        case MessageBase::mouseDragEvent:
+        if(placementPreviewSprite.getRotation() > 0)
         {
-            //Place tiles/remove tiles if dragging
-            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-            if(event->getType() == sf::Mouse::Left) //If left click, place tile
-                placeSelected(currentlySelectedLayer, event->getClickedTileID());
-            else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
-                removeTile(currentlySelectedLayer, event->getClickedTileID());
-            break;
+            placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
         }
-        case MessageBase::mouseEvent:
-        {
-            //Place tiles/remove tiles if click event
-            MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
-            if(event->getType() == sf::Mouse::Left) //If left click, place tile
-                placeSelected(currentlySelectedLayer, event->getClickedTileID());
-            else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
-                removeTile(currentlySelectedLayer, event->getClickedTileID());
-            break;
-        }
+        if(!defaultRotation && placementPreviewSprite.getRotation() == 0)
+            placementPreviewSprite.move(rectangleSize.x/2, rectangleSize.y/2);
+        break;
+    }
+    case MessageBase::mouseDragEvent:
+    {
+        //Place tiles/remove tiles if dragging
+        MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+        if(event->getType() == sf::Mouse::Left) //If left click, place tile
+            placeSelected(currentlySelectedLayer, event->getClickedTileID());
+        else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
+            removeTile(currentlySelectedLayer, event->getClickedTileID());
+        break;
+    }
+    case MessageBase::mouseEvent:
+    {
+        //Place tiles/remove tiles if click event
+        MouseEvent *event = dynamic_cast<MouseEvent*>(message.get());
+        if(event->getType() == sf::Mouse::Left) //If left click, place tile
+            placeSelected(currentlySelectedLayer, event->getClickedTileID());
+        else if(event->getType() == sf::Mouse::Right) //If right click, remove tile
+            removeTile(currentlySelectedLayer, event->getClickedTileID());
+        break;
+    }
     default:
         break;
     }
@@ -552,9 +552,9 @@ void Editor::saveMapAs()
     });
 
     saveMapDialog.setCancelButton([&]()
-      {
-         saveMapDialog.close();
-      });
+    {
+        saveMapDialog.close();
+    });
 
     saveMapDialog.update();
 }
@@ -579,7 +579,7 @@ void Editor::loadMap()
         {
             std::cout<<"Invalid map name entered! \n";
         }
-       loadMapDialog.close();
+        loadMapDialog.close();
     });
 
     loadMapDialog.setCancelButton([&]()
@@ -736,9 +736,9 @@ void Editor::createSpecialTile()
     Dialog dialog("Create Special Tile"); //Loads the dialog box in the constructor
 
     dialog.setCancelButton([&]()
-     {
+    {
         dialog.close();
-     });
+    });
 
     auto blockSpecialTile = [&]()
     {
@@ -767,8 +767,8 @@ void Editor::createSpecialTile()
 
         //Define the function for accepting warp arguments
         auto setWarpArgs = [&]()
-         {
-             //Get the data in the entries by passing in the entryID
+        {
+            //Get the data in the entries by passing in the entryID
             const std::string& xCoord = setWarpLocationBox.getEntryStringByID(xCoordID);
             const std::string& yCoord = setWarpLocationBox.getEntryStringByID(yCoordID);
             const std::string& mapName = setWarpLocationBox.getEntryStringByID(mapNameID);
@@ -784,14 +784,14 @@ void Editor::createSpecialTile()
                     specialTileArgs.emplace_back(std::to_string(HelperClass::getTileIDFromPosition(sf::Vector2f(stoul(xCoord) * currentTileSize, stoul(yCoord) * currentTileSize), *MapManager::getInstance()->getCurrentMap())));
             }
             setWarpLocationBox.close();
-         };
+        };
 
         //Set the okay button
         setWarpLocationBox.setOkayButton(setWarpArgs);
         setWarpLocationBox.setCancelButton([&]()
-       {
-          setWarpLocationBox.close();
-       });
+        {
+            setWarpLocationBox.close();
+        });
 
         setWarpLocationBox.update();
 

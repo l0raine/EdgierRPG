@@ -45,7 +45,7 @@ int main()
 
     std::cout << "\nTime taken to load map: " << loadTime.getElapsedTime().asMilliseconds() << "ms\n";
 
-     MapManager::getInstance()->setCurrentMap(aMap);
+    MapManager::getInstance()->setCurrentMap(aMap);
 
     //Resource/SoundHandler | Sample load for loading sounds
     //ResourceManager::getSoundHandler()->loadMusic("Music/music1.wav", true)

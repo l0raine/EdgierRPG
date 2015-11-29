@@ -272,7 +272,8 @@ bool SoundHandler::play(const std::string &filepath)
     if(!cSound.isActive)
     {
         if(!activateSound(newfilepath))
-        {   std::cout<<"Point 3: \n";
+        {
+            std::cout<<"Point 3: \n";
             return false; //If the sound couldn't be activated, return false
         }
     }
@@ -727,32 +728,32 @@ void SoundHandler::playPlaylist(const std::string& playlistname)
         activePlaylists.push_back(playlistname);
     }
 
-            //Decide on what to play
-            if(playlists[playlistname].currentlyPlaying == "null")
+    //Decide on what to play
+    if(playlists[playlistname].currentlyPlaying == "null")
+    {
+        //If nothings playing, choose a track to play
+        if(playlists[playlistname].filenames.size() != 0)
+        {
+            //If there's stuff in the playlist
+            if(playlists[playlistname].playRandomly)
             {
-                //If nothings playing, choose a track to play
-                if(playlists[playlistname].filenames.size() != 0)
-                {
-                    //If there's stuff in the playlist
-                    if(playlists[playlistname].playRandomly)
-                    {
-                        int ttp = rand() % playlists[playlistname].filenames.size() + 0;
-                        playlists[playlistname].currentlyPlaying = playlists[playlistname].filenames[ttp];
-                    }
-                    else
-                    {
-                        //Else play first thing in the list
-                        playlists[playlistname].currentlyPlaying = playlists[playlistname].filenames[0];
-                    }
-                }
-                else //Nothing in the playlist, nothing to play.
-                {
-                    activePlaylists.pop_back();
-                    return;
-                }
+                int ttp = rand() % playlists[playlistname].filenames.size() + 0;
+                playlists[playlistname].currentlyPlaying = playlists[playlistname].filenames[ttp];
             }
-            std::cout << "\nAttempting to play: " << playlists[playlistname].currentlyPlaying;
-            play(playlists[playlistname].currentlyPlaying);
+            else
+            {
+                //Else play first thing in the list
+                playlists[playlistname].currentlyPlaying = playlists[playlistname].filenames[0];
+            }
+        }
+        else //Nothing in the playlist, nothing to play.
+        {
+            activePlaylists.pop_back();
+            return;
+        }
+    }
+    std::cout << "\nAttempting to play: " << playlists[playlistname].currentlyPlaying;
+    play(playlists[playlistname].currentlyPlaying);
 }
 
 void SoundHandler::setGlobalSoundVolume(float target)

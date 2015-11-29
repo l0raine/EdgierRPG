@@ -7,11 +7,11 @@
 
 class Player : public EntityBase
 {
-    public:
-        Player();
-        virtual ~Player();
-    protected:
-    private:
+public:
+    Player();
+    virtual ~Player();
+protected:
+private:
 };
 
 #endif // PLAYER_H

@@ -29,22 +29,22 @@ void EntityBase::update()
     sf::Vector2f positionOld = position;
     switch(direction)
     {
-        case 0:
-            position.y-=movementOffset; //Moving up
-            break;
-        case 1:
-            position.y+=movementOffset; //Moving down
-            break;
-        case 2:
-            position.x+=movementOffset; //Moving right
-            break;
-        case 3:
-            position.x-=movementOffset; //Moving left
-            break;
-        case 4:
-            break; //Standing still
-        default:
-            std::cout<<"Invalid direction specified."<<std::endl;
+    case 0:
+        position.y-=movementOffset; //Moving up
+        break;
+    case 1:
+        position.y+=movementOffset; //Moving down
+        break;
+    case 2:
+        position.x+=movementOffset; //Moving right
+        break;
+    case 3:
+        position.x-=movementOffset; //Moving left
+        break;
+    case 4:
+        break; //Standing still
+    default:
+        std::cout<<"Invalid direction specified."<<std::endl;
     }
 
     if(sprite.isAnimationRunning() && positionOld == position)

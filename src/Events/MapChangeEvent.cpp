@@ -1,7 +1,7 @@
 #include "MapChangeEvent.h"
 
 MapChangeEvent::MapChangeEvent()
-: MessageBase(Types::mapChangeEvent)
+    : MessageBase(Types::mapChangeEvent)
 {
     //ctor
 }

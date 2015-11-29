@@ -17,66 +17,66 @@ class AnimatedTile;
 
 class Map
 {
-	public:
-		Map();
-		Map(const std::string &filepath);
-		virtual ~Map();
+public:
+    Map();
+    Map(const std::string &filepath);
+    virtual ~Map();
 
-		//Core map data
-		SpecialTileContainer specialTileContainer;
+    //Core map data
+    SpecialTileContainer specialTileContainer;
 
-		//Core map functions
-		bool load(const std::string &filepath);
-		bool save(const std::string &filepath);
-		void draw(sf::RenderTarget &target, const sf::RenderStates &states);
+    //Core map functions
+    bool load(const std::string &filepath);
+    bool save(const std::string &filepath);
+    void draw(sf::RenderTarget &target, const sf::RenderStates &states);
 
-		//Map creation functions. Note, calling these functions *could* destroy the loaded map
-		void setMapSize(const sf::Vector2i &newSize);
-		void setAmbientMusicList(const std::vector<std::string> &songList);
-		void setAggressiveMusicList(const std::vector<std::string> &songList);
-		void setMapName(const std::string &newName);
+    //Map creation functions. Note, calling these functions *could* destroy the loaded map
+    void setMapSize(const sf::Vector2i &newSize);
+    void setAmbientMusicList(const std::vector<std::string> &songList);
+    void setAggressiveMusicList(const std::vector<std::string> &songList);
+    void setMapName(const std::string &newName);
 
-		//Minimal map interface
-		void update(); //Updates animated tiles
-		void updateStaticMap(); //Re-renders the static tiles
-		unsigned int getTileSize(); //Returns the tile width/height
-		TileBase *getTile(unsigned int layer, unsigned int tileID); //Gets the tile at the requested layer/tileID
-		const sf::Vector2i &getMapSizeTiles(); //Returns map size in tiles
-		const sf::Vector2i &getMapSizePixels();
-		unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
-		unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
-		void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
-		const std::string &getMapName(); //Returns map name
-		const std::string &getMapFilepath();
-        void setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd); //Sets which layers are drawn. Default: 0, layerCounter
-        void setTileAnimated(unsigned int layer, unsigned int tileID); //Transforms a static tile into an animated one
-        void setTileStatic(unsigned int layer, unsigned int tileID); //Transforms an animated tile into a static one
-	protected:
+    //Minimal map interface
+    void update(); //Updates animated tiles
+    void updateStaticMap(); //Re-renders the static tiles
+    unsigned int getTileSize(); //Returns the tile width/height
+    TileBase *getTile(unsigned int layer, unsigned int tileID); //Gets the tile at the requested layer/tileID
+    const sf::Vector2i &getMapSizeTiles(); //Returns map size in tiles
+    const sf::Vector2i &getMapSizePixels();
+    unsigned int getTileCount(unsigned int layer); //Returns the number of tiles on a layer
+    unsigned int getLayerCount(); //Returns number of layers, use this externally instead of the global mapLayerCount
+    void removeTile(unsigned int layer, unsigned int tileID); //Removes a tile
+    const std::string &getMapName(); //Returns map name
+    const std::string &getMapFilepath();
+    void setLayerDrawRange(unsigned int drawBegin, unsigned int drawEnd); //Sets which layers are drawn. Default: 0, layerCounter
+    void setTileAnimated(unsigned int layer, unsigned int tileID); //Transforms a static tile into an animated one
+    void setTileStatic(unsigned int layer, unsigned int tileID); //Transforms an animated tile into a static one
+protected:
 
-	private:
-		//Map data
-		std::string filepath;
-		std::string mapName;
-		sf::Vector2i mapSize;
-		std::vector<std::string> ambientMusicList;
-		std::vector<std::string> dangerMusicList;
-		std::vector<std::vector<std::unique_ptr<TileBase>>> tileStorage;
-		std::vector<std::vector<AnimatedTile*>> animatedTiles;
-		unsigned int tileSize;
-		sf::Vector2i mapSizePixels;
+private:
+    //Map data
+    std::string filepath;
+    std::string mapName;
+    sf::Vector2i mapSize;
+    std::vector<std::string> ambientMusicList;
+    std::vector<std::string> dangerMusicList;
+    std::vector<std::vector<std::unique_ptr<TileBase>>> tileStorage;
+    std::vector<std::vector<AnimatedTile*>> animatedTiles;
+    unsigned int tileSize;
+    sf::Vector2i mapSizePixels;
 
-		//Other stuff
-		sf::Clock animatedTileUpdateInterval; //How often should the update call be given to animated tiles?
+    //Other stuff
+    sf::Clock animatedTileUpdateInterval; //How often should the update call be given to animated tiles?
 
-		//Draw info
-		unsigned int drawMin;
-		unsigned int drawMax;
+    //Draw info
+    unsigned int drawMin;
+    unsigned int drawMax;
 
-		//Storage for pre-rendered static tile layers
-		std::vector<sf::VertexArray> staticTileMap;
+    //Storage for pre-rendered static tile layers
+    std::vector<sf::VertexArray> staticTileMap;
 
-		//Temporary tile texture for everything
-		sf::Texture* tileTexture;
+    //Temporary tile texture for everything
+    sf::Texture* tileTexture;
 };
 
 #endif // MAP_H

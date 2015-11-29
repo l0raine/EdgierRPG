@@ -35,52 +35,52 @@ void SpecialTileContainer::handleMessage(std::unique_ptr<MessageBase> &message)
     switch(message->getMessageType())
     {
     case MessageBase::entityMoveEvent:
+    {
+        EntityMoveEvent *event = dynamic_cast<EntityMoveEvent*>(message.get());
+        if(event->didChangeTile()) //If an entity moved, check to see if they walked onto a special tile
         {
-            EntityMoveEvent *event = dynamic_cast<EntityMoveEvent*>(message.get());
-            if(event->didChangeTile()) //If an entity moved, check to see if they walked onto a special tile
+            for(unsigned int a = 0; a < specialTiles.size(); a++)
             {
-                for(unsigned int a = 0; a < specialTiles.size(); a++)
+                if(specialTiles[a].position == event->getNewTileID()) //A unit has indeed stepped upon a special tile
                 {
-                    if(specialTiles[a].position == event->getNewTileID()) //A unit has indeed stepped upon a special tile
+                    switch(specialTiles[a].tileType)
                     {
-                        switch(specialTiles[a].tileType)
+                    case 0: //Block
+                    {
+                        EntityManager *eManager = EntityManager::getInstance().get();
+                        EntityBase *objEntity = eManager->getEntity(eManager->getSelectedEntityID());
+                        objEntity->setPosition(event->getOldPosition());
+                        break;
+                    }
+                    case 1: //Warp
+                    {
+                        EntityManager *eManager = EntityManager::getInstance().get();
+                        EntityBase *objEntity = eManager->getEntity(eManager->getSelectedEntityID());
+                        if(specialTiles[a].arguments.size() == 1) //Warp to tile in this map, only one argument (tileID)
                         {
-                        case 0: //Block
-                        {
-                            EntityManager *eManager = EntityManager::getInstance().get();
-                            EntityBase *objEntity = eManager->getEntity(eManager->getSelectedEntityID());
-                            objEntity->setPosition(event->getOldPosition());
-                            break;
+                            objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[0]), *MapManager::getInstance()->getCurrentMap()));
                         }
-                        case 1: //Warp
+                        else //Warp to another map, 2 arguments (mapPath, tileID)
                         {
-                            EntityManager *eManager = EntityManager::getInstance().get();
-                            EntityBase *objEntity = eManager->getEntity(eManager->getSelectedEntityID());
-                            if(specialTiles[a].arguments.size() == 1) //Warp to tile in this map, only one argument (tileID)
-                            {
-                                objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[0]), *MapManager::getInstance()->getCurrentMap()));
-                            }
-                            else //Warp to another map, 2 arguments (mapPath, tileID)
-                            {
-                                objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[1]), *MapManager::getInstance()->getCurrentMap()));
-                                MapManager::getInstance()->switchToMap(specialTiles[a].arguments[0]);
-                                return;
+                            objEntity->setPosition(HelperClass::getPositionFromTileID(stoi(specialTiles[a].arguments[1]), *MapManager::getInstance()->getCurrentMap()));
+                            MapManager::getInstance()->switchToMap(specialTiles[a].arguments[0]);
+                            return;
 
-                            }
-                            break;
                         }
-                        case 2: //Lua script
-                        {
-                            break;
-                        }
-                        default:
-                            std::cout << "\nMap contained unknown special tile ID!: " << specialTiles[a].tileType;
-                        }
+                        break;
+                    }
+                    case 2: //Lua script
+                    {
+                        break;
+                    }
+                    default:
+                        std::cout << "\nMap contained unknown special tile ID!: " << specialTiles[a].tileType;
                     }
                 }
             }
-            break;
         }
+        break;
+    }
     default:
         break;
     }
