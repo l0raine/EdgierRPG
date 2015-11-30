@@ -3,6 +3,7 @@
 
 #include "System.h"
 #include "Components/StaticRenderable.h"
+#include "Physics.h"
 
 namespace sys
 {
@@ -14,9 +15,12 @@ class StaticRenderable : public System<cmp::StaticRenderable>
         /** Default destructor */
         virtual ~StaticRenderable();
 
-        virtual void update(float dt){}
+        void draw(sf::RenderTarget *target) const;
+
+        virtual void update(float dt);
     protected:
     private:
+        System<cmp::Physics> *physicsSystem;
 };
 }
 #endif // SYS_STATICRENDERABLE_H
