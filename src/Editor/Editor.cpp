@@ -244,7 +244,6 @@ void Editor::open()
     if(!window.isOpen())
     {
         window.create(sf::VideoMode(windowSize.x, windowSize.y), "Editor Window", sf::Style::Close);
-        window.setFramerateLimit(60);
         window.setKeyRepeatEnabled(false);
         window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2 - windowSize.x - 10, sf::VideoMode::getDesktopMode().height/4));
     }
