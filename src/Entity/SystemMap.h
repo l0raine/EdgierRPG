@@ -1,10 +1,10 @@
-#ifndef SWIFT_SYSTEM_MAP_HPP
-#define SWIFT_SYSTEM_MAP_HPP
+#ifndef SYSTEM_MAP_H
+#define SYSTEM_MAP_H
 
 #include <unordered_map>
 
-#include "Component.hpp"
-#include "System.hpp"
+#include "Component.h"
+#include "System.h"
 
 class SystemMap
 {
@@ -42,6 +42,14 @@ class SystemMap
             systems[sys->typeEnum()] = sys;
         }
 
+        void handleMessage(std::unique_ptr<MessageBase> message)
+        {
+            for(Map::iterator iter = systems.begin(); iter != systems.end(); iter++)
+            {
+                iter->second->handleMessage(std::move(message));
+            }
+        }
+
         // forward iterator requests to the AssocMap
         Map::iterator begin()
         {
@@ -67,4 +75,4 @@ class SystemMap
         Map systems;
 };
 
-#endif	// SWIFT_SYSTEM_MAP_HPP
+#endif	// SYSTEM_MAP_H

@@ -4,8 +4,10 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <memory>
 
 #include "Component.h"
+#include "Messaging/MessageBase.h"
 
 class BaseSystem
 {
@@ -13,6 +15,7 @@ class BaseSystem
         virtual ~BaseSystem() = default;
 
         virtual void update(float dt) = 0;
+        virtual void handleMessage(std::unique_ptr<MessageBase> message) = 0;
 
         virtual unsigned int size() const = 0;
         virtual bool has(unsigned int id) const = 0;

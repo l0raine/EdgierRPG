@@ -22,6 +22,7 @@ class ControllerInput : public Component
         }
     protected:
     private:
+        unsigned int direction;
 };
 }
 #endif // CMP_CONTROLLERINPUT_H

@@ -1,7 +1,7 @@
 #ifndef CMP_COMBATAI_H
 #define CMP_COMBATAI_H
 
-#include "Component.h"
+#include "../Component.h"
 
 namespace cmp
 {

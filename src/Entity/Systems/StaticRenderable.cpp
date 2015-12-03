@@ -24,19 +24,31 @@ void StaticRenderable::draw(sf::RenderTarget* target) const
 
 void StaticRenderable::update(float dt)
 {
-    if(physicsSystem != nullptr)
-    {
-        for(auto &c : components)
-        {
-            //Reposition vertex array according to position of sprite
-            cmp::Physics *physComponent = physicsSystem->get(c.second.ID());
-            sf::VertexArray &r = c.second.vertices;
 
-            r[1].position = physComponent->position;
-            r[2].position = sf::Vector2f(physComponent->position.x + physComponent->size.x, physComponent->position.y);
-            r[3].position = sf::Vector2f(physComponent->position.x + physComponent->size.x, physComponent->position.y + physComponent->size.y);
-            r[0].position = sf::Vector2f(physComponent->position.x, physComponent->position.y + physComponent->size.y);
+}
+
+void StaticRenderable::handleMessage(std::unique_ptr<MessageBase> message)
+{
+    if(message->getMessageType() == MessageBase::entityDrawEvent)
+    {
+        if(physicsSystem != nullptr)
+        {
+            for(auto &c : components)
+            {
+                EntityDrawEvent *event = dynamic_cast<EntityDrawEvent*>(message.get());
+
+                sf::Vector2f &pos = event->getPosition();
+                sf::Vector2f &size = event->getSize();
+
+                sf::VertexArray &r = c.second.vertices;
+
+                r[1].position = pos;
+                r[2].position = sf::Vector2f(pos.x + size.x, pos.y);
+                r[3].position = sf::Vector2f(pos.x + size.x, pos.y + size.y);
+                r[0].position = sf::Vector2f(pos.x, pos.y + size.y);
+            }
         }
     }
 }
+
 }

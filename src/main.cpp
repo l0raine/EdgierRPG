@@ -22,6 +22,7 @@
 #include "Entity/Player.h"
 #include "Entity/EntityBase.h"
 #include "Map/TileBase.h"
+#include "SystemMap.h"
 
 using namespace std;
 
@@ -61,6 +62,9 @@ int main()
 
     //Load the editor;
     editor.load();
+
+    //Create the SystemMap object
+    SystemMap sysMap;
 
     GameCamera::getInstance()->setFocus(EntityManager::getInstance()->getEntity(EntityManager::getInstance()->getSelectedEntityID()));
 
@@ -114,6 +118,9 @@ int main()
             MapManager::getInstance()->getCurrentMap()->specialTileContainer.handleMessage(message);
             editor.handleMessage(message);
         }
+
+        //Pass events to the SystemMap
+
 
         while(frameLag >= frameTime)
         {

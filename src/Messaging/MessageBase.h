@@ -13,7 +13,10 @@ public:
         mouseMoveEvent,
         mouseDragEvent,
         entityMoveEvent,
-        mapChangeEvent
+        mapChangeEvent,
+
+        //EntityEvents
+        entityDrawEvent
     };
 
     /** Default destructor */

@@ -18,6 +18,7 @@ class StaticRenderable : public System<cmp::StaticRenderable>
         void draw(sf::RenderTarget *target) const;
 
         virtual void update(float dt);
+        virtual void handleMessage(std::unique_ptr<MessageBase> message);
     protected:
     private:
         System<cmp::Physics> *physicsSystem;
